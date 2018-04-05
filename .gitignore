@@ -1,0 +1,4 @@
+.DS_Store
+.atom-build.*
+*.sh
+node_modules
