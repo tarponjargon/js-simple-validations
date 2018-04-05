@@ -32,6 +32,7 @@ module.exports = {
 		path: PATHS.build,
 		filename: 'js-simple-validations.js'
 	},
+	//watch: true,
 	optimization: {
 		minimizer: [
 			new UglifyJSPlugin({

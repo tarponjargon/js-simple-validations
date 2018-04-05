@@ -3,7 +3,7 @@ import config from './validations-config';
 import Util from './utilities';
 
 function FieldValidator(field, form, event) {
-
+	
 	var util = new Util();
 
 	// hash containing the types of validations

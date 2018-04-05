@@ -10,7 +10,6 @@ function Util() {
 		}
 		return arr;
 	},
-
 	// removes empty or whitespace elements, trims each element
 	this.cleanArray = function(arr) {
 		if (Array.isArray(arr) && arr.length) {

@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
+    "postdev": "./export.sh",
     "dev": "webpack --mode development --output ./build/js-simple-validations-dev.js",
     "lint:js": "eslint src/ webpack.*.js --cache"
   },
