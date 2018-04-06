@@ -1,5 +1,6 @@
 {
   "name": "js-simple-validations",
+  "private": true,
   "version": "0.1.0",
   "description": "Form validation tool",
   "main": "index.js",
@@ -17,6 +18,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
+    "debounce-promise": "^3.1.0",
     "eslint": "^4.19.1",
     "eslint-loader": "^2.0.0",
     "webpack": "^4.5.0",

@@ -407,11 +407,12 @@ function FieldValidator(field, form, event) {
 		}, // end expiredate validator
 
 		"ajax": {
-			"events": ['focusout'],
+			//"events": ['focusout'],
+			"events": [],
 			"validator": function(value, validator) {
 				return new Promise(function(resolve, reject) {
 					try {
-						if (self.isCurrentField && self.eventType === 'focusout') {
+						if (self.isCurrentField) {
 							if (self.errorContainer) {
 								var customMsg = util.getAttr(self.field, config.fieldValidateAjaxProcessing);
 								self.errorContainer.innerText = customMsg || "Checking...";
@@ -678,7 +679,7 @@ function FieldValidator(field, form, event) {
 
 				// if there are no validationTypes set, resolve because there's nothing to validate
 				if (!self.validationTypes || !self.validationTypes.length) {
-					console.error("in FieldValidator but there are no validationTypes to run");
+					//console.error("in FieldValidator but there are no validationTypes to run");
 					resolve();
 				}
 
@@ -694,7 +695,7 @@ function FieldValidator(field, form, event) {
 					}, new Promise.resolve());
 				}
 
-				// dynamically apply validation type(s) specified in field (data attribute) to matching validation function in validations hash
+				// resolve promise sequence
 				eachSeries(self.validationTypes, self.fieldValue).then(function() {
 					// if (needsValidated && needsValidated === results.validated) {
 					//console.log("THEN lastValidator", lastValidator);

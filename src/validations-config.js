@@ -20,6 +20,7 @@ var config = {
 	"fieldValidateAjaxValue": "data-jsv-ajax-value", //data attribute containing the value in ajax endpoint to validate against
 	"fieldValidateAjaxProcessing": "data-jsv-ajax-processing", //data attribute containing the message you want to appear during processing
 	"fieldValidateContains": "data-jsv-contains", //data attribute containing the word that must be contained in the entered string
+	"fieldDebounce": "data-jsv-debounce", //data attribute containing an integer representing the debounce rate in ms
 	"fieldDependentIds": "data-jsv-dependent-field-ids", //data attribute, contains IDs of dependent fields
 	"fieldDependentValidator": "data-jsv-dependent-validator", // data attribute, validator to be run when current field's dependent fields validate
 	"fieldInvalidErrorPrefix": "data-jsv-field-error-", //data attribute, if populated (in the field element) this message overrides the default when field is invalid.  the suffix is validator name

@@ -129,7 +129,7 @@ function FormValidator(form) {
 				try {
 					setTimeout(function() {
 						window[validCallback](event, self.form, 'valid');
-					},200);
+					},100);
 				} catch(e) {
 					console.error("Problem executing valid callback on form:", validCallback, e);
 				}
