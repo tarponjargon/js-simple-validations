@@ -3,7 +3,7 @@ import config from './validations-config';
 import Util from './utilities';
 
 function FieldValidator(field, form, event) {
-	
+
 	var util = new Util();
 
 	// hash containing the types of validations
@@ -309,12 +309,12 @@ function FieldValidator(field, form, event) {
 						if (ids && ids.length) {
 							for (var i=0; i < ids.length; i++) {
 								var id = ids[i];
-								//console.error("querying DOM for id:", id);
+								//console.log("querying DOM for id:", id);
 								var dependent = self.form.querySelector('#'+id);
 								var key = dependent.getAttribute('name');
-								var depValid = util.getAttr(dependent, config.fieldValidatedAttr);
-								//console.log("dependent field", dependent, "valid", depValid);
-								if (key && depValid) {
+								//var depValid = util.getAttr(dependent, config.fieldValidatedAttr);
+								//console.log("dependent field", dependent, "key", key, "valid", depValid, "config.fieldValidatedAttr", config.fieldValidatedAttr);
+								if (key) {
 									depValues[key] = util.getValue(dependent);
 								}
 							}
@@ -383,7 +383,6 @@ function FieldValidator(field, form, event) {
 
 						//if we don't have at least a year and month at this point, bail
 						if (!year || !month) {
-							console.error("expiredate validator could not parse data");
 							resolve();
 						}
 
@@ -536,11 +535,11 @@ function FieldValidator(field, form, event) {
 				Array.isArray(self.validators[validator].events) &&
 				(self.validators[validator].events.length === 0 || self.validators[validator].events.indexOf(self.eventType) !== -1)
 			) {
-				if (self.isCurrentField) { console.log("in validatorEligible, validator:", validator, "is eligible on field", self.field.getAttribute('name')); }
+				//if (self.isCurrentField) { console.log("in validatorEligible, validator:", validator, "is eligible on field", self.field.getAttribute('name')); }
 				eligible = true;
-			} else {
-				if (self.isCurrentField) { console.log("in validatorEligible, validator:", validator, "is NOT eligible on field", self.field.getAttribute('name')); }
-			}
+			} //else {
+			//	if (self.isCurrentField) { console.log("in validatorEligible, validator:", validator, "is NOT eligible on field", self.field.getAttribute('name')); }
+			//}
 		} catch(e) {
 			console.error("Problem getting eligible events for validator", validator, e);
 		}
@@ -554,11 +553,11 @@ function FieldValidator(field, form, event) {
 			var tmpArr = util.splitString(dataAttr);
 			if (tmpArr && tmpArr.length) {
 				//console.log("tmpArr", tmpArr);
-				if (self.isCurrentField) { console.log("tmpArr", tmpArr); }
+				//if (self.isCurrentField) { console.log("tmpArr", tmpArr); }
 				for (var i = 0; i < tmpArr.length; i++) {
 					//console.log("tmpArr[i]", tmpArr[i]);
 					var elig = self.validatorEligible(tmpArr[i]);
-					if (self.isCurrentField) { console.log("elig", tmpArr[i], elig); }
+					//if (self.isCurrentField) { console.log("elig", tmpArr[i], elig); }
 					if (elig) {
 						validators.push(tmpArr[i]);
 					}
@@ -576,16 +575,16 @@ function FieldValidator(field, form, event) {
 			// 	console.log("new validation array", validators);
 			// }
 		}
-		if (self.isCurrentField) { console.log("returning validators", validators); }
+		//if (self.isCurrentField) { console.log("returning validators", validators); }
 		return validators;
 	}();
 
 	this.isRequired = function(){
 		try {
 			// a field is required if it has a 'require*' OR it doesn't, but has a value (that needs to pass a validator's test)
-			if (self.isCurrentField) { console.log("in isRequired, self.fieldValue: |" + self.fieldValue + "|"); }
-			if (self.isCurrentField) { console.log("in isRequired, self.validationTypes.filter(function(x){ return /^require/.test(x) }): |" + self.validationTypes.filter(function(x){ return /^require/.test(x) }) + "|"); }
-			if (self.isCurrentField) { console.log("in isRequired, is test true?: |" + (self.fieldValue.length || self.validationTypes.filter(function(x){ return /^require/.test(x) }).length) + "|"); }
+			//if (self.isCurrentField) { console.log("in isRequired, self.fieldValue: |" + self.fieldValue + "|"); }
+			//if (self.isCurrentField) { console.log("in isRequired, self.validationTypes.filter(function(x){ return /^require/.test(x) }): |" + self.validationTypes.filter(function(x){ return /^require/.test(x) }) + "|"); }
+			//if (self.isCurrentField) { console.log("in isRequired, is test true?: |" + (self.fieldValue.length || self.validationTypes.filter(function(x){ return /^require/.test(x) }).length) + "|"); }
 			return (self.fieldValue.length || self.validationTypes.filter(function(x){ return /^require/.test(x) }).length);
 		} catch(e) {
 			console.error('Problem checking isRequired', e);
@@ -621,10 +620,10 @@ function FieldValidator(field, form, event) {
 	this.customErrorMessages = function() {
 		var errors = {};
 
-		if (self.isCurrentField) { console.log("in customErrorMessages , validationTypes", self.validationTypes); }
+		//if (self.isCurrentField) { console.log("in customErrorMessages , validationTypes", self.validationTypes); }
 		Array.prototype.forEach.call(self.validationTypes, function(validationType) {
 			var customMessage = util.getAttr(self.field, config.fieldInvalidErrorPrefix + validationType);
-			if (self.isCurrentField) { console.log("field", self.field.getAttribute('name'), "customMessage", customMessage, "looking for", config.fieldInvalidErrorPrefix + validationType); }
+			//if (self.isCurrentField) { console.log("field", self.field.getAttribute('name'), "customMessage", customMessage, "looking for", config.fieldInvalidErrorPrefix + validationType); }
 			if (customMessage) {
 				errors[validationType] = customMessage;
 			}
@@ -666,16 +665,16 @@ function FieldValidator(field, form, event) {
 
 				// if the field isn't required, make sure the field is reset to the default
 				// state i.e. no valid or invalid styles.  Needed for when a value is removed.
-				if (self.isCurrentField) { console.log("in validator , field", self.field.getAttribute('name'), "is required:", self.isRequired); }
+				//if (self.isCurrentField) { console.log("in validator , field", self.field.getAttribute('name'), "is required:", self.isRequired); }
 				if (!self.isRequired) {
 					self.reset();
 					resolve();
 				}
 
 				//remove any messages if they exist, they can get out of sync otherwise
-				if (self.isCurrentField && self.errorContainer) {
-					self.errorContainer.innerText = "";
-				}
+				// if (self.isCurrentField && self.errorContainer) {
+				// 	self.errorContainer.innerText = "";
+				// }
 
 				// if there are no validationTypes set, resolve because there's nothing to validate
 				if (!self.validationTypes || !self.validationTypes.length) {
@@ -718,7 +717,7 @@ function FieldValidator(field, form, event) {
 
 	// function resets the field to the default UI state (i.e. no valid or invalid styles)
 	this.reset = function() {
-		console.log("reset called for", self.field.getAttribute('name'));
+		//console.log("reset called for", self.field.getAttribute('name'));
 		try {
 			// un-mark this field as valid if it has been interacted (is dirty)
 			if (self.isDirty && self.hasValid) {
