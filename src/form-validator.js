@@ -60,7 +60,7 @@ function FormValidator(form) {
 				} else { // no value...
 					if (isRequired) { // if field has a 'require' validator, add to validation list
 						addToValidate = true;
-					} else { // if it's not a required field and doesn't have a value, add to list of fields to reset (in case a value was removed)
+					} else { // if it's not a required field and doesn't have a value, any UI changes and call it valid
 						addToReset = true;
 					}
 				} // end if/esle for has field value
@@ -85,33 +85,50 @@ function FormValidator(form) {
 		return (customMsg) ? customMsg : config.formIncompleteMessage;
 	}();
 
+	this.checkFormValid = function() {
+		console.log("in checkFormValid");
+		var fields = self.getFormFields();
+		var validated = 0;
+		Array.prototype.forEach.call(fields, function(field) {
+			if (field.getAttribute(config.fieldValidatedAttr)) {
+				validated++;
+			} else {
+				console.log("in checkFormValid, field NOT validated", field.getAttribute('name'));
+			}
+		});
+		console.log("in checkFormValid", fields.length, validated);
+		return (validated >= fields.length);
+	};
+
 	this.validate = function(event) {
 		try {
 			return new Promise(function(resolve, reject) {
 				var validationFields = self.getValidationFields() || [];
 
 				// loop thru all validation fields fields and validate each
-				var fieldPromises = [];
+				var fieldPromises = [ new Promise.resolve() ];  // give it a resolving promise in case there are none
 				Array.prototype.forEach.call(validationFields.validate, function(field) {
+					//console.log("validationFields current field", field);
 					var fieldValidator = new FieldValidator(field, form, event);
 					fieldPromises.push(fieldValidator.validate());
-				});
-				new Promise.all(fieldPromises).then(function(){}).catch(function(e) {
-					console.error("problem resolving field validation promise", e);
 				});
 
 				// reset UI on any field in 'reset'
 				Array.prototype.forEach.call(validationFields.reset, function(field) {
 					var fieldValidator = new FieldValidator(field, form, event);
-					fieldValidator.reset();
+					fieldPromises.push(fieldValidator.reset());
 				});
 
-
-					self.valid(event);
-					resolve();
-				}).catch(function() {
-					self.invalid(event);
-					reject();
+				// resolve all pending promises. after, count up valid fields
+				new Promise.all(fieldPromises)
+				.then(function(){})
+				.catch(function(){})
+				.finally(function() {
+					if (self.checkFormValid()) {
+						resolve(self.valid(event));
+					} else {
+						reject(self.invalid(event));
+					}
 				});
 			});
 		} catch(e) {

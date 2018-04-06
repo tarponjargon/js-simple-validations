@@ -665,14 +665,6 @@ function FieldValidator(field, form, event) {
 					self.field.setAttribute(config.fieldIsDirtyAttr, self.fieldValue);
 				}
 
-				// if the field isn't required, make sure the field is reset to the default
-				// state i.e. no valid or invalid styles.  Needed for when a value is removed.
-				//if (self.isCurrentField) { console.log("in validator , field", self.field.getAttribute('name'), "is required:", self.isRequired); }
-				// if (!self.isRequired) {
-				// 	self.reset();
-				// 	resolve();
-				// }
-
 				//remove any messages if they exist, they can get out of sync otherwise
 				// if (self.isCurrentField && self.errorContainer) {
 				// 	self.errorContainer.innerText = "";
@@ -751,10 +743,9 @@ function FieldValidator(field, form, event) {
 	// function sets the state of the UI (form field) to valid
 	this.valid = function(lastValidator) {
 		try {
-			// mark this field as valid if it has been interacted (is dirty) with AND passed validation
-			if (!self.hasValid && self.isDirty) {
-				self.field.setAttribute(config.fieldValidatedAttr, "true");
-			}
+			// mark this field as valid
+			self.field.setAttribute(config.fieldValidatedAttr, "true");
+
 			// perform UI changes ONLY if we're operating on the currently-interacted field
 			if (self.isCurrentField) {
 				if (self.validationFieldContainer) {
@@ -803,10 +794,8 @@ function FieldValidator(field, form, event) {
 				message = util.cleanArray(messages).join('. ')+'.';
 			}
 
-			// un-mark this field as valid if it has been interacted (is dirty) with AND doesn't pass validation
-			if (self.isDirty && self.hasValid) {
-				self.field.removeAttribute(config.fieldValidatedAttr);
-			}
+			// un-mark this field as valid
+			self.field.removeAttribute(config.fieldValidatedAttr);
 
 			// perform UI changes ONLY if we're operating on the currently-interacted field
 			if (self.isCurrentField) {
