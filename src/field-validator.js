@@ -814,7 +814,8 @@ function FieldValidator(field, form, event) {
 						self.validationFieldContainer.classList.add(config.fieldInvalidIcon);
 					}
 				}
-				if (message && self.errorContainer && (self.eventType === 'focusout' || self.eventType === 'change' || self.eventType === 'submit')) {
+				//if (message && self.errorContainer && (self.eventType === 'focusout' || self.eventType === 'change' || self.eventType === 'submit')) {
+				if (message && self.errorContainer) {
 					self.errorContainer.innerText = message;
 				}
 
