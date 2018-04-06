@@ -33,26 +33,50 @@ function FormValidator(form) {
 		}
 		return fields;
 	};
-	// create a list of only the required fields (names only) in this form
-	// required = has required validator (can't be empty) OR has a value that needs to pass a validator test
-	this.getRequiredFields = function() {
-		var required = [];
+	// create a list of fields that need validation in this form
+	// the rules are complex and messy, but the idea is we don't want to run validations over and over unnecessarily
+	this.getValidationFields = function() {
+		var validationFields = {
+			"validate": [],
+			"reset": []
+		}
 		Array.prototype.forEach.call(self.getFormFields(), function(field) {
 			try {
+				var addToValidate = false;
+				var addToReset = false;
 				var valTypes = util.getAttr(field, config.fieldValidateAttr);
+				var isRequired = (valTypes && valTypes.toLowerCase().indexOf("require") !== -1);
 				var fieldVal = util.getValue(field);
-				var isRequired = (fieldVal || (valTypes && valTypes.toLowerCase().indexOf("require") !== -1)) ? true : false;
-				//console.log("looking at", field.getAttribute("name"), "the value is", fieldVal, "the validators are", valTypes, "isRequired is", isRequired);
-				if (fieldVal || isRequired) {
-					required.push(field.getAttribute("name"));
-					//required.push(field);
+				var dirtyVal = field.getAttribute(config.fieldIsDirtyAttr);
+
+				if (fieldVal) { // has a value
+					if (dirtyVal) { // does it have a previous value?
+						if (self.isCurrentField) { console.log("has a prev value", dirtyVal, "new valeu", fieldVal); }
+						addToValidate = (fieldVal !== dirtyVal); // required if value is changed, otherwise do not validate
+						if (self.isCurrentField) { console.log("NOT EQUAL", addToValidate, "has a prev value", dirtyVal, "new valeu", fieldVal); }
+					} else {
+						addToValidate = true; // this is a first-time elvauation
+					} // end if/else for dirtyval
+				} else { // no value...
+					if (isRequired) { // if field has a 'require' validator, add to validation list
+						addToValidate = true;
+					} else { // if it's not a required field and doesn't have a value, add to list of fields to reset (in case a value was removed)
+						addToReset = true;
+					}
+				} // end if/esle for has field value
+
+				if (addToValidate) {
+					validationFields.validate.push(field);
+				}
+				if (addToReset) {
+					validationFields.reset.push(field);
 				}
 			} catch(e) {
-				console.error("could not determine if field is required", e);
+				console.error("could not determine if field is needs validation", e);
 			}
 		});
-		//console.log("retrieved required fields", required);
-		return required;
+		console.log("retrieved validationFields", validationFields);
+		return validationFields;
 	};
 
 	// check <form> element and default to formInvalidMessage
@@ -64,25 +88,25 @@ function FormValidator(form) {
 	this.validate = function(event) {
 		try {
 			return new Promise(function(resolve, reject) {
-				// only validate if there's at least one requires validation
-				var formFields = self.getFormFields() || [];
-				var requiredFields = self.getRequiredFields() || [];
+				var validationFields = self.getValidationFields() || [];
 
-				// loop thru all fields and validate each
+				// loop thru all validation fields fields and validate each
 				var fieldPromises = [];
-				//Array.prototype.forEach.call(requiredFields, function(field) {
-				Array.prototype.forEach.call(formFields, function(field) {
-					var fieldName = field.getAttribute('name');
+				Array.prototype.forEach.call(validationFields.validate, function(field) {
 					var fieldValidator = new FieldValidator(field, form, event);
-					if (requiredFields.indexOf(fieldName) !== -1) {
-						fieldPromises.push(fieldValidator.validate());
-					} else {
-						// jank, but reset any non-required field
-						fieldValidator.reset();
-					}
+					fieldPromises.push(fieldValidator.validate());
+				});
+				new Promise.all(fieldPromises).then(function(){}).catch(function(e) {
+					console.error("problem resolving field validation promise", e);
 				});
 
-				new Promise.all(fieldPromises).then(function() {
+				// reset UI on any field in 'reset'
+				Array.prototype.forEach.call(validationFields.reset, function(field) {
+					var fieldValidator = new FieldValidator(field, form, event);
+					fieldValidator.reset();
+				});
+
+
 					self.valid(event);
 					resolve();
 				}).catch(function() {

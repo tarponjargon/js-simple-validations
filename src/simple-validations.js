@@ -233,27 +233,24 @@ var SimpleValidations = function() {
 				console.error("error checking for field value", e);
 			}
 
-			// check if field is to be debounced & set up
+			// set up debouncing of input
 			var dbField = util.getAttr(field, config.fieldDebounce);
-			var dbRate = (dbField && !isNaN(dbField)) ? dbField : 200;
-			console.log(field.getAttribute('name'), "debounce rate", dbRate);
-			var debounced = (dbField) ? debounce(formValidator.validate, dbRate) : null;
+			var dbRate = (dbField && !isNaN(dbField)) ? dbField : config.debounceDefault;
+			//console.log(field.getAttribute('name'), "debounce rate", dbRate);
+			var debounced = debounce(formValidator.validate, dbRate);
 
 			// and add listeners to trigger form revalidation on any changes
 			field.addEventListener('input', function(e) {
-				console.log('EVENT input', this.name, this.value);
-				//formValidator.validate(e);
-				var r = (dbField) ? debounced(e).then(function(){}).catch(function(){}) : formValidator.validate(e).then(function(){}).catch(function(){});
+				//console.log('EVENT input', this.name, this.value);
+				debounced(e).then(function(){}).catch(function(){});
 			});
 			field.addEventListener('change', function(e) {
-				console.log('EVENT change', this.name, this.value);
-				//formValidator.validate(e);
-				var r = (dbField) ? debounced(e).then(function(){}).catch(function(){}) : formValidator.validate(e).then(function(){}).catch(function(){});
+				//console.log('EVENT change', this.name, this.value);
+				debounced(e).then(function(){}).catch(function(){});
 			});
 			field.addEventListener('focusout', function(e) {
-				console.log('EVENT focusout', this.name, this.value);
-				//formValidator.validate(e);
-				var r = (dbField) ? debounced(e).then(function(){}).catch(function(){}) : formValidator.validate(e).then(function(){}).catch(function(){});
+				//console.log('EVENT focusout', this.name, this.value);
+				debounced(e).then(function(){}).catch(function(){});
 			});
 		}); // end loop thru fields in form
 

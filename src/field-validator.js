@@ -489,7 +489,8 @@ function FieldValidator(field, form, event) {
 	this.hasValid = util.getAttr(field, config.fieldValidatedAttr);
 
 	this.isDirty = function() {
-		return (event.type === 'submit' || self.field.getAttribute(config.fieldIsDirtyAttr));
+		//return (event.type === 'submit' || self.field.getAttribute(config.fieldIsDirtyAttr));
+		return self.field.getAttribute(config.fieldIsDirtyAttr);
 	}();
 
 	// if the current field has other fields it depends on, create a list (incl current field)
@@ -638,13 +639,13 @@ function FieldValidator(field, form, event) {
 			"invalid": {}
 		};
 		Array.prototype.forEach.call(self.validationTypes, function(validationType) {
-			var isValid = util.getAttr(self.field, config.fieldValidCallbackPrefix + validationType);
-			if (isValid) {
-				callbacks.valid[validationType] = isValid;
+			var validCallback = util.getAttr(self.field, config.fieldValidCallbackPrefix + validationType);
+			if (validCallback) {
+				callbacks.valid[validationType] = validCallback;
 			}
-			var isInvalid = util.getAttr(self.field, config.fieldInvalidCallbackPrefix + validationType);
-			if (isInvalid) {
-				callbacks.invalid[validationType] = isInvalid;
+			var invalidCallback = util.getAttr(self.field, config.fieldInvalidCallbackPrefix + validationType);
+			if (invalidCallback) {
+				callbacks.invalid[validationType] = invalidCallback;
 			}
 			//console.log("forEach", isValid, isInvalid, validationType, config.fieldValidCallbackPrefix, config.fieldValidCallbackPrefix + validationType);
 		});
@@ -661,16 +662,16 @@ function FieldValidator(field, form, event) {
 			return new Promise(function(resolve, reject) {
 				// mark this field as having been interacted with
 				if (self.isCurrentField) {
-					self.field.setAttribute(config.fieldIsDirtyAttr, "true");
+					self.field.setAttribute(config.fieldIsDirtyAttr, self.fieldValue);
 				}
 
 				// if the field isn't required, make sure the field is reset to the default
 				// state i.e. no valid or invalid styles.  Needed for when a value is removed.
 				//if (self.isCurrentField) { console.log("in validator , field", self.field.getAttribute('name'), "is required:", self.isRequired); }
-				if (!self.isRequired) {
-					self.reset();
-					resolve();
-				}
+				// if (!self.isRequired) {
+				// 	self.reset();
+				// 	resolve();
+				// }
 
 				//remove any messages if they exist, they can get out of sync otherwise
 				// if (self.isCurrentField && self.errorContainer) {
@@ -679,7 +680,7 @@ function FieldValidator(field, form, event) {
 
 				// if there are no validationTypes set, resolve because there's nothing to validate
 				if (!self.validationTypes || !self.validationTypes.length) {
-					//console.error("in FieldValidator but there are no validationTypes to run");
+					console.error("in FieldValidator but there are no validationTypes to run");
 					resolve();
 				}
 
@@ -718,27 +719,33 @@ function FieldValidator(field, form, event) {
 
 	// function resets the field to the default UI state (i.e. no valid or invalid styles)
 	this.reset = function() {
-		//console.log("reset called for", self.field.getAttribute('name'));
-		try {
-			// un-mark this field as valid if it has been interacted (is dirty)
-			if (self.isDirty && self.hasValid) {
-				self.field.removeAttribute(config.fieldValidatedAttr);
-			}
+		return new Promise(function(resolve, reject) {
+			//console.log("reset called for", self.field.getAttribute('name'));
+			try {
+				// un-mark this field as valid if it has been interacted (is dirty)
+				// if (self.isDirty && self.hasValid) {
+				// 	self.field.removeAttribute(config.fieldValidatedAttr);
+				// }
+				// this field is considered valid, but we also reset it to an unmodified state (not dirty)
+				self.field.setAttribute(config.fieldValidatedAttr, "true");
+				self.field.removeAttribute(config.fieldIsDirtyAttr);
 
-			//remove styles
-			if (self.validationFieldContainer) {
-				self.validationFieldContainer.classList.remove(config.fieldValid, config.fieldValidIcon, config.fieldInvalid, config.fieldInvalidIcon);
-			}
+				//remove styles
+				if (self.validationFieldContainer) {
+					self.validationFieldContainer.classList.remove(config.fieldValid, config.fieldValidIcon, config.fieldInvalid, config.fieldInvalidIcon);
+				}
 
-			//remove any messages
-			if (self.errorContainer) {
-				self.errorContainer.innerText = "";
+				//remove any messages
+				if (self.errorContainer) {
+					self.errorContainer.innerText = "";
+				}
+				resolve();
 			}
-		}
-		catch(e) {
-			console.error('FieldValidator problem in reset field function', e);
-		}
-		return true;
+			catch(e) {
+				console.error('FieldValidator problem in reset field function', e);
+				reject();
+			}
+		});
 	}
 
 	// function sets the state of the UI (form field) to valid

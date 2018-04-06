@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "description": "Form validation tool",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tarponjargon/js-simple-validations.git"
+   },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
