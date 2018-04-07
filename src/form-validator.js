@@ -48,16 +48,14 @@ function FormValidator(form) {
 				var valTypes = util.getAttr(field, cfg.fieldValidateAttr);
 				var isRequired = (valTypes && valTypes.toLowerCase().indexOf("require") !== -1);
 				var fieldVal = util.getValue(field);
-				var dirtyVal = field.getAttribute(cfg.fieldIsDirtyAttr);
+				var previousVal = field.getAttribute(cfg.fieldPreviousVal);
 
 				if (fieldVal) { // has a value
-					if (dirtyVal) { // does it have a previous value?
-						if (self.isCurrentField) { console.log("has a prev value", dirtyVal, "new valeu", fieldVal); }
-						addToValidate = (fieldVal !== dirtyVal); // required if value is changed, otherwise do not validate
-						if (self.isCurrentField) { console.log("NOT EQUAL", addToValidate, "has a prev value", dirtyVal, "new valeu", fieldVal); }
+					if (previousVal) { // does it have a previous value?
+						addToValidate = (fieldVal !== previousVal); // required if value is changed, otherwise do not validate
 					} else {
 						addToValidate = true; // this is a first-time elvauation
-					} // end if/else for dirtyval
+					} // end if/else for previousVal
 				} else { // no value...
 					if (isRequired) { // if field has a 'require' validator, add to validation list
 						addToValidate = true;
@@ -104,6 +102,7 @@ function FormValidator(form) {
 	this.validate = function(event) {
 		try {
 			return new Promise(function(resolve, reject) {
+
 				var validationFields = self.getValidationFields() || [];
 
 				// loop thru all validation fields fields and validate each

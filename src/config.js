@@ -8,7 +8,7 @@ var cfg = {
 	"disableInvalid": "data-jsv-disable-invalid", // disables form/button until form is validated
 	"fieldValidateAttr": "data-jsv-validator", // the data attribute containing the validators to apply to field (field level, comma-separated)
 	"fieldValidatedAttr": "data-jsv-field-isvalid", // data attribute store on field element when valid
-	"fieldIsDirtyAttr": "data-jsv-field-dirty", // data attribute denoting the field has been touched
+	"fieldPreviousVal": "data-jsv-field-prev-val", // data attribute denoting the field has been touched
 	"fieldValidateMin": "data-jsv-min", //data attribute denoting min allowed length of field
 	"fieldValidateMax": "data-jsv-max", //data attribute denoting max allowed length of field
 	"fieldValidateExact": "data-jsv-exact", //data attribute denoting field must be this length exactly
