@@ -34,7 +34,8 @@ function FormValidator(form) {
 		return fields;
 	};
 	// create a list of fields that need validation in this form
-	// the rules are complex and messy, but the idea is we don't want to run validations over and over unnecessarily
+	// the rules are complex and messy, but the idea is we don't want to run validations over and over unnecessarily,
+	// since the form revalidates with every interaction
 	this.getValidationFields = function() {
 		var validationFields = {
 			"validate": [],
@@ -75,7 +76,7 @@ function FormValidator(form) {
 				console.error("could not determine if field is needs validation", e);
 			}
 		});
-		console.log("retrieved validationFields", validationFields);
+		//console.log("retrieved validationFields", validationFields);
 		return validationFields;
 	};
 
@@ -86,15 +87,15 @@ function FormValidator(form) {
 	}();
 
 	this.checkFormValid = function() {
-		console.log("in checkFormValid");
+		//console.log("in checkFormValid");
 		var fields = self.getFormFields();
 		var validated = 0;
 		Array.prototype.forEach.call(fields, function(field) {
 			if (field.getAttribute(config.fieldValidatedAttr)) {
 				validated++;
-			} else {
-				console.log("in checkFormValid, field NOT validated", field.getAttribute('name'));
-			}
+			} //else {
+			//	console.log("in checkFormValid, field NOT validated", field.getAttribute('name'));
+			//}
 		});
 		console.log("in checkFormValid", fields.length, validated);
 		return (validated >= fields.length);
@@ -233,7 +234,7 @@ function FormValidator(form) {
 				try {
 					setTimeout(function() {
 						window[invalidCallback](event, self.form, 'invalid');
-					},200);
+					},100);
 				} catch(e) {
 					console.error("Problem executing invalid callback on form:", invalidCallback, e);
 				}

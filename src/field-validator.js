@@ -263,7 +263,7 @@ function FieldValidator(field, form, event) {
 					// this is for radio, checkbox and multi-select menus, and you want to require a minimum number of them to be selected.
 
 					var minThreshold = util.getAttr(field, config.fieldValidateMinThreshold) || 1;
-					var allNamedElements = self.form.querySelectorAll('[name='+self.field.getAttribute("name")+']');
+					var allNamedElements = self.form.querySelectorAll('[name='+self.fieldName+']');
 					var countSelected = 0;
 
 					if (allNamedElements && allNamedElements[0]) {
@@ -301,7 +301,7 @@ function FieldValidator(field, form, event) {
 					var ids = null;
 					var depValues = {};
 					var depValidator = util.getAttr(self.field, config.fieldDependentValidator);
-					var thisKey = self.field.getAttribute('name');
+					var thisKey = self.fieldName;
 					var thisValue = util.getValue(self.field);
 					try {
 						var idStr = util.getAttr(self.field, config.fieldDependentIds);
@@ -334,11 +334,13 @@ function FieldValidator(field, form, event) {
 						depValidator in self.validators
 					) {
 						depValues[thisKey] = thisValue;
-						//console.log("depValidator", depValidator, self.validators[depValidator]);
+						console.log("depValidator", depValidator, "depvalues", depValues);
 						var subPromise = self.validators[depValidator].validator(depValues, depValidator);
 						subPromise.then(function() {
+							console.log("dependent validator resolving");
 							resolve();
 						}).catch(function(message) {
+							console.log("dependent validator rejecting");
 							reject(message);
 						});
 					} else {
@@ -383,7 +385,9 @@ function FieldValidator(field, form, event) {
 
 						//if we don't have at least a year and month at this point, bail
 						if (!year || !month) {
+							console.log("expiredate not complete, resolving");
 							resolve();
+							return true;
 						}
 
 						var today = (new Date()).toISOString().slice(0,10).replace(/-/g,""); // format current date to YYYYMMDD
@@ -392,9 +396,11 @@ function FieldValidator(field, form, event) {
 
 						var isValid = (compareDate >= today);
 						if (isValid) {
+							console.log("expiredate validator resolving");
 							resolve();
 						} else {
 							var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Appears to be expired - please check date";
+							console.log("expiredate validator rejecting");
 							reject(error);
 						}
 
@@ -422,10 +428,9 @@ function FieldValidator(field, form, event) {
 							var ajaxValue = util.getAttr(self.field, config.fieldValidateAjaxValue);
 							if (ajaxEndpoint && ajaxKey && ajaxValue !== null && !/^http/.test(ajaxEndpoint.toLowerCase())) { // crude way to make ajax safe - don't allow absolute URLs
 
-								var ajaxUrl = ajaxEndpoint + '?' + self.field.getAttribute('name') + '=' + util.getValue(self.field);
+								var ajaxUrl = ajaxEndpoint + '?' + self.fieldName + '=' + util.getValue(self.field);
 								console.log("ajaXUrl", ajaxUrl, "ajaxKey", ajaxKey, "ajaxValue", ajaxValue);
 
-								//setTimeout(function() {
 								var xhr = new XMLHttpRequest();
 								xhr.open('GET', ajaxUrl);
 								xhr.timeout = config.ajaxTimeout;
@@ -455,7 +460,6 @@ function FieldValidator(field, form, event) {
 									resolve();
 								};
 								xhr.send();
-								//},2000);
 							}
 						} else {
 							// if this is a submit event,immediately resolve
@@ -485,11 +489,11 @@ function FieldValidator(field, form, event) {
 	this.form = form;
 	this.eventType = event.type || null;
 	this.fieldValue = util.getValue(this.field);
+	this.fieldName = this.field.getAttribute('name');
 	this.customErrorContainerId = util.getAttr(field, config.fieldInvalidMessageTarget);
 	this.hasValid = util.getAttr(field, config.fieldValidatedAttr);
 
 	this.isDirty = function() {
-		//return (event.type === 'submit' || self.field.getAttribute(config.fieldIsDirtyAttr));
 		return self.field.getAttribute(config.fieldIsDirtyAttr);
 	}();
 
@@ -506,9 +510,8 @@ function FieldValidator(field, form, event) {
 						depNames.push(depField.getAttribute('name'));
 					}
 				}, this);
-				depNames.push(self.field.getAttribute('name'));
+				depNames.push(self.fieldName);
 				depNames = (depNames && depNames.length) ? util.cleanArray(depNames) : depNames;
-				//console.log("returning depNames", depNames);
 			}
 		} catch(e) {
 			console.error("problem getting dependent names from dependent fields", e);
@@ -518,8 +521,7 @@ function FieldValidator(field, form, event) {
 
 	this.isCurrentField = function() {
 		try {
-			//console.log('ISCURRENTFIELD field name: ' + field.getAttribute("name") + ' target name: ' + event.target.name);
-			return (self.field.getAttribute("name") === event.target.name || self.dependentNames.indexOf(event.target.name) !== -1 || event.type === 'submit') ? self.field.getAttribute("name") : null;
+			return (self.fieldName === event.target.name || self.dependentNames.indexOf(event.target.name) !== -1 || event.type === 'submit') ? self.fieldName : null;
 		} catch(e) {
 			console.error('Problem checking isCurrentField', e);
 		}
@@ -529,7 +531,6 @@ function FieldValidator(field, form, event) {
 		// each validator should have an 'events' prop that is an array of eligible events it should be run on.
 		// if the array is empty (means "all events") OR the current event is found in the array, validator is eligible
 		var eligible = false;
-		//console.log("validatorEligible called", validator);
 		try {
 			if (validator &&
 				validator in self.validators &&
@@ -548,6 +549,7 @@ function FieldValidator(field, form, event) {
 		return eligible;
 	}
 
+	// makes a list of the validators to run on this field, at this time
 	this.validationTypes = function() {
 		var validators = [];
 		var dataAttr = util.getAttr(self.field, config.fieldValidateAttr);
@@ -565,33 +567,18 @@ function FieldValidator(field, form, event) {
 					}
 				}
 			}
-			// hack - if this field has an ajax validator, remove it from validators UNLESS it's a focusout
-			// console.log("in this.validationTypes, eventType", self.eventType);
-			// console.log("in this.validationTypes, dataAttr", dataAttr.toLowerCase());
-			// console.log("in this.validationTypes, /ajax/.test(dataAttr.toLowerCase())", /ajax/.test(dataAttr.toLowerCase()));
-			// if (self.eventType !== 'focusout' && /ajax/.test(dataAttr.toLowerCase())) {
-			// 	console.log("has ajax validator:", dataAttr.toLowerCase, "is not focusout:", self.eventType);
-			// 	validators = validators.filter(function(item) {
-			// 		return item.indexOf('ajax') !== 0;
-			// 	});
-			// 	console.log("new validation array", validators);
-			// }
 		}
-		//if (self.isCurrentField) { console.log("returning validators", validators); }
 		return validators;
 	}();
 
-	this.isRequired = function(){
-		try {
-			// a field is required if it has a 'require*' OR it doesn't, but has a value (that needs to pass a validator's test)
-			//if (self.isCurrentField) { console.log("in isRequired, self.fieldValue: |" + self.fieldValue + "|"); }
-			//if (self.isCurrentField) { console.log("in isRequired, self.validationTypes.filter(function(x){ return /^require/.test(x) }): |" + self.validationTypes.filter(function(x){ return /^require/.test(x) }) + "|"); }
-			//if (self.isCurrentField) { console.log("in isRequired, is test true?: |" + (self.fieldValue.length || self.validationTypes.filter(function(x){ return /^require/.test(x) }).length) + "|"); }
-			return (self.fieldValue.length || self.validationTypes.filter(function(x){ return /^require/.test(x) }).length);
-		} catch(e) {
-			console.error('Problem checking isRequired', e);
-		}
-	}();
+	// this.isRequired = function(){
+	// 	try {
+	// 		// a field is required if it has a 'require*' OR it doesn't, but has a value (that needs to pass a validator's test)
+	// 		return (self.fieldValue.length || self.validationTypes.filter(function(x){ return /^require/.test(x) }).length);
+	// 	} catch(e) {
+	// 		console.error('Problem checking isRequired', e);
+	// 	}
+	// }();
 
 	this.errorContainer = function() {
 		try {
@@ -601,7 +588,6 @@ function FieldValidator(field, form, event) {
 				if (self.customErrorContainerId && form.querySelector('#' + self.customErrorContainerId)) {
 					errorContainer = form.querySelector('#' + self.customErrorContainerId);
 				} else {
-					//console.log("field.parentNode.nextElementSibling", field.parentNode.nextElementSibling);
 					errorContainer = (self.field.parentNode.nextElementSibling.classList.contains(config.fieldError.className)) ? self.field.parentNode.nextElementSibling : null;
 				}
 				return errorContainer;
@@ -621,11 +607,8 @@ function FieldValidator(field, form, event) {
 
 	this.customErrorMessages = function() {
 		var errors = {};
-
-		//if (self.isCurrentField) { console.log("in customErrorMessages , validationTypes", self.validationTypes); }
 		Array.prototype.forEach.call(self.validationTypes, function(validationType) {
 			var customMessage = util.getAttr(self.field, config.fieldInvalidErrorPrefix + validationType);
-			//if (self.isCurrentField) { console.log("field", self.field.getAttribute('name'), "customMessage", customMessage, "looking for", config.fieldInvalidErrorPrefix + validationType); }
 			if (customMessage) {
 				errors[validationType] = customMessage;
 			}
@@ -651,9 +634,6 @@ function FieldValidator(field, form, event) {
 		});
 		return callbacks;
 	}();
-
-	//console.log("customErrorMessages", this.customErrorMessages);
-	//console.log("Validationcallbacks", this.validationCallbacks);
 
 	// performs field validation
 	this.validate = function() {
@@ -690,15 +670,9 @@ function FieldValidator(field, form, event) {
 
 				// resolve promise sequence
 				eachSeries(self.validationTypes, self.fieldValue).then(function() {
-					// if (needsValidated && needsValidated === results.validated) {
-					//console.log("THEN lastValidator", lastValidator);
 					self.valid(lastValidator);
 					resolve();
-					// } else {
-					// 	self.invalid(results.messages);
-					// }
 				}).catch(function(message) {
-					//console.log("CATCH lastValidator", lastValidator);
 					self.invalid(lastValidator, message)
 					reject();
 				});
@@ -714,17 +688,15 @@ function FieldValidator(field, form, event) {
 		return new Promise(function(resolve, reject) {
 			//console.log("reset called for", self.field.getAttribute('name'));
 			try {
-				// un-mark this field as valid if it has been interacted (is dirty)
-				// if (self.isDirty && self.hasValid) {
-				// 	self.field.removeAttribute(config.fieldValidatedAttr);
-				// }
 				// this field is considered valid, but we also reset it to an unmodified state (not dirty)
 				self.field.setAttribute(config.fieldValidatedAttr, "true");
 				self.field.removeAttribute(config.fieldIsDirtyAttr);
 
 				//remove styles
 				if (self.validationFieldContainer) {
-					self.validationFieldContainer.classList.remove(config.fieldValid, config.fieldValidIcon, config.fieldInvalid, config.fieldInvalidIcon);
+					Array.prototype.forEach.call([config.fieldValid, config.fieldValidIcon, config.fieldInvalid, config.fieldInvalidIcon], function(c) {
+						self.validationFieldContainer.classList.remove(c);
+					});
 				}
 
 				//remove any messages
@@ -743,13 +715,19 @@ function FieldValidator(field, form, event) {
 	// function sets the state of the UI (form field) to valid
 	this.valid = function(lastValidator) {
 		try {
-			// mark this field as valid
-			self.field.setAttribute(config.fieldValidatedAttr, "true");
+
+			// mark all fields with this name as valid (this will cover multi-value fields)
+			var validFields = self.form.querySelectorAll('[name='+self.fieldName+']');
+			Array.prototype.forEach.call(validFields, function(field) {
+				field.setAttribute(config.fieldValidatedAttr, "true");
+			});
 
 			// perform UI changes ONLY if we're operating on the currently-interacted field
 			if (self.isCurrentField) {
+
 				if (self.validationFieldContainer) {
-					self.validationFieldContainer.classList.remove(config.fieldInvalid, config.fieldInvalidIcon);
+					self.validationFieldContainer.classList.remove(config.fieldInvalid);
+					self.validationFieldContainer.classList.remove(config.fieldInvalidIcon);
 					self.validationFieldContainer.classList.add(config.fieldValid);
 					//if (self.eventType === 'focusout' &&
 					if (!util.getAttr(self.form, config.formDisableIcons) &&
@@ -758,6 +736,7 @@ function FieldValidator(field, form, event) {
 						self.validationFieldContainer.classList.add(config.fieldValidIcon);
 					}
 				}
+
 				if (self.errorContainer) {
 					self.errorContainer.innerText = "";
 				}
@@ -770,10 +749,10 @@ function FieldValidator(field, form, event) {
 				) {
 					try {
 						setTimeout(function() {
-							window[self.validationCallbacks.valid[lastValidator]](event, self.form, self.field.getAttribute('name'), lastValidator, 'valid');
-						},200);
+							window[self.validationCallbacks.valid[lastValidator]](event, self.form, self.fieldName, lastValidator, 'valid');
+						},100);
 					} catch(e) {
-						console.error("Problem executing valid callback on field:", self.field.getAttribute('name'), e);
+						console.error("Problem executing valid callback on field:", self.fieldName, e);
 					}
 				} // end callback check
 			}
@@ -794,14 +773,19 @@ function FieldValidator(field, form, event) {
 				message = util.cleanArray(messages).join('. ')+'.';
 			}
 
-			// un-mark this field as valid
-			self.field.removeAttribute(config.fieldValidatedAttr);
+			// un-mark fields with this name from being valid
+			var invalidFields = self.form.querySelectorAll('[name='+self.fieldName+']');
+			Array.prototype.forEach.call(invalidFields, function(field) {
+				field.removeAttribute(config.fieldValidatedAttr);
+			});
+
 
 			// perform UI changes ONLY if we're operating on the currently-interacted field
 			if (self.isCurrentField) {
 				//console.log("in invalid isCurrentField", self.isCurrentField, self.eventType, self.validationFieldContainer);
 				if (self.validationFieldContainer) {
-					self.validationFieldContainer.classList.remove(config.fieldValid, config.fieldValidIcon);
+					self.validationFieldContainer.classList.remove(config.fieldValid);
+					self.validationFieldContainer.classList.remove(config.fieldValidIcon);
 					self.validationFieldContainer.classList.add(config.fieldInvalid);
 					//if (self.eventType === 'focusout' &&
 					if (!util.getAttr(self.form, config.formDisableIcons) &&
@@ -822,7 +806,7 @@ function FieldValidator(field, form, event) {
 				// console.log("self.validationCallbacks.invalid[lastValidator] in window", self.validationCallbacks.invalid[lastValidator] in window);
 				// console.log("typeof window[self.validationCallbacks.invalid[lastValidator]] === 'function'", typeof window[self.validationCallbacks.invalid[lastValidator]] === 'function');
 				// console.log("window[self.validationCallbacks.invalid[lastValidator]]", window[self.validationCallbacks.invalid[lastValidator]]);
-				if (self.eventType === 'focusout' &&
+				if (//self.eventType === 'focusout' &&
 					lastValidator &&
 					lastValidator in self.validationCallbacks.invalid &&
 					self.validationCallbacks.invalid[lastValidator] in window &&
@@ -830,10 +814,10 @@ function FieldValidator(field, form, event) {
 				) {
 					try {
 						setTimeout(function() {
-							window[self.validationCallbacks.invalid[lastValidator]](event, self.form, self.field.getAttribute('name'), lastValidator, 'invalid', message);
-						},200);
+							window[self.validationCallbacks.invalid[lastValidator]](event, self.form, self.fieldName, lastValidator, 'invalid', message);
+						},100);
 					} catch(e) {
-						console.error("Problem executing valid callback on field:", self.field.getAttribute('name'), e);
+						console.error("Problem executing valid callback on field:", self.fieldName, e);
 					}
 				} // end callback check
 

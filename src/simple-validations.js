@@ -1,6 +1,6 @@
 import Util from './utilities';
 import FormValidator from './form-validator';
-import debounce from '../node_modules/debounce-promise';
+import debounce from './debounce-promise';
 import config from './validations-config';
 
 var SimpleValidations = function() {
@@ -239,18 +239,23 @@ var SimpleValidations = function() {
 			//console.log(field.getAttribute('name'), "debounce rate", dbRate);
 			var debounced = debounce(formValidator.validate, dbRate);
 
+			//console.log("field name: "+ field.getAttribute('name') + " field value:" + util.getValue(field));
+
 			// and add listeners to trigger form revalidation on any changes
 			field.addEventListener('input', function(e) {
-				//console.log('EVENT input', this.name, this.value);
+				//console.log('EVENT inputz ' + field.getAttribute('name') + field.value);
 				debounced(e).then(function(){}).catch(function(){});
+				//formValidator.validate(e).then(function(){}).catch(function(){});
 			});
 			field.addEventListener('change', function(e) {
-				//console.log('EVENT change', this.name, this.value);
+				//console.log('EVENT change' + field.getAttribute('name') + util.getValue(field));
 				debounced(e).then(function(){}).catch(function(){});
+				//formValidator.validate(e).then(function(){}).catch(function(){});
 			});
 			field.addEventListener('focusout', function(e) {
-				//console.log('EVENT focusout', this.name, this.value);
+				//console.log('EVENT focusout' + field.getAttribute('name') + util.getValue(field));
 				debounced(e).then(function(){}).catch(function(){});
+				//formValidator.validate(e).then(function(){}).catch(function(){});
 			});
 		}); // end loop thru fields in form
 

@@ -138,10 +138,12 @@ function Util() {
 						button.setAttribute(config.buttonTooltipAttr, message);
 					}
 				}
+				return true;
 			} catch(e) {
 				console.error("problem disabling element", e);
+				return false;
 			}
-			return this.disableElement(form, b);
+			//return this.disableElement(form, b);
 		} else {
 			return false;
 		}
@@ -175,8 +177,9 @@ function Util() {
 
 	// function is a generic value getter for most form field types
 	this.getValue = function(field) {
+		//console.log("getValue Called");
 		try {
-			//console.log("in getValue, field.type: ", field.type);
+
 			switch (field.type) {
 				case "text":
 				case "textarea":
