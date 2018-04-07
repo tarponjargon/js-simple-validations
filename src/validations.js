@@ -1,5 +1,5 @@
 import Promise from '../node_modules/promise-polyfill';
-import config from './validations-config';
+import cfg from './config';
 import Util from './utilities';
 
 var Validations = function(self) {
@@ -40,8 +40,8 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(value, validator) {
 				return new Promise(function(resolve, reject) {
-					var lengthMin = util.getAttr(self.field, config.fieldValidateMin) || 1;
-					var lengthMax = util.getAttr(self.field, config.fieldValidateMax) || 1;
+					var lengthMin = util.getAttr(self.field, cfg.fieldValidateMin) || 1;
+					var lengthMax = util.getAttr(self.field, cfg.fieldValidateMax) || 1;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && (value.length >= lengthMin && value.length <= lengthMax));
 					if (isValid) {
 						resolve();
@@ -56,7 +56,7 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(value, validator) {
 				return new Promise(function(resolve, reject) {
-					var lengthExact = util.getAttr(self.field, config.fieldValidateExact) || 1;
+					var lengthExact = util.getAttr(self.field, cfg.fieldValidateExact) || 1;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && value.length === lengthExact);
 					if (isValid) {
 						resolve();
@@ -71,7 +71,7 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(value, validator) {
 				return new Promise(function(resolve, reject) {
-					var compareId = util.getAttr(self.field, config.fieldValidateCompare);
+					var compareId = util.getAttr(self.field, cfg.fieldValidateCompare);
 					var compareField = self.form.querySelector('#'+compareId);
 					var compareFieldValue = (compareField) ? util.getValue(compareField) : null;
 					var errorMessage = function() {
@@ -117,7 +117,7 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(value, validator) {
 				return new Promise(function(resolve, reject) {
-					var numExact = util.getAttr(self.field, config.fieldValidateExact) || 1;
+					var numExact = util.getAttr(self.field, cfg.fieldValidateExact) || 1;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && !isNaN(value) && value.length === numExact);
 					if (isValid) {
 						resolve();
@@ -132,8 +132,8 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(value, validator) {
 				return new Promise(function(resolve, reject) {
-					var rangeMin = util.getAttr(self.field, config.fieldValidateMin) || 1;
-					var rangeMax = util.getAttr(self.field, config.fieldValidateMax) || 1;
+					var rangeMin = util.getAttr(self.field, cfg.fieldValidateMin) || 1;
+					var rangeMax = util.getAttr(self.field, cfg.fieldValidateMax) || 1;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && (value.length >= rangeMin && value.length <= rangeMax));
 					if (isValid) {
 						resolve();
@@ -206,7 +206,7 @@ var Validations = function(self) {
 			"events": [],
 				"validator": function(value, validator) {
 				return new Promise(function(resolve, reject) {
-					var regex = self.field.getAttribute(config.fieldValidatePattern);
+					var regex = self.field.getAttribute(cfg.fieldValidatePattern);
 					if (typeof regex !== 'undefined' && regex && regex.length) {
 						var re = new RegExp(regex, "g");
 						var isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(value));
@@ -226,7 +226,7 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(value, validator) {
 				return new Promise(function(resolve, reject) {
-					var neededStr = util.getAttr(self.field, config.fieldValidateContains);
+					var neededStr = util.getAttr(self.field, cfg.fieldValidateContains);
 					neededStr = (neededStr && neededStr.length) ? neededStr.toLowerCase() : null;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && value.toLowerCase().indexOf(neededStr) !== -1);
 					if (isValid) {
@@ -261,7 +261,7 @@ var Validations = function(self) {
 				return new Promise(function(resolve, reject) {
 					// this is for radio, checkbox and multi-select menus, and you want to require a minimum number of them to be selected.
 
-					var minThreshold = util.getAttr(self.field, config.fieldValidateMinThreshold) || 1;
+					var minThreshold = util.getAttr(self.field, cfg.fieldValidateMinThreshold) || 1;
 					var allNamedElements = self.form.querySelectorAll('[name='+self.fieldName+']');
 					var countSelected = 0;
 
@@ -299,11 +299,11 @@ var Validations = function(self) {
 
 					var ids = null;
 					var depValues = {};
-					var depValidator = util.getAttr(self.field, config.fieldDependentValidator);
+					var depValidator = util.getAttr(self.field, cfg.fieldDependentValidator);
 					var thisKey = self.fieldName;
 					var thisValue = util.getValue(self.field);
 					try {
-						var idStr = util.getAttr(self.field, config.fieldDependentIds);
+						var idStr = util.getAttr(self.field, cfg.fieldDependentIds);
 						ids = (idStr) ? util.splitString(idStr) : null;
 						if (ids && ids.length) {
 							for (var i=0; i < ids.length; i++) {
@@ -311,8 +311,8 @@ var Validations = function(self) {
 								//console.log("querying DOM for id:", id);
 								var dependent = self.form.querySelector('#'+id);
 								var key = dependent.getAttribute('name');
-								//var depValid = util.getAttr(dependent, config.fieldValidatedAttr);
-								//console.log("dependent field", dependent, "key", key, "valid", depValid, "config.fieldValidatedAttr", config.fieldValidatedAttr);
+								//var depValid = util.getAttr(dependent, cfg.fieldValidatedAttr);
+								//console.log("dependent field", dependent, "key", key, "valid", depValid, "cfg.fieldValidatedAttr", cfg.fieldValidatedAttr);
 								if (key) {
 									depValues[key] = util.getValue(dependent);
 								}
@@ -419,12 +419,12 @@ var Validations = function(self) {
 					try {
 						if (self.isCurrentField) {
 							if (self.errorContainer) {
-								var customMsg = util.getAttr(self.field, config.fieldValidateAjaxProcessing);
+								var customMsg = util.getAttr(self.field, cfg.fieldValidateAjaxProcessing);
 								self.errorContainer.innerText = customMsg || "Checking...";
 							}
-							var ajaxEndpoint = util.getAttr(self.field, config.fieldValidateAjaxEndpoint);
-							var ajaxKey = util.getAttr(self.field, config.fieldValidateAjaxKey);
-							var ajaxValue = util.getAttr(self.field, config.fieldValidateAjaxValue);
+							var ajaxEndpoint = util.getAttr(self.field, cfg.fieldValidateAjaxEndpoint);
+							var ajaxKey = util.getAttr(self.field, cfg.fieldValidateAjaxKey);
+							var ajaxValue = util.getAttr(self.field, cfg.fieldValidateAjaxValue);
 							if (ajaxEndpoint && ajaxKey && ajaxValue !== null && !/^http/.test(ajaxEndpoint.toLowerCase())) { // crude way to make ajax safe - don't allow absolute URLs
 
 								var ajaxUrl = ajaxEndpoint + '?' + self.fieldName + '=' + util.getValue(self.field);
@@ -432,7 +432,7 @@ var Validations = function(self) {
 
 								var xhr = new XMLHttpRequest();
 								xhr.open('GET', ajaxUrl);
-								xhr.timeout = config.ajaxTimeout;
+								xhr.timeout = cfg.ajaxTimeout;
 								xhr.setRequestHeader('Content-Type', 'application/json');
 								xhr.onload = function() {
 									if (xhr.status === 200) {

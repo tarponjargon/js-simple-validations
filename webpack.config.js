@@ -10,20 +10,23 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
 	module: {
-		rules: [{
-			test: /\.js$/,
-			enforce: 'pre',
-			loader: 'eslint-loader',
-			options: {
-				emitWarning: true,
+		rules: [
+			{
+				test: /\.js$/,
+				enforce: 'pre',
+				loader: 'eslint-loader',
+				options: {
+					emitWarning: true,
+				},
 			},
-		},{
-		test: /\.js$/,
-		exclude: /node_modules/,
-		use: {
-			loader: "babel-loader"
-		}
-		}]
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: {
+					loader: "babel-loader"
+				}
+			}
+		]
 	},
 	entry: {
 		src: PATHS.src,

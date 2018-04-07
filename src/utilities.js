@@ -1,4 +1,4 @@
-import config from './validations-config';
+import cfg from './config';
 
 function Util() {
 
@@ -82,9 +82,9 @@ function Util() {
 		}
 	},
 
-	// santizes text only if config value true
+	// santizes text only if cfg value true
 	this.safeStringInput = function(text) {
-		return (text !== 'undefined' && text && config.safeStringInput) ? this.safeString(text) : text;
+		return (text !== 'undefined' && text && cfg.safeStringInput) ? this.safeString(text) : text;
 	},
 
 	// check if element is an html element
@@ -116,11 +116,11 @@ function Util() {
 		}
 	},
 
-	// toggle disabling the form && button but only if config value is true.  takes a true/false
+	// toggle disabling the form && button but only if cfg value is true.  takes a true/false
 	this.disableForm = function(form, isDisabled) {
-		if (this.getAttr(form, config.disableInvalid)) {
+		if (this.getAttr(form, cfg.disableInvalid)) {
 			var b = isDisabled || false;
-			//console.log("getAttr(form, config.disableInvalid", this.getAttr(form, config.disableInvalid));
+			//console.log("getAttr(form, cfg.disableInvalid", this.getAttr(form, cfg.disableInvalid));
 			// disable button on form
 			try {
 				var button = null;
@@ -128,14 +128,14 @@ function Util() {
 				if (buttons && buttons.length) {
 					button = buttons[0];
 					this.disableElement(button, b);
-					// if configured, add "incomplete" message to tooltip
+					// if cfgured, add "incomplete" message to tooltip
 					if (b &&
-						config.useTooltip &&
-						config.buttonTooltipAttr
+						cfg.useTooltip &&
+						cfg.buttonTooltipAttr
 					) {
-						var overrideMessage = this.getAttr(form, config.formIncompleteAttr);
-						var message = (overrideMessage) ? overrideMessage : config.formIncompleteMessage;
-						button.setAttribute(config.buttonTooltipAttr, message);
+						var overrideMessage = this.getAttr(form, cfg.formIncompleteAttr);
+						var message = (overrideMessage) ? overrideMessage : cfg.formIncompleteMessage;
+						button.setAttribute(cfg.buttonTooltipAttr, message);
 					}
 				}
 				return true;
@@ -258,14 +258,14 @@ function Util() {
 	}, // end getValue function
 
 	this.showFormMessage = function(form, targetId, message) {
-		if (!form || !targetId || !message || !config.formShowMessages) {
+		if (!form || !targetId || !message || !cfg.formShowMessages) {
 			return false;
 		}
 		try {
 			var target = form.querySelector('.' + targetId);
 			if (target && this.isElement(target)) {
 				target.innerHTML = message;
-				target.classList.remove(config.formMessageHidden);
+				target.classList.remove(cfg.formMessageHidden);
 				return true;
 			} else {
 				return false;
@@ -284,7 +284,7 @@ function Util() {
 			var target = form.querySelector('.' + targetId);
 			if (target) {
 				target.innerHTML = "";
-				target.classList.add(config.formMessageHidden);
+				target.classList.add(cfg.formMessageHidden);
 				return true;
 			} else {
 				return false;

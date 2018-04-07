@@ -1,4 +1,4 @@
-import config from './validations-config.js'
+import cfg from './config.js'
 
 const styles = ' \
 	[data-jsv-form-tooltip] { \
@@ -80,28 +80,28 @@ const styles = ' \
 	  transform:         translateY(-12px); \
 	} \
 	.validate-form-error-message { \
-		color: '+config.isInvalidColor+'; \
+		color: '+cfg.isInvalidColor+'; \
 	} \
 	.validate-form-error-message.well { \
-		border-color: '+config.isInvalidColor+'; \
+		border-color: '+cfg.isInvalidColor+'; \
 	} \
 	.validate-form-success-message { \
-		color: '+config.isValidColor+'; \
+		color: '+cfg.isValidColor+'; \
 	} \
 	.validate-form-success-message.well { \
-		border-color: '+config.isValidColor+'; \
+		border-color: '+cfg.isValidColor+'; \
 	} \
 	.validate-field-error-message { \
 		width: 100%; \
 		display: block; \
-		color: '+config.isInvalidColor+'; \
-		font: '+config.fieldErrorFont+';	 \
+		color: '+cfg.isInvalidColor+'; \
+		font: '+cfg.fieldErrorFont+';	 \
 	} \
 	.validate-form-hidden-message { \
 		display: none; \
 	} \
 	.button-success, .button-success:hover { \
-		background-color: '+config.isValidColor+'; \
+		background-color: '+cfg.isValidColor+'; \
 	} \
 	.validate-input { \
 		position: relative; \
@@ -109,23 +109,23 @@ const styles = ' \
 	.validate-input.form-field-invalid input, \
 	.validate-input.form-field-invalid textarea, \
 	.validate-input.form-field-invalid select { \
-		border: 1px solid '+config.isInvalidColor+'; \
+		border: 1px solid '+cfg.isInvalidColor+'; \
 	} \
 	.validate-input.form-field-valid input, \
 	.validate-input.form-field-valid textarea, \
 	.validate-input.form-field-valid select { \
-		border: 1px solid '+config.isValidColor+'; \
+		border: 1px solid '+cfg.isValidColor+'; \
 	} \
 	.validate-input.form-field-valid-focusout::after { \
-		content: "'+config.isValidIcon+'"; \
-		color: '+config.isValidColor+';	 \
+		content: "'+cfg.isValidIcon+'"; \
+		color: '+cfg.isValidColor+';	 \
 		right:20px; \
 		top:9px; \
 		position:absolute;     \
 	} \
 	.validate-input.form-field-invalid-focusout::after { \
-		content: "'+config.isInvalidIcon+'"; \
-		color: '+config.isInvalidColor+';	 \
+		content: "'+cfg.isInvalidIcon+'"; \
+		color: '+cfg.isInvalidColor+';	 \
 		right:20px; \
 		top:8px; \
 		position:absolute; \

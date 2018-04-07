@@ -1,7 +1,7 @@
 import Util from './utilities';
 import FormValidator from './form-validator';
 import debounce from './debounce-promise';
-import config from './validations-config';
+import cfg from './config';
 import styles from './styles.js'
 
 // make sure we're in a browser environment
@@ -21,21 +21,21 @@ var SimpleValidations = function() {
 
 	var util = new Util();
 
-	// merge any user-defined options into config
-	if ('config' in window.validateOptions && typeof window.validateOptions.config === 'object') {
-		for (var key in window.validateOptions.config) {
-			config[key] = window.validateOptions.config[key];
+	// merge any user-defined options into cfg
+	if ('cfg' in window.validateOptions && typeof window.validateOptions.cfg === 'object') {
+		for (var key in window.validateOptions.cfg) {
+			cfg[key] = window.validateOptions.cfg[key];
 		}
 	}
 
-	// exit if config disableValidations === true
-	if (config.disableValidations !== 'undefined' && config.disableValidations) {
+	// exit if cfg disableValidations === true
+	if (cfg.disableValidations !== 'undefined' && cfg.disableValidations) {
 		console.log("validations exiting");
 		return false;
 	}
 
 	// add stylesheet/styles to window (if enabled)
-	if (config.useCss !== 'undefined' && config.useCss) {
+	if (cfg.useCss !== 'undefined' && cfg.useCss) {
 		try {
 			var styleSheet = document.createElement('style');
 			styleSheet.innerHTML = styles;
@@ -46,17 +46,17 @@ var SimpleValidations = function() {
 	} // end if for useCss
 
 	// loop thru forms in DOM marked for validation
-	Array.prototype.forEach.call(document.querySelectorAll('[' + config.formValidateAttr + ']'), function(form) {
+	Array.prototype.forEach.call(document.querySelectorAll('[' + cfg.formValidateAttr + ']'), function(form) {
 		//console.log("form to validate", form);
 
 		// add form-level error container (if not exists)
-		var formError = util.createValidationElement(form, config.formError);
+		var formError = util.createValidationElement(form, cfg.formError);
 		if (formError) {
 			form.insertBefore(formError, form.firstChild);
 		}
 
 		// add form-level success container (if not exists)
-		var formSuccess = util.createValidationElement(form, config.formSuccess);
+		var formSuccess = util.createValidationElement(form, cfg.formSuccess);
 		if (formSuccess) {
 			form.appendChild(formSuccess);
 		}
@@ -67,32 +67,32 @@ var SimpleValidations = function() {
 		var formValidator = new FormValidator(form);
 
 		// loop thru fields in this form marked for validation
-		Array.prototype.forEach.call(form.querySelectorAll('[' + config.fieldValidateAttr + ']'), function(field) {
+		Array.prototype.forEach.call(form.querySelectorAll('[' + cfg.fieldValidateAttr + ']'), function(field) {
 
 			// add containing div around field to be validated (if not exists)
 			// radio buttons are excluded.  the <div class="validate-input"></div> needs to be added manually
 			// around all radio inputs with the same name (for now)
 			if (field.type !== 'radio' && field.type !== 'checkbox') {
 				try {
-					var fieldContainer = util.createValidationElement(field.parentNode, config.fieldContainer);
+					var fieldContainer = util.createValidationElement(field.parentNode, cfg.fieldContainer);
 					if (fieldContainer) {
 						field.parentNode.appendChild(fieldContainer);
 						fieldContainer.appendChild(field);
 					}
 				}
 				catch(e) {
-					console.error('problem wrapping field ' + field + ' with containing div' + config.fieldContainer);
+					console.error('problem wrapping field ' + field + ' with containing div' + cfg.fieldContainer);
 				}
 
 				// add field-level error container (if not exists)
 				try {
-					var fieldError = util.createValidationElement(field.parentNode, config.fieldError);
+					var fieldError = util.createValidationElement(field.parentNode, cfg.fieldError);
 					if (fieldError) {
 						field.parentNode.parentNode.insertBefore(fieldError, field.parentNode.nextElementSibling);
 					}
 				}
 				catch(e) {
-					console.error('problem adding element ' + config.fieldError);
+					console.error('problem adding element ' + cfg.fieldError);
 				}
 			} // end if for not radio or checkbox
 
@@ -114,8 +114,8 @@ var SimpleValidations = function() {
 			}
 
 			// set up debouncing of input
-			var dbField = util.getAttr(field, config.fieldDebounce);
-			var dbRate = (dbField && !isNaN(dbField)) ? dbField : config.debounceDefault;
+			var dbField = util.getAttr(field, cfg.fieldDebounce);
+			var dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
 			//console.log(field.getAttribute('name'), "debounce rate", dbRate);
 			var debounced = debounce(formValidator.validate, dbRate);
 
@@ -146,8 +146,8 @@ var SimpleValidations = function() {
 			formValidator.validate(e).then(function() {
 				console.log("success!");
 
-				var afterSubmitRef = (config.formSubmitHandler) ? util.getAttr(form, config.formSubmitHandler) : null;
-				// console.log("config.formSubmitHandler", config.formSubmitHandler);
+				var afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
+				// console.log("cfg.formSubmitHandler", cfg.formSubmitHandler);
 				// console.log("afterSubmitRef", afterSubmitRef);
 				// console.log("afterSubmitRef in window", (afterSubmitRef in window));
 				// console.log("typeof window[afterSubmitRef]", (typeof window[afterSubmitRef]));
@@ -172,7 +172,7 @@ var SimpleValidations = function() {
 					form.submit();
 				}
 			}).catch(function() {
-				util.showFormMessage(form, config.formError.className, config.formInvalidMessage);
+				util.showFormMessage(form, cfg.formError.className, cfg.formInvalidMessage);
 			});
 		});
 

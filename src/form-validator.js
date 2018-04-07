@@ -1,6 +1,6 @@
 import Promise from '../node_modules/promise-polyfill';
 import FieldValidator from './field-validator';
-import config from './validations-config';
+import cfg from './config';
 import Util from './utilities';
 
 function FormValidator(form) {
@@ -18,7 +18,7 @@ function FormValidator(form) {
 	}();
 	this.hasValid = function() {
 		try {
-			return util.getAttr(form, config.formValidatedAttr);
+			return util.getAttr(form, cfg.formValidatedAttr);
 		} catch(e) {
 			console.error("FormValidator self.hasValid function failed", e)
 		}
@@ -26,10 +26,10 @@ function FormValidator(form) {
 	this.getFormFields = function() {
 		var fields = [];
 		try {
-			fields = form.querySelectorAll('[' + config.fieldValidateAttr + ']');
-			//console.log("in self.formFields(), getting data attr", config.fieldValidateAttr, "from", form);
+			fields = form.querySelectorAll('[' + cfg.fieldValidateAttr + ']');
+			//console.log("in self.formFields(), getting data attr", cfg.fieldValidateAttr, "from", form);
 		} catch(e) {
-			console.error("could not get nodeList for [" + config.fieldValidateAttr + "]", e);
+			console.error("could not get nodeList for [" + cfg.fieldValidateAttr + "]", e);
 		}
 		return fields;
 	};
@@ -45,10 +45,10 @@ function FormValidator(form) {
 			try {
 				var addToValidate = false;
 				var addToReset = false;
-				var valTypes = util.getAttr(field, config.fieldValidateAttr);
+				var valTypes = util.getAttr(field, cfg.fieldValidateAttr);
 				var isRequired = (valTypes && valTypes.toLowerCase().indexOf("require") !== -1);
 				var fieldVal = util.getValue(field);
-				var dirtyVal = field.getAttribute(config.fieldIsDirtyAttr);
+				var dirtyVal = field.getAttribute(cfg.fieldIsDirtyAttr);
 
 				if (fieldVal) { // has a value
 					if (dirtyVal) { // does it have a previous value?
@@ -82,8 +82,8 @@ function FormValidator(form) {
 
 	// check <form> element and default to formInvalidMessage
 	this.incompleteMessage = function() {
-		var customMsg = util.getAttr(self.form, config.formIncompleteAttr);
-		return (customMsg) ? customMsg : config.formIncompleteMessage;
+		var customMsg = util.getAttr(self.form, cfg.formIncompleteAttr);
+		return (customMsg) ? customMsg : cfg.formIncompleteMessage;
 	}();
 
 	this.checkFormValid = function() {
@@ -91,7 +91,7 @@ function FormValidator(form) {
 		var fields = self.getFormFields();
 		var validated = 0;
 		Array.prototype.forEach.call(fields, function(field) {
-			if (field.getAttribute(config.fieldValidatedAttr)) {
+			if (field.getAttribute(cfg.fieldValidatedAttr)) {
 				validated++;
 			} //else {
 			//	console.log("in checkFormValid, field NOT validated", field.getAttribute('name'));
@@ -142,22 +142,22 @@ function FormValidator(form) {
 		try {
 			// set form data attribute to valid
 			if (!self.hasValid()) {
-				self.form.setAttribute(config.formValidatedAttr, "true");
+				self.form.setAttribute(cfg.formValidatedAttr, "true");
 			}
 
 			// enable form
 			util.disableForm(form, false);
 
-			// if configure, remove "incomplete" message from tooltip
-			if (config.useTooltip &&
-				config.buttonTooltipAttr &&
-				self.button.getAttribute(config.buttonTooltipAttr)
+			// if cfgure, remove "incomplete" message from tooltip
+			if (cfg.useTooltip &&
+				cfg.buttonTooltipAttr &&
+				self.button.getAttribute(cfg.buttonTooltipAttr)
 			) {
-				self.button.removeAttribute(config.buttonTooltipAttr);
+				self.button.removeAttribute(cfg.buttonTooltipAttr);
 			}
 
 			// see if there are any callbcks to execute on form=valid
-			var validCallback = util.getAttr(self.form, config.formValidCallback);
+			var validCallback = util.getAttr(self.form, cfg.formValidCallback);
 			// console.log("eventType !== 'submit' ", eventType !== 'submit');
 			// console.log("validCallback", validCallback);
 			// console.log("validCallback in window", validCallback in window);
@@ -191,36 +191,36 @@ function FormValidator(form) {
 
 			// remove form "valid" data attribute (if any)
 			if (self.hasValid()) {
-				self.form.removeAttribute(config.formValidatedAttr);
+				self.form.removeAttribute(cfg.formValidatedAttr);
 			}
 
 			// reset button on form to default/disabled state
 			util.disableForm(self.form, true);
 
-			// if configured, add "incomplete" message to tooltip
-			if (config.useTooltip &&
-				config.buttonTooltipAttr
+			// if cfgured, add "incomplete" message to tooltip
+			if (cfg.useTooltip &&
+				cfg.buttonTooltipAttr
 			) {
-				self.button.setAttribute(config.buttonTooltipAttr, self.incompleteMessage);
+				self.button.setAttribute(cfg.buttonTooltipAttr, self.incompleteMessage);
 			}
 
-			// if configured, make sure success state is not set on button
-			if (config.buttonSuccess && self.button.classList.contains(config.buttonSuccess)) {
-				self.button.classList.remove(config.buttonSuccess);
+			// if cfgured, make sure success state is not set on button
+			if (cfg.buttonSuccess && self.button.classList.contains(cfg.buttonSuccess)) {
+				self.button.classList.remove(cfg.buttonSuccess);
 			}
 
-			// if configured, reset original text on button
-			if (config.buttonOriginalAttr && self.button.getAttribute(config.buttonOriginalAttr)) {
-				self.button.innerText = util.getAttr(self.button, config.buttonOriginalAttr);
-				self.button.removeAttribute(config.buttonOriginalAttr);
+			// if cfgured, reset original text on button
+			if (cfg.buttonOriginalAttr && self.button.getAttribute(cfg.buttonOriginalAttr)) {
+				self.button.innerText = util.getAttr(self.button, cfg.buttonOriginalAttr);
+				self.button.removeAttribute(cfg.buttonOriginalAttr);
 			}
 
 			// reset all messages
-			util.hideFormMessage(self.form, config.formError.className);
-			util.hideFormMessage(self.form, config.formSuccess.className);
+			util.hideFormMessage(self.form, cfg.formError.className);
+			util.hideFormMessage(self.form, cfg.formSuccess.className);
 
 			// see if there are any callbcks to execute on form=invalid
-			var invalidCallback = util.getAttr(self.form, config.formInvalidCallback);
+			var invalidCallback = util.getAttr(self.form, cfg.formInvalidCallback);
 			// console.log("event.type === 'submit'", event.type === 'submit');
 			// console.log("invalidCallback", invalidCallback);
 			// console.log("invalidCallback in window", invalidCallback in window);
