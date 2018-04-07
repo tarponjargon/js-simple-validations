@@ -404,12 +404,12 @@ var Validations = function(self) {
 				return new Promise(function(resolve, reject) {
 
 					var dateHash = {};
-					var revalidateFields = []; // fields to revalidate if this validation successds (will force UI update on any related invalid fields)
+					var setFieldsToValid = []; // fields to to force state of 'valid' on if this valiation succeeds
 					// get year, month and day values (if exist), force them to 3 or 4 digit format
 					Array.prototype.forEach.call(['year','month','day'], function(k) {
 						var f = self.form.querySelector('[' + cfg.fieldValidateExpireDate + '="' + k + '" i]');
 						var v = (f) ? util.getValue(f) : null;
-						if (f && v) { revalidateFields.push(f) }
+						if (f && v) { setFieldsToValid.push(f) }
 						if (k === 'year') {
 							 dateHash[k] = (v && !isNaN(v) && v.length === 2) ? '20'+v.toString() : v;
 						}
@@ -432,7 +432,7 @@ var Validations = function(self) {
 					var isValid = (compareDate >= today);
 					if (isValid) {
 						console.log("expiredate validator resolving");
-						resolve(self.triggerRevalidate(revalidateFields));
+						resolve(self.setValidated(setFieldsToValid, validator));
 					} else {
 						var customErrors = self.getCustomErrors(field);
 						var error = (validator && validator in customErrors) ?
