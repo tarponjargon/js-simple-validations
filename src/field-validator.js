@@ -16,7 +16,7 @@ function FieldValidator(field, form, event) {
 	this.customErrorContainerId = util.getAttr(field, cfg.fieldInvalidMessageTarget);
 	this.hasValid = util.getAttr(field, cfg.fieldValidatedAttr);
 
-	// hash containing the types of validations
+	// Load validations (hash containing the types of validations)
 	this.validators = new Validations(this);
 
 	// merge in any custom validators
@@ -26,6 +26,7 @@ function FieldValidator(field, form, event) {
 		}
 	}
 
+	// used to be a flag, is now a value - refactor to update sematics
 	this.isDirty = function() {
 		return self.field.getAttribute(cfg.fieldIsDirtyAttr);
 	}();
@@ -104,15 +105,6 @@ function FieldValidator(field, form, event) {
 		return validators;
 	}();
 
-	// this.isRequired = function(){
-	// 	try {
-	// 		// a field is required if it has a 'require*' OR it doesn't, but has a value (that needs to pass a validator's test)
-	// 		return (self.fieldValue.length || self.validationTypes.filter(function(x){ return /^require/.test(x) }).length);
-	// 	} catch(e) {
-	// 		console.error('Problem checking isRequired', e);
-	// 	}
-	// }();
-
 	this.errorContainer = function() {
 		try {
 			if (self.isCurrentField) {
@@ -167,6 +159,36 @@ function FieldValidator(field, form, event) {
 		});
 		return callbacks;
 	}();
+
+	/*
+	   this hacky function triggers a focusout (and therefore a revalidation)
+	   on an array of fields passed in.  useful for when validations span multiple
+	   fields (like expiredate) and a change on one field needs to force a revalidation on another.
+	*/
+	this.triggerRevalidate = function(fields) {
+		try {
+			if (Array.isArray(fields) && fields.length) {
+				setTimeout(function() {
+					Array.prototype.forEach.call(fields, function(f) {
+						// ignore field if it's the current field
+						if (self.field.getAttribute('name') !== f.getAttribute('name') &&
+							!util.getAttr(f, cfg.fieldValidatedAttr) && // conditions to be safe about not creating infinte loop
+							util.getValue(f)
+						) {
+							console.log("triggering revalidate on ", f);
+							f.setAttribute(cfg.fieldIsDirtyAttr, "reset"); // hack which will force the form validator to evaluate the field
+							var event = new Event('focusout');
+							f.dispatchEvent(event);
+						}
+					});
+				},100);
+			}
+			return true;
+		} catch(e) {
+			console.error("problem running triggerRevalidate", e);
+			return false
+		}
+	};
 
 	// performs field validation
 	this.validate = function() {
@@ -339,7 +361,7 @@ function FieldValidator(field, form, event) {
 				// console.log("self.validationCallbacks.invalid[lastValidator] in window", self.validationCallbacks.invalid[lastValidator] in window);
 				// console.log("typeof window[self.validationCallbacks.invalid[lastValidator]] === 'function'", typeof window[self.validationCallbacks.invalid[lastValidator]] === 'function');
 				// console.log("window[self.validationCallbacks.invalid[lastValidator]]", window[self.validationCallbacks.invalid[lastValidator]]);
-				if (//self.eventType === 'focusout' &&
+				if (self.eventType === 'focusout' &&
 					lastValidator &&
 					lastValidator in self.validationCallbacks.invalid &&
 					self.validationCallbacks.invalid[lastValidator] in window &&

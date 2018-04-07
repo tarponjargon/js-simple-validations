@@ -133,7 +133,7 @@ var SimpleValidations = function() {
 				//formValidator.validate(e).then(function(){}).catch(function(){});
 			});
 			field.addEventListener('focusout', function(e) {
-				//console.log('EVENT focusout' + field.getAttribute('name') + util.getValue(field));
+				console.log('EVENT focusout' + field.getAttribute('name') + util.getValue(field));
 				debounced(e).then(function(){}).catch(function(){});
 				//formValidator.validate(e).then(function(){}).catch(function(){});
 			});

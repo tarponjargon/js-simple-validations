@@ -15,7 +15,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "This field can't be empty";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"This field can't be empty";
 						reject(error);
 					}
 				});
@@ -30,7 +32,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Please enter a valid e-mail address";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Please enter a valid e-mail address";
 						reject(error);
 					}
 				});
@@ -46,7 +50,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Should be between " + lengthMin + " and " + lengthMax + " characters";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Should be between " + lengthMin + " and " + lengthMax + " characters";
 						reject(error);
 					}
 				});
@@ -61,7 +67,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Should be " + lengthExact + " characters";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Should be " + lengthExact + " characters";
 						reject(error);
 					}
 				});
@@ -93,7 +101,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : errorMessage;
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							errorMessage;
 						reject(error);
 					}
 				});
@@ -107,7 +117,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Should be a number";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Should be a number";
 						reject(error);
 					}
 				});
@@ -122,7 +134,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Should be a " + numExact + " character number";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Should be a " + numExact + " character number";
 						reject(error);
 					}
 				});
@@ -138,7 +152,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Should be a number between " + rangeMin + " and " + rangeMax + " characters";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Should be a number between " + rangeMin + " and " + rangeMax + " characters";
 						reject(error);
 					}
 				});
@@ -153,7 +169,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Please check your Zip/Postal Code";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Please check your Zip/Postal Code";
 						reject(error);
 					}
 				});
@@ -181,7 +199,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Please check your credit card number";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Please check your credit card number";
 						reject(error);
 					}
 				});
@@ -196,7 +216,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Please enter a valid phone number";
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Please enter a valid phone number";
 						reject(error);
 					}
 				});
@@ -213,7 +235,9 @@ var Validations = function(self) {
 						if (isValid) {
 							resolve();
 						} else {
-							var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Incorrect format";
+							var error = (validator && validator in self.customErrorMessages) ?
+								self.customErrorMessages[validator] :
+								"Incorrect format";
 							reject(error);
 						}
 					} else {
@@ -232,7 +256,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : 'Should contain "' + neededStr + '"';
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							'Should contain "' + neededStr + '"';
 						reject(error);
 					}
 				});
@@ -249,7 +275,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : 'Please enter a valid URL (starts with "http" or "https")';
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							'Please enter a valid URL (starts with "http" or "https")';
 						reject(error);
 					}
 				});
@@ -277,7 +305,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Please select " + util.digitWord(minThreshold);
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Please select " + util.digitWord(minThreshold);
 						reject(error);
 					}
 
@@ -350,62 +380,51 @@ var Validations = function(self) {
 		},
 		"expireddate": {
 			"events": [],
-			"validator": function(hash, validator) {
+			"validator": function(value, validator) {
 				/* this one makes some assumptions:
-					1. an object from the 'dependent' validator was passed in, containing year and month key/value entries
-					2. the year key contains the word 'year', same with 'month' and 'day' (Case insensitive).  'day' is optional
-					3. the values are numbers (not month names)
+					1. there are fields on the form containing data attributes data-jsv-expiredate="year", data-jsv-expiredate="month", and (optionally) data-jsv-expiredate="day"
+					2. the field values are numbers, not names.  therefore it's best if the form elements are select boxes
 				*/
 				return new Promise(function(resolve, reject) {
-					var year = null;
-					var month = null;
-					var day = null;
-					if (!hash || typeof hash !== 'object') {
-						console.error("expiredate validator did not receive object");
+
+					var dateHash = {};
+					var revalidateFields = []; // fields to revalidate if this validation successds (will force UI update on any related invalid fields)
+					// get year, month and day values (if exist), force them to 3 or 4 digit format
+					Array.prototype.forEach.call(['year','month','day'], function(k) {
+						var f = self.form.querySelector('[' + cfg.fieldValidateExpireDate + '="' + k + '" i]');
+						var v = (f) ? util.getValue(f) : null;
+						if (f && v) { revalidateFields.push(f) }
+
+						if (k === 'year') {
+							 dateHash[k] = (v && !isNaN(v) && v.length === 2) ? '20'+v.toString() : v;
+						}
+						if (k === 'month' || k === 'day') {
+							 dateHash[k] = (v && !isNaN(v) && v.length === 1) ? '0'+v.toString() : v;
+						}
+					});
+
+					//if we don't have at least a year and month at this point, bail
+					if (!dateHash['year'] || !dateHash['month']) {
+						console.log("expiredate not complete, resolving");
 						resolve();
+						return true;
 					}
-					try {
-						for (var key in hash) {
-							if (hash.hasOwnProperty(key)) {
-								if (/year/.test(key.toLowerCase())) {
-									 var y = hash[key];
-									 year = (y && !isNaN(y) && y.length === 2) ? '20'+y.toString() : y.toString();
-								}
-								if (/month/.test(key.toLowerCase())) {
-									 var m = hash[key];
-									 month = (m && !isNaN(m) && m.length === 1) ? '0'+m.toString() : m.toString();
-								}
-								if (/day/.test(key.toLowerCase())) {
-									 var d = hash[key];
-									 day = (d && !isNaN(d) && d.length === 1) ? '0'+d.toString() : d.toString();
-								}
-							}
-						}
 
-						//if we don't have at least a year and month at this point, bail
-						if (!year || !month) {
-							console.log("expiredate not complete, resolving");
-							resolve();
-							return true;
-						}
+					var today = (new Date()).toISOString().slice(0,10).replace(/-/g,""); // format current date to YYYYMMDD
+					today = (!dateHash['day']) ? parseInt(today.substring(0, 6)) : parseInt(today); // format to YYYYMM if there's no 'day' in hash
+					var compareDate = parseInt(dateHash['year']+dateHash['month']+dateHash['day']);
 
-						var today = (new Date()).toISOString().slice(0,10).replace(/-/g,""); // format current date to YYYYMMDD
-						today = (!day) ? parseInt(today.substring(0, 6)) : parseInt(today); // format to YYYYMM if there's no 'day' in hash
-						var compareDate = parseInt(year+month+day);
+					var isValid = (compareDate >= today);
+					if (isValid) {
+						console.log("expiredate validator resolving");
+						resolve(self.triggerRevalidate(revalidateFields));
+					} else {
+						var error = (validator && validator in self.customErrorMessages) ?
+							self.customErrorMessages[validator] :
+							"Appears to be expired - please check date";
 
-						var isValid = (compareDate >= today);
-						if (isValid) {
-							console.log("expiredate validator resolving");
-							resolve();
-						} else {
-							var error = (validator && validator in self.customErrorMessages) ? self.customErrorMessages[validator] : "Appears to be expired - please check date";
-							console.log("expiredate validator rejecting");
-							reject(error);
-						}
-
-					} catch(e) {
-						console.error("problem in expireddate validator", e);
-						resolve();
+						console.log("expiredate validator rejecting");
+						reject(error);
 					}
 				});
 			}
