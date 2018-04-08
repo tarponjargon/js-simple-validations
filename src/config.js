@@ -6,7 +6,7 @@ var cfg = {
 	"formValidCallback": "data-jsv-form-valid-callback", // data attribute on form element that contains a window function to call when form validates (for all events EXCEPT submit) !!! DON'T USE AS A SUBMIT HANDLER !!!
 	"formInvalidCallback": "data-jsv-form-invalid-callback", // data attribute on form element that contains a window function to call when form is invalid - only called AFTER submit (fails)
 	"disableInvalid": "data-jsv-disable-invalid", // disables form/button until form is validated
-	"fieldValidateAttr": "data-jsv-validator", // the data attribute containing the validators to apply to field (field level, comma-separated)
+	"fieldValidators": "data-jsv-validators", // the data attribute containing the validators to apply to field (field level, comma-separated)
 	"fieldValidatedAttr": "data-jsv-field-isvalid", // data attribute store on field element when valid
 	"fieldPreviousVal": "data-jsv-field-prev-val", // data attribute denoting the field has been touched
 	"fieldValidateMin": "data-jsv-min", //data attribute denoting min allowed length of field
@@ -21,9 +21,8 @@ var cfg = {
 	"fieldValidateAjaxProcessing": "data-jsv-ajax-processing", //data attribute containing the message you want to appear during processing
 	"fieldValidateContains": "data-jsv-contains", //data attribute containing the word that must be contained in the entered string
 	"fieldValidateExpireDate": "data-jsv-expiredate", //data attribute containing one of "year", "month", "day" for expiredate validator
+	"fieldDependentFields": "data-jsv-dependents", // data attribute containing comma-delim list of field (names) that need to validate before current
 	"fieldDebounce": "data-jsv-debounce", //data attribute containing an integer representing the debounce rate in ms
-	"fieldDependentIds": "data-jsv-dependent-field-ids", //data attribute, contains IDs of dependent fields
-	"fieldDependentValidator": "data-jsv-dependent-validator", // data attribute, validator to be run when current field's dependent fields validate
 	"fieldInvalidErrorPrefix": "data-jsv-field-error-", //data attribute, if populated (in the field element) this message overrides the default when field is invalid.  the suffix is validator name
 	"fieldInvalidCallbackPrefix": "data-jsv-field-invalid-callback-", //data attribute, if populated (in the field element) this callback function will be called on invalid.  suffix is validator name
 	"fieldValidCallbackPrefix": "data-jsv-field-valid-callback-", //data attribute, if populated (in the field element) this callback function will be called on valid.  suffix is validator name

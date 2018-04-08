@@ -6,11 +6,9 @@ import styles from './styles.js'
 
 // make sure we're in a browser environment
 if (typeof window !== 'undefined' && window) {
-
 	document.addEventListener("DOMContentLoaded", function() {
 		SimpleValidations();
 	});
-
 }
 
 var SimpleValidations = function() {
@@ -67,7 +65,7 @@ var SimpleValidations = function() {
 		var formValidator = new FormValidator(form);
 
 		// loop thru fields in this form marked for validation
-		Array.prototype.forEach.call(form.querySelectorAll('[' + cfg.fieldValidateAttr + ']'), function(field) {
+		Array.prototype.forEach.call(form.querySelectorAll('[' + cfg.fieldValidators + ']'), function(field) {
 
 			// add containing div around field to be validated (if not exists)
 			// radio buttons are excluded.  the <div class="validate-input"></div> needs to be added manually

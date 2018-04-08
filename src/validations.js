@@ -83,24 +83,16 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var compareId = util.getAttr(field, cfg.fieldValidateCompare);
-					var compareField = self.form.querySelector('#'+compareId);
-					var compareFieldValue = (compareField) ? util.getValue(compareField) : null;
+					var n = util.getAttr(field, cfg.fieldValidateCompare);
+					var f = (n) ? self.form.querySelector('[name="' + n + '"]') : null;
+					var v = (f) ? util.getValue(f) : null;
 					var errorMessage = function() {
 						var message = "Does not match";
-						try {
-							// attempt to get field label
-							var prevTag = compareField.parentNode.previousElementSibling;
-							if (prevTag && prevTag.tagName.toLowerCase() === 'label') {
-								message += " " + prevTag.innerText.toLowerCase();
-							}
-						}
-						catch(e) {
-							console.error("compare errormessage failed", e);
-						}
+						var label = self.getLabel(field);
+						if (label) { message += " " + label }
 						return message;
 					}();
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && value === compareFieldValue);
+					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && value === v);
 
 					if (isValid) {
 						resolve();
@@ -333,73 +325,51 @@ var Validations = function(self) {
 		"dependent": {
 			"events": [],
 			"validator": function(field, value, validator) { // eslint-disable-line
-				/*
-					This validator references other fields specified in data-jsv-dependent-field-ids (can be comma delim for more than one)
-					WHen the current field AND the referenced fields are validated, a hash table is built with each field's name attribute
-					as the key, and it's value attribute as value.  that hash is then passed to another validator (specified in
-					data-jsv-dependent-validator) as the parameter.  Since it's passing an object and not a string, the target validator
-					needs to be one that accepts an object as the argument.  Primarily these will be custom validators.  this Validator
-					gets its result from that validator and returns it.
-				*/
-				return new Promise(function(resolve, reject) {
-
-					var ids = null;
-					var depValues = {};
-					var depValidator = util.getAttr(self.field, cfg.fieldDependentValidator);
-					var thisKey = self.fieldName;
-					var thisValue = util.getValue(self.field);
-					try {
-						var idStr = util.getAttr(self.field, cfg.fieldDependentIds);
-						ids = (idStr) ? util.splitString(idStr) : null;
-						if (ids && ids.length) {
-							for (var i=0; i < ids.length; i++) {
-								var id = ids[i];
-								//console.log("querying DOM for id:", id);
-								var dependent = self.form.querySelector('#'+id);
-								var key = dependent.getAttribute('name');
-								//var depValid = util.getAttr(dependent, cfg.fieldValidatedAttr);
-								//console.log("dependent field", dependent, "key", key, "valid", depValid, "cfg.fieldValidatedAttr", cfg.fieldValidatedAttr);
-								if (key) {
-									depValues[key] = util.getValue(dependent);
+				try {
+					return new Promise(function(resolve, reject) {
+						var n = util.getAttr(field, cfg.fieldDependentFields);
+						var d = (n) ? util.splitString(n) : [];
+						var f = (d.length) ? Array.prototype.map.call(d, function(i) { return '[name="'+i+'"]' }) : [];
+						var q = (f.length) ? self.form.querySelectorAll(f.join(',')) : [];
+						var v = 0;
+						var b = [];
+						Array.prototype.forEach.call(q, function(c) {
+							if (self.checkValid(c)) {
+								v++;
+							} else {
+								b.push(c);
+							}
+						});
+						var isValid = (v >= q.length);
+						if (isValid) {
+							resolve();
+						} else {
+							var error = null;
+							var customErrors = self.getCustomErrors(field);
+							if (validator && validator in customErrors) {
+								error = customErrors[validator];
+							} else {
+								var da = (b.length) ? Array.prototype.map.call(b, function(i) { return self.getLabel(i) }) : [];
+								error = (da.length) ? "Please complete " + da.join(", ") : null;
+								if (b.length) {
+									self.setFieldsInvalid(b, validator);
 								}
 							}
+							reject(error);
 						}
-					}
-					catch(e) {
-						console.error("dependentFields failed", e);
-					}
-
-					if (thisKey &&
-						thisValue &&
-						ids &&
-						ids.length &&
-						Object.keys(depValues).length > 0 &&
-						Object.keys(depValues).length >= ids.length &&
-						depValidator &&
-						depValidator in self.validators
-					) {
-						depValues[thisKey] = thisValue;
-						console.log("depValidator", depValidator, "depvalues", depValues);
-						var subPromise = self.validators[depValidator].validator(depValues, depValidator);
-						subPromise.then(function() {
-							console.log("dependent validator resolving");
-							resolve();
-						}).catch(function(message) {
-							console.log("dependent validator rejecting");
-							reject(message);
-						});
-					} else {
-						reject("Error with dependent validation");
-					}
-				});
+					});
+				} catch(e) {
+					console.error("problem with dependent validator", e);
+				}
 			}
 		},
 		"expireddate": {
 			"events": [],
 			"validator": function(field, value, validator) {
 				/* this one makes some assumptions:
-					1. there are fields on the form containing data attributes data-jsv-expiredate="year", data-jsv-expiredate="month", and (optionally) data-jsv-expiredate="day"
-					2. the field values are numbers, not names.  therefore it's best if the form elements are select boxes
+					1. there are fields on the form containing data attributes data-jsv-expiredate="year",
+					   data-jsv-expiredate="month", and (optionally) data-jsv-expiredate="day" (case-sensitive)
+					2. the field values are numbers like '2004', not names like 'Jul'.
 				*/
 				return new Promise(function(resolve, reject) {
 
@@ -407,7 +377,7 @@ var Validations = function(self) {
 					var setFieldsToValid = []; // fields to to force state of 'valid' on if this valiation succeeds
 					// get year, month and day values (if exist), force them to 3 or 4 digit format
 					Array.prototype.forEach.call(['year','month','day'], function(k) {
-						var f = self.form.querySelector('[' + cfg.fieldValidateExpireDate + '="' + k + '" i]');
+						var f = self.form.querySelector('[' + cfg.fieldValidateExpireDate + '="' + k + '"]');
 						var v = (f) ? util.getValue(f) : null;
 						if (f && v) { setFieldsToValid.push(f) }
 						if (k === 'year') {
@@ -432,7 +402,7 @@ var Validations = function(self) {
 					var isValid = (compareDate >= today);
 					if (isValid) {
 						console.log("expiredate validator resolving");
-						resolve(self.setValidated(setFieldsToValid, validator));
+						resolve(self.setFieldsValid(setFieldsToValid, validator));
 					} else {
 						var customErrors = self.getCustomErrors(field);
 						var error = (validator && validator in customErrors) ?

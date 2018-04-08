@@ -295,6 +295,23 @@ function Util() {
 		}
 	}
 
+	this.capitalize = function(word) {
+		if (!word) { return null; }
+	    return word.charAt(0).toUpperCase() + word.substring(1);
+	}
+
+	this.nameToString = function(name){
+		if (!name) { return null; }
+    	var words = name.match(/[A-Za-z][a-z]*/g);
+		return words.map(this.capitalize).join(" ");
+	}
+
+	this.alphaNum = function(str) {
+		if (!str) { return null; }
+		return str.replace(/[^a-z0-9 \-]/gi,'');
+	}
+
+
 } // end Utilities
 
 export default Util;

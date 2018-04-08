@@ -26,10 +26,10 @@ function FormValidator(form) {
 	this.getFormFields = function() {
 		var fields = [];
 		try {
-			fields = form.querySelectorAll('[' + cfg.fieldValidateAttr + ']');
-			//console.log("in self.formFields(), getting data attr", cfg.fieldValidateAttr, "from", form);
+			fields = form.querySelectorAll('[' + cfg.fieldValidators + ']');
+			//console.log("in self.formFields(), getting data attr", cfg.fieldValidators, "from", form);
 		} catch(e) {
-			console.error("could not get nodeList for [" + cfg.fieldValidateAttr + "]", e);
+			console.error("could not get nodeList for [" + cfg.fieldValidators + "]", e);
 		}
 		return fields;
 	};
@@ -45,7 +45,7 @@ function FormValidator(form) {
 			try {
 				var addToValidate = false;
 				var addToReset = false;
-				var valTypes = util.getAttr(field, cfg.fieldValidateAttr);
+				var valTypes = util.getAttr(field, cfg.fieldValidators);
 				var isRequired = (valTypes && valTypes.toLowerCase().indexOf("require") !== -1);
 				var fieldVal = util.getValue(field);
 				var previousVal = field.getAttribute(cfg.fieldPreviousVal);

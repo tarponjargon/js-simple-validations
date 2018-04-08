@@ -32,28 +32,6 @@ function FieldValidator(field, form, event) {
 		return field.getAttribute(cfg.fieldPreviousVal);
 	};
 
-	// // if the current field has other fields it depends on, create a list (incl current field)
-	// this.dependentNames = function() {
-	// 	var depNames = [];
-	// 	var hasDeps = util.getAttr(self.field, cfg.fieldDependentIds);
-	// 	try {
-	// 		if (hasDeps) {
-	// 			var ids = (hasDeps) ? util.splitString(hasDeps) : null;
-	// 			Array.prototype.forEach.call(ids, function(id) {
-	// 				var depField = self.form.querySelector('#'+id);
-	// 				if (depField) {
-	// 					depNames.push(depField.getAttribute('name'));
-	// 				}
-	// 			}, this);
-	// 			depNames.push(self.fieldName);
-	// 			depNames = (depNames && depNames.length) ? util.cleanArray(depNames) : depNames;
-	// 		}
-	// 	} catch(e) {
-	// 		console.error("problem getting dependent names from dependent fields", e);
-	// 	}
-	// 	return depNames;
-	// }(),
-
 	this.checkIfCurrent = function(field=self.field) {
 		var fieldName = field.getAttribute('name');
 		return (fieldName && fieldName === self.event.target.name) ? fieldName : null;
@@ -81,7 +59,7 @@ function FieldValidator(field, form, event) {
 	// makes a list of the validators to run on this field, at this time
 	this.getValidationTypes = function(field=self.field) {
 		var validators = [];
-		var dataAttr = util.getAttr(field, cfg.fieldValidateAttr);
+		var dataAttr = util.getAttr(field, cfg.fieldValidators);
 		if (dataAttr) {
 			var tmpArr = util.splitString(dataAttr);
 			if (tmpArr && tmpArr.length) {
@@ -105,7 +83,9 @@ function FieldValidator(field, form, event) {
 			if (customContainer) {
 				errorContainer = customContainer;
 			} else {
-				errorContainer = (field.parentNode.nextElementSibling.classList.contains(cfg.fieldError.className)) ? field.parentNode.nextElementSibling : null;
+				errorContainer = (field.parentNode.nextElementSibling.classList.contains(cfg.fieldError.className)) ?
+								  field.parentNode.nextElementSibling :
+								  null;
 			}
 			return errorContainer;
 		} catch(e) {
@@ -132,6 +112,18 @@ function FieldValidator(field, form, event) {
 		return errors;
 	};
 
+	this.getLabel = function(field=self.field) {
+		var l = null;
+		try {
+			// attempt to get the label of the field
+			var p = field.parentNode.previousElementSibling;
+			l = (p && p.tagName.toLowerCase() === 'label') ?
+					 util.alphaNum(p.innerText) :
+					 util.nameToString(field.getAttribute('name'));
+		} catch(e) {} // eslint-disable-line
+		return l;
+	};
+
 	this.getValidationCallbacks = function(field=self.field) {
 		var callbacks = {
 			"valid": {},
@@ -151,38 +143,7 @@ function FieldValidator(field, form, event) {
 		return callbacks;
 	};
 
-	/*
-	   this hacky function triggers a focusout (and therefore a revalidation)
-	   on an array of fields passed in.  useful for when validations span multiple
-	   fields (like expiredate) and a change on one field needs to force a revalidation on another.
-	*/
-	// this.triggerRevalidate = function(field=self.fields) {
-	// 	try {
-	// 		if (Array.isArray(fields) && fields.length) {
-	// 			setTimeout(function() {
-	// 				Array.prototype.forEach.call(fields, function(f) {
-	// 					// ignore field if it's the current field
-	// 					if (self.field.getAttribute('name') !== f.getAttribute('name')
-	// 					// &&
-	// 					// 	!util.getAttr(f, cfg.fieldValidatedAttr) && // conditions to be safe about not creating infinte loop
-	// 					// 	util.getValue(f)
-	// 					) {
-	// 						console.log("triggering revalidate on ", f);
-	// 						f.setAttribute(cfg.fieldPreviousVal, "reset"); // hack which will force the form validator to evaluate the field
-	// 						var event = new Event('focusout');
-	// 						f.dispatchEvent(event);
-	// 					}
-	// 				});
-	// 			},100);
-	// 		}
-	// 		return true;
-	// 	} catch(e) {
-	// 		console.error("problem running triggerRevalidate", e);
-	// 		return false
-	// 	}
-	// };
-
-	this.setValidated = function(fields, validator) {
+	this.setFieldsValid = function(fields, validator) {
 		try {
 			if (Array.isArray(fields) && fields.length) {
 				Array.prototype.forEach.call(fields, function(f) {
@@ -194,8 +155,26 @@ function FieldValidator(field, form, event) {
 			}
 			return true;
 		} catch(e) {
-			console.error("problem running triggerRevalidate", e);
-			return false
+			console.error("problem running setFieldsValid", e);
+			return false;
+		}
+	};
+
+	this.setFieldsInvalid = function(fields, validator) {
+		console.log("SETFIELDSINVALID", fields);
+		try {
+			if (Array.isArray(fields) && fields.length) {
+				Array.prototype.forEach.call(fields, function(f) {
+					// ignore field if it's the current field
+					if (self.field.getAttribute('name') !== f.getAttribute('name')) {
+						self.invalid(f, validator, null, true);
+					}
+				});
+			}
+			return true;
+		} catch(e) {
+			console.error("problem running setFieldsInvalid", e);
+			return false;
 		}
 	};
 
@@ -205,14 +184,17 @@ function FieldValidator(field, form, event) {
 			var validationTypes = self.getValidationTypes(field);
 			var fieldValue = util.getValue(field);
 			return new Promise(function(resolve, reject) {
+				var isCurrent = self.checkIfCurrent(field);
+
 				// mark this field as having been interacted with
-				if (self.checkIfCurrent(field)) {
+				if (isCurrent) {
 					field.setAttribute(cfg.fieldPreviousVal, fieldValue);
 				}
 
 				//remove any messages if they exist, they can get out of sync otherwise
-				// if (self.checkIfCurrent() && self.getErrorContainer()) {
-				// 	self.getErrorContainer().innerText = "";
+				//var errTarget = self.getErrorContainer(field);
+				// if (isCurrent && errTarget && errTarget.innerText.length) {
+				//  	errTarget.innerText = "";
 				// }
 
 				// if there are no validationTypes set, resolve because there's nothing to validate
@@ -226,7 +208,6 @@ function FieldValidator(field, form, event) {
 				function eachSeries(vtypes, f, v) {
 					return vtypes.reduce(function(p, validator) {
 						return p.then(function() {
-							//console.log("currently on", validator);
 							lastValidator = validator;
 							return self.validators[validator].validator(f, v, validator);
 						});
@@ -333,7 +314,7 @@ function FieldValidator(field, form, event) {
 	}
 
 	// function sets the state of the UI (form field) to invalid
-	this.invalid = function(field=self.field, lastValidator, messages) {
+	this.invalid = function(field=self.field, lastValidator, messages, current) {
 		//if (self.checkIfCurrent()) { console.log("in self.invalid", messages) }
 		try {
 			var fieldName = field.getAttribute('name');
@@ -352,7 +333,7 @@ function FieldValidator(field, form, event) {
 
 
 			// perform UI changes ONLY if we're operating on the currently-interacted field
-			if (self.checkIfCurrent(field)) {
+			if (self.checkIfCurrent(field) || current) {
 				//console.log("in invalid checkIfCurrent()", self.checkIfCurrent(), self.eventType, validationContainer);
 				var validationContainer = self.getValidationContainer(field);
 				if (validationContainer) {
