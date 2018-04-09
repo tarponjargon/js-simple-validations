@@ -9,7 +9,8 @@ function Util() {
 			});
 		}
 		return arr;
-	},
+	};
+
 	// removes empty or whitespace elements, trims each element
 	this.cleanArray = function(arr) {
 		if (Array.isArray(arr) && arr.length) {
@@ -20,7 +21,7 @@ function Util() {
 			arr = this.uniqueArray(arr);
 		}
 		return arr;
-	}.bind(this),
+	}.bind(this);
 
 	// split comma delim string into array, clean, unique
 	this.splitString = function(str) {
@@ -43,7 +44,7 @@ function Util() {
 		} catch(e) {
 			return digit;
 		}
-	},
+	};
 
 	// function inserts DOM elements needed by this program
 	this.createValidationElement = function(refElement, selectorObj, tag) {
@@ -66,7 +67,7 @@ function Util() {
 			console.error('problem adding ' + refElement + ' element', e);
 		}
 		return newElement;
-	},
+	};
 
 	// crude way of making strings htm-safe
 	this.safeString = function(text) {
@@ -80,17 +81,17 @@ function Util() {
 				console.error("problem creating safeString on text", text, e);
 			}
 		}
-	},
+	};
 
 	// santizes text only if cfg value true
 	this.safeStringInput = function(text) {
 		return (text !== 'undefined' && text && cfg.safeStringInput) ? this.safeString(text) : text;
-	},
+	};
 
 	// check if element is an html element
 	this.isElement = function(element) {
 		return element instanceof Element;
-	},
+	};
 
 	// safely toggle disabling an element - takea a true/false
 	this.disableElement = function(element, isDisabled) {
@@ -114,7 +115,7 @@ function Util() {
 			console.error("problem disabling element", e);
 			return false;
 		}
-	},
+	};
 
 	// toggle disabling the form && button but only if cfg value is true.  takes a true/false
 	this.disableForm = function(form, isDisabled) {
@@ -147,7 +148,7 @@ function Util() {
 		} else {
 			return false;
 		}
-	}.bind(this),
+	}.bind(this);
 
 	// get an attribute and sanitize it
 	this.getAttr = function(element, attrName) {
@@ -173,7 +174,7 @@ function Util() {
 		}
 
 		return attrValue;
-	},
+	};
 
 	// function is a generic value getter for most form field types
 	this.getValue = function(field) {
@@ -274,7 +275,7 @@ function Util() {
 			console.error("fproblem showing form message", e);
 			return false;
 		}
-	},
+	};
 
 	this.hideFormMessage = function(form, targetId) {
 		if (!form || !targetId) {
@@ -293,23 +294,40 @@ function Util() {
 			console.error("fproblem hiding form message", e);
 			return false;
 		}
-	}
+	};
+
+	this.debounce = function(func, wait, immediate) {
+		console.log("DEBOUNCE CALLED", func, wait);
+		var timeout;
+		return function() {
+			var context = this, args = arguments;
+			if (timeout) {
+				console.log("there is a timeout");
+			}
+			clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				timeout = null;
+				if (!immediate) func.apply(context, args);
+			}, wait);
+			if (immediate && !timeout) func.apply(context, args);
+		}
+	};
 
 	this.capitalize = function(word) {
 		if (!word) { return null; }
 	    return word.charAt(0).toUpperCase() + word.substring(1);
-	}
+	};
 
 	this.nameToString = function(name){
 		if (!name) { return null; }
     	var words = name.match(/[A-Za-z][a-z]*/g);
 		return words.map(this.capitalize).join(" ");
-	}
+	}.bind(this);
 
 	this.alphaNum = function(str) {
 		if (!str) { return null; }
 		return str.replace(/[^a-z0-9 \-]/gi,'');
-	}
+	};
 
 
 } // end Utilities

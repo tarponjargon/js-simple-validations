@@ -168,9 +168,8 @@ function FormValidator(form) {
 				typeof window[validCallback] === 'function'
 			) {
 				try {
-					setTimeout(function() {
-						window[validCallback](event, self.form, 'valid');
-					},100);
+					var debouncedCallback = util.debounce(window[validCallback], cfg.debounceDefault);
+					debouncedCallback(event, self.form, 'valid');
 				} catch(e) {
 					console.error("Problem executing valid callback on form:", validCallback, e);
 				}
@@ -231,9 +230,8 @@ function FormValidator(form) {
 				typeof window[invalidCallback] === 'function'
 			) {
 				try {
-					setTimeout(function() {
-						window[invalidCallback](event, self.form, 'invalid');
-					},100);
+					var debouncedCallback = util.debounce(window[invalidCallback], cfg.debounceDefault);
+					debouncedCallback(event, self.form, 'invalid');
 				} catch(e) {
 					console.error("Problem executing invalid callback on form:", invalidCallback, e);
 				}

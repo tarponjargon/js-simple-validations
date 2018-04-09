@@ -56,7 +56,7 @@ var cfg = {
 	"formIncompleteAttr": "data-jsv-form-incomplete", // data attribute on <form> that stores the text to be shown in tooltip when form is in invalid state
 	"safeStringInput": true, // passes any entered field values thru a santiizer
 	"ajaxTimeout": 8000, // milliseconds
-	"debounceDefault": 100, // milliseconds
+	"debounceDefault": 300, // milliseconds
 
 	// optional stuff passed from user
 	"useCss": true,

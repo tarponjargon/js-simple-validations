@@ -435,7 +435,7 @@ var Validations = function(self) {
 							if (ajaxEndpoint && ajaxKey && ajaxValue !== null && !/^http/.test(ajaxEndpoint.toLowerCase())) { // crude way to make ajax safe - don't allow absolute URLs
 
 								var ajaxUrl = ajaxEndpoint + '?' + fieldName + '=' + util.getValue(field);
-								console.log("ajaXUrl", ajaxUrl, "ajaxKey", ajaxKey, "ajaxValue", ajaxValue);
+								//console.log("ajaXUrl", ajaxUrl, "ajaxKey", ajaxKey, "ajaxValue", ajaxValue);
 
 								var xhr = new XMLHttpRequest();
 								xhr.open('GET', ajaxUrl);
@@ -444,7 +444,7 @@ var Validations = function(self) {
 								xhr.onload = function() {
 									if (xhr.status === 200) {
 										var data = JSON.parse(xhr.responseText);
-										console.log("raw ajax response", data, "data[ajaxKey]", data[ajaxKey]);
+										//console.log("raw ajax response", data, "data[ajaxKey]", data[ajaxKey]);
 										if (data && data[ajaxKey] === ajaxValue) {
 											resolve(self.forceEvent(field));
 										} else {
@@ -454,7 +454,7 @@ var Validations = function(self) {
 										}
 									}
 									else {
-										console.error('response from endpoint != 200', xhr.status);
+										//console.error('response from endpoint != 200', xhr.status);
 										resolve(self.forceEvent(field));
 									}
 								};

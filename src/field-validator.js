@@ -308,9 +308,8 @@ function FieldValidator(field, form, event) {
 				typeof window[callbacks.valid[lastValidator]] === 'function'
 			) {
 				try {
-					setTimeout(function() {
-						window[callbacks.valid[lastValidator]](event, self.form, fieldName, lastValidator, 'valid');
-					},100);
+					var debouncedCallback = util.debounce(window[callbacks.valid[lastValidator]], cfg.debounceDefault);
+					debouncedCallback(event, self.form, fieldName, lastValidator, 'invalid');
 				} catch(e) {
 					console.error("Problem executing valid callback on field:", fieldName, e);
 				}
@@ -378,9 +377,8 @@ function FieldValidator(field, form, event) {
 					typeof window[callbacks.invalid[lastValidator]] === 'function'
 				) {
 					try {
-						setTimeout(function() {
-							window[callbacks.invalid[lastValidator]](event, self.form, fieldName, lastValidator, 'invalid', message);
-						},100);
+						var debouncedCallback = util.debounce(window[callbacks.invalid[lastValidator]], cfg.debounceDefault);
+						debouncedCallback(event, self.form, fieldName, lastValidator, 'invalid', message);
 					} catch(e) {
 						console.error("Problem executing valid callback on field:", fieldName, e);
 					}

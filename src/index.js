@@ -116,7 +116,7 @@ var SimpleValidations = function() {
 			var dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
 			var debounced = debounce(formValidator.validate, dbRate);
 			var debounceWrapper = function(e) {
-				console.log("debounceWrapper", event.type, field.getAttribute('name'));
+				//console.log("debounceWrapper", event.type, field.getAttribute('name'));
 				debounced(e).then(function(){}).catch(function(){});
 			}
 
