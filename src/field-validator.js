@@ -178,6 +178,15 @@ function FieldValidator(field, form, event) {
 		}
 	};
 
+	this.forceEvent = function(field=self.field) {
+		setTimeout(function() {
+			console.log("forceEvent Running on ", field.getAttribute('name'));
+			var newEvent = new Event('change');
+			field.dispatchEvent(newEvent);
+		},100);
+		return true;
+	};
+
 	// performs field validation
 	this.validate = function(field=self.field) {
 		try {
@@ -354,14 +363,15 @@ function FieldValidator(field, form, event) {
 				}
 
 				// see if there are any callbcks to execute on field=invalid
+				var callbacks = self.getValidationCallbacks(field);
+				// console.log("callbacks", callbacks);
 				// console.log("self.eventType === 'focusout'", self.eventType === 'focusout');
 				// console.log("lastValidator", lastValidator);
-				// console.log("lastValidator in self.validationCallbacks.invalid", lastValidator in self.validationCallbacks.invalid);
-				// console.log("self.validationCallbacks.invalid[lastValidator] in window", self.validationCallbacks.invalid[lastValidator] in window);
-				// console.log("typeof window[self.validationCallbacks.invalid[lastValidator]] === 'function'", typeof window[self.validationCallbacks.invalid[lastValidator]] === 'function');
-				// console.log("window[self.validationCallbacks.invalid[lastValidator]]", window[self.validationCallbacks.invalid[lastValidator]]);
-				var callbacks = self.getValidationCallbacks(field);
-				if (self.eventType === 'focusout' &&
+				// console.log("lastValidator in callbacks.invalid", lastValidator in callbacks.invalid);
+				// console.log("callbacks.invalid[lastValidator] in window", callbacks.invalid[lastValidator] in window);
+				// console.log("typeof window[scallbacks.invalid[lastValidator]] === 'function'", typeof window[callbacks.invalid[lastValidator]] === 'function');
+				// console.log("window[callbacks.invalid[lastValidator]]", window[callbacks.invalid[lastValidator]]);
+				if (
 					lastValidator &&
 					lastValidator in callbacks.invalid &&
 					callbacks.invalid[lastValidator] in window &&

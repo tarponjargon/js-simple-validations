@@ -11,8 +11,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
-    "postdev": "./export.sh",
+	"postbuild": "./deploy-prod.sh",
     "dev": "webpack --mode development --output ./build/js-simple-validations-dev.js",
+	"postdev": "./deploy-dev.sh",
     "lint:js": "eslint src/ webpack.*.js --cache"
   },
   "keywords": [],

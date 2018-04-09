@@ -351,7 +351,7 @@ var Validations = function(self) {
 							} else {
 								var da = (b.length) ? Array.prototype.map.call(b, function(i) { return self.getLabel(i) }) : [];
 								error = (da.length) ? "Please complete " + da.join(", ") : null;
-								if (b.length) {
+								if (b.length && self.checkIfCurrent(field)) {
 									self.setFieldsInvalid(b, validator);
 								}
 							}
@@ -446,7 +446,7 @@ var Validations = function(self) {
 										var data = JSON.parse(xhr.responseText);
 										console.log("raw ajax response", data, "data[ajaxKey]", data[ajaxKey]);
 										if (data && data[ajaxKey] === ajaxValue) {
-											resolve();
+											resolve(self.forceEvent(field));
 										} else {
 											var customErrors = self.getCustomErrors(field);
 											var error = (validator && validator in customErrors) ? customErrors[validator] : "Does not validate";
@@ -455,16 +455,16 @@ var Validations = function(self) {
 									}
 									else {
 										console.error('response from endpoint != 200', xhr.status);
-										resolve();
+										resolve(self.forceEvent(field));
 									}
 								};
 								xhr.onerror = function(e) {
 									console.error("error on xhr request", e, xhr);
-									resolve();
+									resolve(self.forceEvent(field));
 								};
 								xhr.ontimeout = function(e) {
 									console.error("ajax request timeout", e);
-									resolve();
+									resolve(self.forceEvent(field));
 								};
 								xhr.send();
 							}

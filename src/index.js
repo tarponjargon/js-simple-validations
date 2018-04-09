@@ -114,27 +114,17 @@ var SimpleValidations = function() {
 			// set up debouncing of input
 			var dbField = util.getAttr(field, cfg.fieldDebounce);
 			var dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
-			//console.log(field.getAttribute('name'), "debounce rate", dbRate);
 			var debounced = debounce(formValidator.validate, dbRate);
-
-			//console.log("field name: "+ field.getAttribute('name') + " field value:" + util.getValue(field));
+			var debounceWrapper = function(e) {
+				console.log("debounceWrapper", event.type, field.getAttribute('name'));
+				debounced(e).then(function(){}).catch(function(){});
+			}
 
 			// and add listeners to trigger form revalidation on any changes
-			field.addEventListener('input', function(e) {
-				//console.log('EVENT inputz ' + field.getAttribute('name') + field.value);
-				debounced(e).then(function(){}).catch(function(){});
-				//formValidator.validate(e).then(function(){}).catch(function(){});
-			});
-			field.addEventListener('change', function(e) {
-				//console.log('EVENT change' + field.getAttribute('name') + util.getValue(field));
-				debounced(e).then(function(){}).catch(function(){});
-				//formValidator.validate(e).then(function(){}).catch(function(){});
-			});
-			field.addEventListener('focusout', function(e) {
-				console.log('EVENT focusout' + field.getAttribute('name') + util.getValue(field));
-				debounced(e).then(function(){}).catch(function(){});
-				//formValidator.validate(e).then(function(){}).catch(function(){});
-			});
+			field.addEventListener('input', debounceWrapper, false);
+			field.addEventListener('change', debounceWrapper, false);
+			field.addEventListener('focusout', debounceWrapper, false);
+
 		}); // end loop thru fields in form
 
 
