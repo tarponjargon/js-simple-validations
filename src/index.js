@@ -13,8 +13,11 @@ if (typeof window !== 'undefined' && window) {
 
 var SimpleValidations = function() {
 
-	if (typeof window.validateOptions === 'undefined' || window.validateOptions === null || typeof window.validateOptions !== 'object') {
-		window.validateOptions = {}
+	if (typeof window.validateOptions === 'undefined' ||
+		window.validateOptions === null ||
+		typeof window.validateOptions !== 'object'
+	) {
+		window.validateOptions = {};
 	}
 
 	var util = new Util();
@@ -33,7 +36,7 @@ var SimpleValidations = function() {
 	}
 
 	// add stylesheet/styles to window (if enabled)
-	if (cfg.useCss !== 'undefined' && cfg.useCss) {
+	if (cfg.useCss) {
 		try {
 			var styleSheet = document.createElement('style');
 			styleSheet.innerHTML = styles;
@@ -45,7 +48,7 @@ var SimpleValidations = function() {
 
 	// loop thru forms in DOM marked for validation
 	Array.prototype.forEach.call(document.querySelectorAll('[' + cfg.formValidateAttr + ']'), function(form) {
-		//console.log("form to validate", form);
+		console.log("form to validate", form);
 
 		// add form-level error container (if not exists)
 		var formError = util.createValidationElement(form, cfg.formError);
@@ -63,6 +66,43 @@ var SimpleValidations = function() {
 		util.disableForm(form, true);
 
 		var formValidator = new FormValidator(form);
+
+		// form submit handler
+		form.addEventListener('submit', function(e) {
+			e.preventDefault(); // we need to do a final validation first
+			console.log("SUBMIT event", form);
+			formValidator.validate(e, form).then(function() {
+				console.log("success!");
+
+				var afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
+				// console.log("cfg.formSubmitHandler", cfg.formSubmitHandler);
+				// console.log("afterSubmitRef", afterSubmitRef);
+				// console.log("afterSubmitRef in window", (afterSubmitRef in window));
+				// console.log("typeof window[afterSubmitRef]", (typeof window[afterSubmitRef]));
+				// console.log("window[afterSubmitRef]", (window[afterSubmitRef]));
+
+				var afterSubmit = (
+					afterSubmitRef &&
+					afterSubmitRef in window &&
+					typeof window[afterSubmitRef] === 'function'
+				) ? window[afterSubmitRef] : null;
+
+				if (afterSubmit) {
+					//console.log("calling", afterSubmit);
+					try {
+						afterSubmit(e, form, 'valid');
+					} catch(e) {
+						//console.log("afterSubmit failed, continuing with regular form submit", e);
+						//form.submit()
+					}
+				} else {
+					console.log("submitting form the traditional way");
+					form.submit();
+				}
+			}).catch(function() {
+				util.showFormMessage(form, cfg.formError.className, cfg.formInvalidMessage);
+			});
+		});
 
 		// loop thru fields in this form marked for validation
 		Array.prototype.forEach.call(form.querySelectorAll('[' + cfg.fieldValidators + ']'), function(field) {
@@ -116,7 +156,7 @@ var SimpleValidations = function() {
 			var dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
 			var debounced = debounce(formValidator.validate, dbRate);
 			var debounceWrapper = function(e) {
-				//console.log("debounceWrapper", event.type, field.getAttribute('name'));
+				console.log("debounceWrapper", e.type, field.getAttribute('name'), field.getAttribute('id'));
 				debounced(e).then(function(){}).catch(function(){});
 			}
 
@@ -126,44 +166,6 @@ var SimpleValidations = function() {
 			field.addEventListener('focusout', debounceWrapper, false);
 
 		}); // end loop thru fields in form
-
-
-		// form submit handler
-		form.addEventListener('submit', function(e) {
-			e.preventDefault(); // we need to do a final validation first
-			formValidator.validate(e).then(function() {
-				console.log("success!");
-
-				var afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
-				// console.log("cfg.formSubmitHandler", cfg.formSubmitHandler);
-				// console.log("afterSubmitRef", afterSubmitRef);
-				// console.log("afterSubmitRef in window", (afterSubmitRef in window));
-				// console.log("typeof window[afterSubmitRef]", (typeof window[afterSubmitRef]));
-				// console.log("window[afterSubmitRef]", (window[afterSubmitRef]));
-
-				var afterSubmit = (
-					afterSubmitRef &&
-					afterSubmitRef in window &&
-					typeof window[afterSubmitRef] === 'function'
-				) ? window[afterSubmitRef] : null;
-
-				if (afterSubmit) {
-					//console.log("calling", afterSubmit);
-					try {
-						afterSubmit(e, form, 'valid');
-					} catch(e) {
-						//console.log("afterSubmit failed, continuing with regular form submit", e);
-						//form.submit()
-					}
-				} else {
-					console.log("submitting form the traditional way");
-					form.submit();
-				}
-			}).catch(function() {
-				util.showFormMessage(form, cfg.formError.className, cfg.formInvalidMessage);
-			});
-		});
-
 
 	}); // end loop thru forms in window
 

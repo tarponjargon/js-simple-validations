@@ -179,11 +179,11 @@ function FieldValidator(field, form, event) {
 	};
 
 	this.forceEvent = function(field=self.field) {
-		setTimeout(function() {
-			console.log("forceEvent Running on ", field.getAttribute('name'));
-			var newEvent = new Event('change');
-			field.dispatchEvent(newEvent);
-		},100);
+		// setTimeout(function() {
+		// 	console.log("forceEvent Running on ", field.getAttribute('name'));
+		// 	var newEvent = new Event('change');
+		// 	field.dispatchEvent(newEvent);
+		// },100);
 		return true;
 	};
 
