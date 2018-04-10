@@ -34,7 +34,7 @@ function FieldValidator(field, form, event) {
 
 	this.checkIfCurrent = function(field=self.field) {
 		var fieldName = field.getAttribute('name');
-		return (fieldName && fieldName === self.event.target.name) ? fieldName : null;
+		return (fieldName && (fieldName === self.event.target.name || self.eventType === 'submit')) ? fieldName : null;
 	};
 
 	this.checkValidatorEligible = function(validator) {
@@ -179,11 +179,11 @@ function FieldValidator(field, form, event) {
 	};
 
 	this.forceEvent = function(field=self.field) {
-		// setTimeout(function() {
-		// 	console.log("forceEvent Running on ", field.getAttribute('name'));
-		// 	var newEvent = new Event('change');
-		// 	field.dispatchEvent(newEvent);
-		// },100);
+		setTimeout(function() {
+			console.log("forceEvent Running on ", field.getAttribute('name'));
+			var newEvent = new Event('change');
+			field.dispatchEvent(newEvent);
+		},100);
 		return true;
 	};
 

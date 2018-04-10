@@ -156,8 +156,8 @@ var SimpleValidations = function() {
 			var dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
 			var debounced = debounce(formValidator.validate, dbRate);
 			var debounceWrapper = function(e) {
-				console.log("debounceWrapper", e.type, field.getAttribute('name'), field.getAttribute('id'));
-				debounced(e).then(function(){}).catch(function(){});
+				console.log("debounceWrapper", e.type, form.getAttribute('name'), field.getAttribute('name'), field.getAttribute('id'), "debouterate", dbRate);
+				debounced(e, form).then(function(){}).catch(function(){});
 			}
 
 			// and add listeners to trigger form revalidation on any changes
