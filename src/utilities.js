@@ -26,8 +26,6 @@ function Util() {
 	// split comma delim string into array, clean, unique
 	this.splitString = function(str) {
 		return this.cleanArray(str.split(','));
-		//validators = util.cleanArray(str.split(','));
-		//return util.lcArray(validators);
 	}.bind(this);
 
 	// convert int to it's english word equiv.  1-10 only, else just returns argument
@@ -35,7 +33,10 @@ function Util() {
 		try {
 			var num = (digit && !isNaN(digit)) ? digit : parseInt(digit);
 			num = num.toString();
-			var digitWords = {'1': 'one','2': 'two','3': 'three','4': 'four','5': 'five','6': 'six','7': 'seven','8': 'eight','9': 'nine'};
+			var digitWords = {
+				'1': 'one','2': 'two','3': 'three','4': 'four','5': 'five',
+				'6': 'six','7': 'seven','8': 'eight','9': 'nine'
+			};
 			if (num in digitWords) {
 				return digitWords[num];
 			} else {
@@ -47,33 +48,36 @@ function Util() {
 	};
 
 	// function inserts DOM elements needed by this program
-	this.createValidationElement = function(refElement, selectorObj, tag) {
+	this.createValidationElement = function(el, selectorObj, tag) {
 		if (tag === 'undefined' || !tag) {
 			tag = 'div';
 		}
-		var newElement = null;
+		var newEl = null;
 		try {
-			if (!refElement.querySelector('.' + selectorObj.className)) {
-				newElement = document.createElement(tag);
-				newElement.classList.add(selectorObj.className);
+			if (!el.querySelector('.' + selectorObj.className)) {
+				newEl = document.createElement(tag);
+				newEl.classList.add(selectorObj.className);
 				if (selectorObj.addClasses && Array.isArray(selectorObj.addClasses)) {
 					Array.prototype.forEach.call(selectorObj.addClasses, function(addClass) {
-						newElement.classList.add(addClass);
+						newEl.classList.add(addClass);
 					})
 				}
 			}
 		}
 		catch(e) {
-			console.error('problem adding ' + refElement + ' element', e);
+			console.error('problem adding ' + el + ' element', e);
 		}
-		return newElement;
+		return newEl;
 	};
 
 	// crude way of making strings htm-safe
 	this.safeString = function(text) {
 		if (text) {
 			try {
-				var table = { '<': 'lt','>': 'gt','"': 'quot','\'': 'apos','&': 'amp','\r': '#10','\n': '#13' };
+				var table = {
+					'<': 'lt','>': 'gt','"': 'quot','\'': 'apos','&': 'amp',
+					'\r': '#10','\n': '#13'
+				};
 				return text.toString().replace(/[<>"'\r\n&]/g, function(chr) {
 					return '&' + table[chr] + ';';
 				});
@@ -85,7 +89,9 @@ function Util() {
 
 	// santizes text only if cfg value true
 	this.safeStringInput = function(text) {
-		return (text !== 'undefined' && text && cfg.safeStringInput) ? this.safeString(text) : text;
+		return (text !== 'undefined' && text && cfg.safeStringInput) ?
+				this.safeString(text) :
+				text;
 	};
 
 	// check if element is an html element
@@ -121,7 +127,6 @@ function Util() {
 	this.disableForm = function(form, isDisabled) {
 		if (this.getAttr(form, cfg.disableInvalid)) {
 			var b = isDisabled || false;
-			//console.log("getAttr(form, cfg.disableInvalid", this.getAttr(form, cfg.disableInvalid));
 			// disable button on form
 			try {
 				var button = null;
@@ -132,11 +137,11 @@ function Util() {
 					// if cfgured, add "incomplete" message to tooltip
 					if (b &&
 						cfg.useTooltip &&
-						cfg.buttonTooltipAttr
+						cfg.buttonTooltip
 					) {
-						var overrideMessage = this.getAttr(form, cfg.formIncompleteAttr);
-						var message = (overrideMessage) ? overrideMessage : cfg.formIncompleteMessage;
-						button.setAttribute(cfg.buttonTooltipAttr, message);
+						var override = this.getAttr(form, cfg.formIncompleteText);
+						var message = (override) ? override : cfg.formIncompleteMessage;
+						button.setAttribute(cfg.buttonTooltip, message);
 					}
 				}
 				return true;
@@ -266,7 +271,7 @@ function Util() {
 			var target = form.querySelector('.' + targetId);
 			if (target && this.isElement(target)) {
 				target.innerHTML = message;
-				target.classList.remove(cfg.formMessageHidden);
+				target.classList.remove(cfg.messageHidden);
 				return true;
 			} else {
 				return false;
@@ -285,7 +290,7 @@ function Util() {
 			var target = form.querySelector('.' + targetId);
 			if (target) {
 				target.innerHTML = "";
-				target.classList.add(cfg.formMessageHidden);
+				target.classList.add(cfg.messageHidden);
 				return true;
 			} else {
 				return false;

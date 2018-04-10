@@ -15,9 +15,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"This field can't be empty";
 						reject(error);
 					}
@@ -33,9 +33,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Please enter a valid e-mail address";
 						reject(error);
 					}
@@ -46,15 +46,15 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var lengthMin = util.getAttr(field, cfg.fieldValidateMin) || 1;
-					var lengthMax = util.getAttr(field, cfg.fieldValidateMax) || 1;
+					var lengthMin = util.getAttr(field, cfg.lenMin) || 1;
+					var lengthMax = util.getAttr(field, cfg.lenMax) || 1;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && (value.length >= lengthMin && value.length <= lengthMax));
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Should be between " + lengthMin + " and " + lengthMax + " characters";
 						reject(error);
 					}
@@ -65,14 +65,14 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var lengthExact = util.getAttr(field, cfg.fieldValidateExact) || 1;
+					var lengthExact = util.getAttr(field, cfg.lenExact) || 1;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && value.length === lengthExact);
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Should be " + lengthExact + " characters";
 						reject(error);
 					}
@@ -83,7 +83,7 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var n = util.getAttr(field, cfg.fieldValidateCompare);
+					var n = util.getAttr(field, cfg.fieldCompare);
 					var f = (n) ? self.form.querySelector('[name="' + n + '"]') : null;
 					var v = (f) ? util.getValue(f) : null;
 					var errorMessage = function() {
@@ -97,9 +97,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							errorMessage;
 						reject(error);
 					}
@@ -114,9 +114,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Should be a number";
 						reject(error);
 					}
@@ -127,14 +127,14 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var numExact = util.getAttr(field, cfg.fieldValidateExact) || 1;
+					var numExact = util.getAttr(field, cfg.lenExact) || 1;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && !isNaN(value) && value.length === numExact);
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Should be a " + numExact + " character number";
 						reject(error);
 					}
@@ -145,15 +145,15 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var rangeMin = util.getAttr(field, cfg.fieldValidateMin) || 1;
-					var rangeMax = util.getAttr(field, cfg.fieldValidateMax) || 1;
+					var rangeMin = util.getAttr(field, cfg.lenMin) || 1;
+					var rangeMax = util.getAttr(field, cfg.lenMax) || 1;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && (value.length >= rangeMin && value.length <= rangeMax));
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Should be a number between " + rangeMin + " and " + rangeMax + " characters";
 						reject(error);
 					}
@@ -169,9 +169,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Please check your Zip/Postal Code";
 						reject(error);
 					}
@@ -200,9 +200,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Please check your credit card number";
 						reject(error);
 					}
@@ -218,9 +218,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Please enter a valid phone number";
 						reject(error);
 					}
@@ -231,16 +231,16 @@ var Validations = function(self) {
 			"events": [],
 				"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var regex = field.getAttribute(cfg.fieldValidatePattern);
+					var regex = field.getAttribute(cfg.fieldPattern);
 					if (typeof regex !== 'undefined' && regex && regex.length) {
 						var re = new RegExp(regex, "g");
 						var isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(value));
 						if (isValid) {
 							resolve();
 						} else {
-							var customErrors = self.getCustomErrors(field);
-							var error = (validator && validator in customErrors) ?
-								customErrors[validator] :
+							var err = self.getCustomErrors(field);
+							var error = (validator && validator in err) ?
+								err[validator] :
 								"Incorrect format";
 							reject(error);
 						}
@@ -254,15 +254,15 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var neededStr = util.getAttr(field, cfg.fieldValidateContains);
+					var neededStr = util.getAttr(field, cfg.fieldContains);
 					neededStr = (neededStr && neededStr.length) ? neededStr.toLowerCase() : null;
 					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && value.toLowerCase().indexOf(neededStr) !== -1);
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							'Should contain "' + neededStr + '"';
 						reject(error);
 					}
@@ -280,9 +280,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							'Please enter a valid URL (starts with "http" or "https")';
 						reject(error);
 					}
@@ -296,7 +296,7 @@ var Validations = function(self) {
 					// this is for radio, checkbox and multi-select menus, and you want to require a minimum number of them to be selected.
 
 					var fieldName = field.getAttribute('name');
-					var minThreshold = util.getAttr(field, cfg.fieldValidateMinThreshold) || 1;
+					var minThreshold = util.getAttr(field, cfg.minThresh) || 1;
 					var allNamedElements = self.form.querySelectorAll('[name='+fieldName+']');
 					var countSelected = 0;
 
@@ -312,9 +312,9 @@ var Validations = function(self) {
 					if (isValid) {
 						resolve();
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Please select " + util.digitWord(minThreshold);
 						reject(error);
 					}
@@ -327,7 +327,7 @@ var Validations = function(self) {
 			"validator": function(field, value, validator) { // eslint-disable-line
 				try {
 					return new Promise(function(resolve, reject) {
-						var n = util.getAttr(field, cfg.fieldDependentFields);
+						var n = util.getAttr(field, cfg.dependentFields);
 						var d = (n) ? util.splitString(n) : [];
 						var f = (d.length) ? Array.prototype.map.call(d, function(i) { return '[name="'+i+'"]' }) : [];
 						var q = (f.length) ? self.form.querySelectorAll(f.join(',')) : [];
@@ -345,9 +345,9 @@ var Validations = function(self) {
 							resolve();
 						} else {
 							var error = null;
-							var customErrors = self.getCustomErrors(field);
-							if (validator && validator in customErrors) {
-								error = customErrors[validator];
+							var err = self.getCustomErrors(field);
+							if (validator && validator in err) {
+								error = err[validator];
 							} else {
 								var da = (b.length) ? Array.prototype.map.call(b, function(i) { return self.getLabel(i) }) : [];
 								error = (da.length) ? "Please complete " + da.join(", ") : null;
@@ -377,7 +377,7 @@ var Validations = function(self) {
 					var setFieldsToValid = []; // fields to to force state of 'valid' on if this valiation succeeds
 					// get year, month and day values (if exist), force them to 3 or 4 digit format
 					Array.prototype.forEach.call(['year','month','day'], function(k) {
-						var f = self.form.querySelector('[' + cfg.fieldValidateExpireDate + '="' + k + '"]');
+						var f = self.form.querySelector('[' + cfg.expireDate + '="' + k + '"]');
 						var v = (f) ? util.getValue(f) : null;
 						if (f && v) { setFieldsToValid.push(f) }
 						if (k === 'year') {
@@ -404,9 +404,9 @@ var Validations = function(self) {
 						console.log("expiredate validator resolving");
 						resolve(self.setFieldsValid(setFieldsToValid, validator));
 					} else {
-						var customErrors = self.getCustomErrors(field);
-						var error = (validator && validator in customErrors) ?
-							customErrors[validator] :
+						var err = self.getCustomErrors(field);
+						var error = (validator && validator in err) ?
+							err[validator] :
 							"Appears to be expired - please check date";
 
 						console.log("expiredate validator rejecting");
@@ -423,33 +423,32 @@ var Validations = function(self) {
 				return new Promise(function(resolve, reject) {
 					try {
 						if (self.checkIfCurrent(field)) {
-							var errTarget = self.getErrorContainer(field);
-							if (errTarget) {
-								var customMsg = util.getAttr(field, cfg.fieldValidateAjaxProcessing);
-								errTarget.innerText = customMsg || "Checking...";
+							var errTgt = self.getErrorContainer(field);
+							if (errTgt) {
+								var msg = util.getAttr(field, cfg.ajaxProcessing);
+								errTgt.innerText = msg || "Checking...";
 							}
-							var fieldName = field.getAttribute('name')
-							var ajaxEndpoint = util.getAttr(field, cfg.fieldValidateAjaxEndpoint);
-							var ajaxKey = util.getAttr(field, cfg.fieldValidateAjaxKey);
-							var ajaxValue = util.getAttr(field, cfg.fieldValidateAjaxValue);
-							if (ajaxEndpoint && ajaxKey && ajaxValue !== null && !/^http/.test(ajaxEndpoint.toLowerCase())) { // crude way to make ajax safe - don't allow absolute URLs
+							var fname = field.getAttribute('name')
+							var endp = util.getAttr(field, cfg.ajaxEndpoint);
+							var key = util.getAttr(field, cfg.ajaxKey);
+							var val = util.getAttr(field, cfg.ajaxValue);
+							if (endp && key && val !== null && !/^http/.test(endp.toLowerCase())) { // crude way to make ajax safe - don't allow absolute URLs
 
-								var ajaxUrl = ajaxEndpoint + '?' + fieldName + '=' + util.getValue(field);
-								//console.log("ajaXUrl", ajaxUrl, "ajaxKey", ajaxKey, "ajaxValue", ajaxValue);
+								var url = endp + '?' + fname + '=' + util.getValue(field);
 
 								var xhr = new XMLHttpRequest();
-								xhr.open('GET', ajaxUrl);
+								xhr.open('GET', url);
 								xhr.timeout = cfg.ajaxTimeout;
 								xhr.setRequestHeader('Content-Type', 'application/json');
 								xhr.onload = function() {
 									if (xhr.status === 200) {
 										var data = JSON.parse(xhr.responseText);
 										//console.log("raw ajax response", data, "data[ajaxKey]", data[ajaxKey]);
-										if (data && data[ajaxKey] === ajaxValue) {
+										if (data && data[key] === val) {
 											resolve(self.forceEvent(field));
 										} else {
-											var customErrors = self.getCustomErrors(field);
-											var error = (validator && validator in customErrors) ? customErrors[validator] : "Does not validate";
+											var err = self.getCustomErrors(field);
+											var error = (validator && validator in err) ? err[validator] : "Does not validate";
 											reject(error);
 										}
 									}
@@ -468,14 +467,7 @@ var Validations = function(self) {
 								};
 								xhr.send();
 							}
-						} else {
-							// if this is a submit event,immediately resolve
-							// we don't want to do the validation again
-							// CHECK IF THIS IS STILL NECESSARY
-							if (self.eventType  === 'submit') {
-								resolve();
-							}
-						}// end if for focusout
+						}
 					} catch(e) {
 						console.error("problem executing ajax validator", e);
 						resolve();

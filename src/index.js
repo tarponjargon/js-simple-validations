@@ -13,21 +13,21 @@ if (typeof window !== 'undefined' && window) {
 
 var SimpleValidations = function() {
 
-	if (typeof window.validateOptions === 'undefined' ||
-		window.validateOptions === null ||
-		typeof window.validateOptions !== 'object'
-	) {
-		window.validateOptions = {};
-	}
+	// if (typeof window.validateOptions === 'undefined' ||
+	// 	window.validateOptions === null ||
+	// 	typeof window.validateOptions !== 'object'
+	// ) {
+	// 	window.validateOptions = {};
+	// }
 
 	var util = new Util();
 
 	// merge any user-defined options into cfg
-	if ('cfg' in window.validateOptions && typeof window.validateOptions.cfg === 'object') {
-		for (var key in window.validateOptions.cfg) {
-			cfg[key] = window.validateOptions.cfg[key];
-		}
-	}
+	// if ('cfg' in window.validateOptions && typeof window.validateOptions.cfg === 'object') {
+	// 	for (var key in window.validateOptions.cfg) {
+	// 		cfg[key] = window.validateOptions.cfg[key];
+	// 	}
+	// }
 
 	// exit if cfg disableValidations === true
 	if (cfg.disableValidations !== 'undefined' && cfg.disableValidations) {
@@ -38,9 +38,9 @@ var SimpleValidations = function() {
 	// add stylesheet/styles to window (if enabled)
 	if (cfg.useCss) {
 		try {
-			var styleSheet = document.createElement('style');
-			styleSheet.innerHTML = styles;
-			document.head.appendChild(styleSheet);
+			var sht = document.createElement('style');
+			sht.innerHTML = styles;
+			document.head.appendChild(sht);
 		} catch(e) {
 			console.error("problem creating stylesheet");
 		}
@@ -48,18 +48,17 @@ var SimpleValidations = function() {
 
 	// loop thru forms in DOM marked for validation
 	Array.prototype.forEach.call(document.querySelectorAll('[' + cfg.formValidateAttr + ']'), function(form) {
-		console.log("form to validate", form);
 
 		// add form-level error container (if not exists)
-		var formError = util.createValidationElement(form, cfg.formError);
-		if (formError) {
-			form.insertBefore(formError, form.firstChild);
+		var ferr = util.createValidationElement(form, cfg.formError);
+		if (ferr) {
+			form.insertBefore(ferr, form.firstChild);
 		}
 
 		// add form-level success container (if not exists)
-		var formSuccess = util.createValidationElement(form, cfg.formSuccess);
-		if (formSuccess) {
-			form.appendChild(formSuccess);
+		var fsucc = util.createValidationElement(form, cfg.formSuccess);
+		if (fsucc) {
+			form.appendChild(fsucc);
 		}
 
 		// disable form by default
@@ -75,12 +74,6 @@ var SimpleValidations = function() {
 				console.log("success!");
 
 				var afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
-				// console.log("cfg.formSubmitHandler", cfg.formSubmitHandler);
-				// console.log("afterSubmitRef", afterSubmitRef);
-				// console.log("afterSubmitRef in window", (afterSubmitRef in window));
-				// console.log("typeof window[afterSubmitRef]", (typeof window[afterSubmitRef]));
-				// console.log("window[afterSubmitRef]", (window[afterSubmitRef]));
-
 				var afterSubmit = (
 					afterSubmitRef &&
 					afterSubmitRef in window &&
@@ -88,13 +81,8 @@ var SimpleValidations = function() {
 				) ? window[afterSubmitRef] : null;
 
 				if (afterSubmit) {
-					//console.log("calling", afterSubmit);
-					try {
-						afterSubmit(e, form, 'valid');
-					} catch(e) {
-						//console.log("afterSubmit failed, continuing with regular form submit", e);
-						//form.submit()
-					}
+					console.log("AFTERSUBMIT", e, form, 'valid');
+					afterSubmit(e, form, 'valid');
 				} else {
 					console.log("submitting form the traditional way");
 					form.submit();
@@ -112,10 +100,10 @@ var SimpleValidations = function() {
 			// around all radio inputs with the same name (for now)
 			if (field.type !== 'radio' && field.type !== 'checkbox') {
 				try {
-					var fieldContainer = util.createValidationElement(field.parentNode, cfg.fieldContainer);
-					if (fieldContainer) {
-						field.parentNode.appendChild(fieldContainer);
-						fieldContainer.appendChild(field);
+					var fc = util.createValidationElement(field.parentNode, cfg.fieldContainer);
+					if (fc) {
+						field.parentNode.appendChild(fc);
+						fc.appendChild(field);
 					}
 				}
 				catch(e) {
@@ -124,9 +112,9 @@ var SimpleValidations = function() {
 
 				// add field-level error container (if not exists)
 				try {
-					var fieldError = util.createValidationElement(field.parentNode, cfg.fieldError);
-					if (fieldError) {
-						field.parentNode.parentNode.insertBefore(fieldError, field.parentNode.nextElementSibling);
+					var fe = util.createValidationElement(field.parentNode, cfg.fieldError);
+					if (fe) {
+						field.parentNode.parentNode.insertBefore(fe, field.parentNode.nextElementSibling);
 					}
 				}
 				catch(e) {
@@ -138,8 +126,7 @@ var SimpleValidations = function() {
 			// simulate a focusout event by sending an explicit event object
 			try {
 				var val = util.getValue(field);
-				if (val !== 'undefined' && /\S/.test(val)) {
-					//console.log('field ' + field + ' type ' + field.type + " has a value " + field.value);
+				if (val && /\S/.test(val)) {
 					formValidator.validate({
 						"type": "focusout",
 						"target": {

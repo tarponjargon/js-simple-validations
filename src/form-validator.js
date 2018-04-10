@@ -19,12 +19,12 @@ function FormValidator(form) {
 	};
 	this.hasValid = function(form=self.form) {
 		try {
-			return util.getAttr(form, cfg.formValidatedAttr);
+			return util.getAttr(form, cfg.formIsValid);
 		} catch(e) {
 			console.error("FormValidator hasValid function failed", e)
 		}
 	};
-	this.getFormFields = function(form=self.form) {
+	this.getFields = function(form=self.form) {
 		var fields = [];
 		try {
 			fields = form.querySelectorAll('[' + cfg.fieldValidators + ']');
@@ -38,94 +38,92 @@ function FormValidator(form) {
 	// the rules are complex and messy, but the idea is we don't want to run validations over and over unnecessarily,
 	// since the form revalidates with every interaction
 	this.getValidationFields = function(form=self.form) {
-		var validationFields = {
+		var vfields = {
 			"validate": [],
 			"reset": []
 		}
-		Array.prototype.forEach.call(self.getFormFields(form), function(field) {
+		Array.prototype.forEach.call(self.getFields(form), function(field) {
 			try {
-				var addToValidate = false;
-				var addToReset = false;
-				var valTypes = util.getAttr(field, cfg.fieldValidators);
-				var isRequired = (valTypes && valTypes.toLowerCase().indexOf("require") !== -1);
+				var add = false;
+				var reset = false;
+				var vtypes = util.getAttr(field, cfg.fieldValidators);
+				var isRequired = (vtypes && vtypes.toLowerCase().indexOf("require") !== -1);
 				var fieldVal = util.getValue(field);
-				var previousVal = field.getAttribute(cfg.fieldPreviousVal);
+				var previousVal = field.getAttribute(cfg.prevVal);
 
 				if (fieldVal) { // has a value
 					if (previousVal) { // does it have a previous value?
-						addToValidate = (fieldVal !== previousVal); // required if value is changed, otherwise do not validate
+						add = (fieldVal !== previousVal); // required if value is changed, otherwise do not validate
 					} else {
-						addToValidate = true; // this is a first-time elvauation
+						add = true; // this is a first-time elvauation
 					} // end if/else for previousVal
 				} else { // no value...
 					if (isRequired) { // if field has a 'require' validator, add to validation list
-						addToValidate = true;
+						add = true;
 					} else { // if it's not a required field and doesn't have a value, any UI changes and call it valid
-						addToReset = true;
+						reset = true;
 					}
 				} // end if/esle for has field value
 
-				if (addToValidate) {
-					validationFields.validate.push(field);
+				if (add) {
+					vfields.validate.push(field);
 				}
-				if (addToReset) {
-					validationFields.reset.push(field);
+				if (reset) {
+					vfields.reset.push(field);
 				}
 			} catch(e) {
 				console.error("could not determine if field is needs validation", e);
 			}
 		});
-		//console.log("retrieved validationFields", validationFields);
-		return validationFields;
+		//console.log("retrieved vfields", vfields);
+		return vfields;
 	};
 
 	// check <form> element and default to formInvalidMessage
 	this.getIncompleteMessage = function(form=self.form) {
-		var customMsg = util.getAttr(form, cfg.formIncompleteAttr);
+		var customMsg = util.getAttr(form, cfg.formIncompleteText);
 		return (customMsg) ? customMsg : cfg.formIncompleteMessage;
 	};
 
-	this.checkFormValid = function(form=self.form) {
-		//console.log("in checkFormValid");
-		var fields = self.getFormFields(form);
-		var validated = 0;
+	this.checkValid = function(form=self.form) {
+		//console.log("in checkValid");
+		var fields = self.getFields(form);
+		var v = 0;
 		Array.prototype.forEach.call(fields, function(field) {
-			if (field.getAttribute(cfg.fieldValidatedAttr)) {
-				validated++;
-			} //else {
-			//	console.log("in checkFormValid, field NOT validated", field.getAttribute('name'));
-			//}
+			if (field.getAttribute(cfg.fieldIsValid)) {
+				v++;
+			}
 		});
-		console.log("in checkFormValid", fields.length, validated);
-		return (validated >= fields.length);
+		console.log("in checkValid", fields.length, v);
+		return (v >= fields.length);
 	};
 
 	this.validate = function(e, form=self.form) {
 		try {
 			return new Promise(function(resolve, reject) {
 
-				var validationFields = self.getValidationFields(form) || [];
+				var vfields = self.getValidationFields(form) || [];
 
 				// loop thru all validation fields fields and validate each
-				var fieldPromises = [ new Promise.resolve() ];  // give it a resolving promise in case there are none
-				Array.prototype.forEach.call(validationFields.validate, function(field) {
-					//console.log("validationFields current field", field);
+				var proms = [ new Promise.resolve() ];  // give it a resolving promise in case there are none
+				Array.prototype.forEach.call(vfields.validate, function(field) {
+					//console.log("vfields current field", field);
 					var fieldValidator = new FieldValidator(field, form, e);
-					fieldPromises.push(fieldValidator.validate(field));
+					proms.push(fieldValidator.validate(field));
 				});
 
 				// reset UI on any field in 'reset'
-				Array.prototype.forEach.call(validationFields.reset, function(field) {
+				Array.prototype.forEach.call(vfields.reset, function(field) {
 					var fieldValidator = new FieldValidator(field, form, e);
-					fieldPromises.push(fieldValidator.reset(field));
+					proms.push(fieldValidator.reset(field));
 				});
 
 				// resolve all pending promises. after, count up valid fields
-				new Promise.all(fieldPromises)
+				new Promise.all(proms)
 				.then(function(){})
 				.catch(function(){})
 				.finally(function() {
-					if (self.checkFormValid(form)) {
+					if (self.checkValid(form)) {
 						resolve(self.valid(e, form));
 					} else {
 						reject(self.invalid(e, form));
@@ -145,7 +143,7 @@ function FormValidator(form) {
 
 			// set form data attribute to valid
 			if (!self.hasValid(form)) {
-				form.setAttribute(cfg.formValidatedAttr, "true");
+				form.setAttribute(cfg.formIsValid, "true");
 			}
 
 			// enable form
@@ -153,19 +151,14 @@ function FormValidator(form) {
 
 			// if cfgure, remove "incomplete" message from tooltip
 			if (cfg.useTooltip &&
-				cfg.buttonTooltipAttr &&
-				button.getAttribute(cfg.buttonTooltipAttr)
+				cfg.buttonTooltip &&
+				button.getAttribute(cfg.buttonTooltip)
 			) {
-				button.removeAttribute(cfg.buttonTooltipAttr);
+				button.removeAttribute(cfg.buttonTooltip);
 			}
 
 			// see if there are any callbcks to execute on form=valid
 			var validCallback = util.getAttr(form, cfg.formValidCallback);
-			// console.log("eventType !== 'submit' ", eventType !== 'submit');
-			// console.log("validCallback", validCallback);
-			// console.log("validCallback in window", validCallback in window);
-			// console.log("typeof  window[validCallback] === 'function'", typeof  window[validCallback] === 'function');
-			// console.log("window[validCallback]", window[validCallback]);
 			if (e.type !== 'submit' &&
 				validCallback &&
 				validCallback in window &&
@@ -195,7 +188,7 @@ function FormValidator(form) {
 
 			// remove form "valid" data attribute (if any)
 			if (self.hasValid(form)) {
-				form.removeAttribute(cfg.formValidatedAttr);
+				form.removeAttribute(cfg.formIsValid);
 			}
 
 			// reset button on form to default/disabled state
@@ -203,9 +196,9 @@ function FormValidator(form) {
 
 			// if cfgured, add "incomplete" message to tooltip
 			if (cfg.useTooltip &&
-				cfg.buttonTooltipAttr
+				cfg.buttonTooltip
 			) {
-				button.setAttribute(cfg.buttonTooltipAttr, self.getIncompleteMessage(form));
+				button.setAttribute(cfg.buttonTooltip, self.getIncompleteMessage(form));
 			}
 
 			// if cfgured, make sure success state is not set on button
@@ -214,9 +207,9 @@ function FormValidator(form) {
 			}
 
 			// if cfgured, reset original text on button
-			if (cfg.buttonOriginalAttr && button.getAttribute(cfg.buttonOriginalAttr)) {
-				button.innerText = util.getAttr(button, cfg.buttonOriginalAttr);
-				button.removeAttribute(cfg.buttonOriginalAttr);
+			if (cfg.buttonOriginalText && button.getAttribute(cfg.buttonOriginalText)) {
+				button.innerText = util.getAttr(button, cfg.buttonOriginalText);
+				button.removeAttribute(cfg.buttonOriginalText);
 			}
 
 			// reset all messages
@@ -225,11 +218,7 @@ function FormValidator(form) {
 
 			// see if there are any callbcks to execute on form=invalid
 			var invalidCallback = util.getAttr(form, cfg.formInvalidCallback);
-			// console.log("event.type === 'submit'", event.type === 'submit');
-			// console.log("invalidCallback", invalidCallback);
-			// console.log("invalidCallback in window", invalidCallback in window);
-			// console.log("typeof window[invalidCallback] === 'function'", typeof window[invalidCallback] === 'function');
-			// console.log("window[invalidCallback]", window[invalidCallback]);
+
 			if (e.type === 'submit' &&
 				invalidCallback &&
 				invalidCallback in window &&

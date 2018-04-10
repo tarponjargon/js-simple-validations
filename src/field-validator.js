@@ -17,19 +17,19 @@ function FieldValidator(field, form, event) {
 	this.validators = new Validations(this);
 
 	// merge in any custom validators
-	if ('customValidators' in window.validateOptions && typeof window.validateOptions.customValidators === 'object') {
-		for (var key in window.validateOptions.customValidators) {
-			this.validators[key] = window.validateOptions.customValidators[key];
-		}
-	}
+	// if ('customValidators' in window.validateOptions && typeof window.validateOptions.customValidators === 'object') {
+	// 	for (var key in window.validateOptions.customValidators) {
+	// 		this.validators[key] = window.validateOptions.customValidators[key];
+	// 	}
+	// }
 
 	this.checkValid = function(field=self.field) {
-		return util.getAttr(field, cfg.fieldValidatedAttr);
+		return util.getAttr(field, cfg.fieldIsValid);
 	};
 
 	// used to determine if field is changed
 	this.getPreviousVal = function(field=self.field) {
-		return field.getAttribute(cfg.fieldPreviousVal);
+		return field.getAttribute(cfg.prevVal);
 	};
 
 	this.checkIfCurrent = function(field=self.field) {
@@ -37,7 +37,7 @@ function FieldValidator(field, form, event) {
 		return (fieldName && (fieldName === self.event.target.name || self.eventType === 'submit')) ? fieldName : null;
 	};
 
-	this.checkValidatorEligible = function(validator) {
+	this.checkElig = function(validator) {
 		// each validator should have an 'events' prop that is an array of eligible events it should be run on.
 		// if the array is empty (means "all events") OR the current event is found in the array, validator is eligible
 		var eligible = false;
@@ -57,14 +57,14 @@ function FieldValidator(field, form, event) {
 	}
 
 	// makes a list of the validators to run on this field, at this time
-	this.getValidationTypes = function(field=self.field) {
+	this.getValidations = function(field=self.field) {
 		var validators = [];
 		var dataAttr = util.getAttr(field, cfg.fieldValidators);
 		if (dataAttr) {
 			var tmpArr = util.splitString(dataAttr);
 			if (tmpArr && tmpArr.length) {
 				for (var i = 0; i < tmpArr.length; i++) {
-					var elig = self.checkValidatorEligible(tmpArr[i]);
+					var elig = self.checkElig(tmpArr[i]);
 					if (elig) {
 						validators.push(tmpArr[i]);
 					}
@@ -76,18 +76,18 @@ function FieldValidator(field, form, event) {
 
 	this.getErrorContainer = function(field=self.field) {
 		try {
-			var errorContainer = null;
+			var ec = null;
 			// if there is a custom target cfgured for the field error message AND it exists, use that
-			var customId = util.getAttr(field, cfg.fieldInvalidMessageTarget);
-			var customContainer = (customId) ? form.querySelector('#' + customId) : null;
-			if (customContainer) {
-				errorContainer = customContainer;
+			var id = util.getAttr(field, cfg.invMessage);
+			var cc = (id) ? form.querySelector('#' + id) : null;
+			if (cc) {
+				ec = cc;
 			} else {
-				errorContainer = (field.parentNode.nextElementSibling.classList.contains(cfg.fieldError.className)) ?
-								  field.parentNode.nextElementSibling :
-								  null;
+				ec = (field.parentNode.nextElementSibling.classList.contains(cfg.fieldError.className)) ?
+					  field.parentNode.nextElementSibling :
+					  null;
 			}
-			return errorContainer;
+			return ec;
 		} catch(e) {
 			console.error("problem finding errorcontainer on", field, e);
 		}
@@ -103,10 +103,10 @@ function FieldValidator(field, form, event) {
 
 	this.getCustomErrors = function(field=self.field) {
 		var errors = {};
-		Array.prototype.forEach.call(self.getValidationTypes(field), function(validationType) {
-			var customMessage = util.getAttr(field, cfg.fieldInvalidErrorPrefix + validationType);
-			if (customMessage) {
-				errors[validationType] = customMessage;
+		Array.prototype.forEach.call(self.getValidations(field), function(vtype) {
+			var cm = util.getAttr(field, cfg.invErrPrefix + vtype);
+			if (cm) {
+				errors[vtype] = cm;
 			}
 		});
 		return errors;
@@ -124,23 +124,23 @@ function FieldValidator(field, form, event) {
 		return l;
 	};
 
-	this.getValidationCallbacks = function(field=self.field) {
-		var callbacks = {
+	this.getCallbacks = function(field=self.field) {
+		var cb = {
 			"valid": {},
 			"invalid": {}
 		};
-		Array.prototype.forEach.call(self.getValidationTypes(field), function(validationType) {
-			var validCallback = util.getAttr(field, cfg.fieldValidCallbackPrefix + validationType);
-			if (validCallback) {
-				callbacks.valid[validationType] = validCallback;
+		Array.prototype.forEach.call(self.getValidations(field), function(type) {
+			var v = util.getAttr(field, cfg.fieldValidCallback + type);
+			if (v) {
+				cb.valid[type] = v;
 			}
-			var invalidCallback = util.getAttr(field, cfg.fieldInvalidCallbackPrefix + validationType);
-			if (invalidCallback) {
-				callbacks.invalid[validationType] = invalidCallback;
+			var i = util.getAttr(field, cfg.fieldInvalidCallback + type);
+			if (i) {
+				cb.invalid[type] = i;
 			}
-			//console.log("forEach", isValid, isInvalid, validationType, cfg.fieldValidCallbackPrefix, cfg.fieldValidCallbackPrefix + validationType);
+			//console.log("forEach", isValid, isInvalid, validationType, cfg.fieldValidCallback, cfg.fieldValidCallback + validationType);
 		});
-		return callbacks;
+		return cb;
 	};
 
 	this.setFieldsValid = function(fields, validator) {
@@ -180,7 +180,6 @@ function FieldValidator(field, form, event) {
 
 	this.forceEvent = function(field=self.field) {
 		setTimeout(function() {
-			console.log("forceEvent Running on ", field.getAttribute('name'));
 			var newEvent = new Event('change');
 			field.dispatchEvent(newEvent);
 		},100);
@@ -190,14 +189,14 @@ function FieldValidator(field, form, event) {
 	// performs field validation
 	this.validate = function(field=self.field) {
 		try {
-			var validationTypes = self.getValidationTypes(field);
-			var fieldValue = util.getValue(field);
+			var vTypes = self.getValidations(field);
+			var fieldVal = util.getValue(field);
 			return new Promise(function(resolve, reject) {
 				var isCurrent = self.checkIfCurrent(field);
 
 				// mark this field as having been interacted with
 				if (isCurrent) {
-					field.setAttribute(cfg.fieldPreviousVal, fieldValue);
+					field.setAttribute(cfg.prevVal, fieldVal);
 				}
 
 				//remove any messages if they exist, they can get out of sync otherwise
@@ -207,29 +206,27 @@ function FieldValidator(field, form, event) {
 				// }
 
 				// if there are no validationTypes set, resolve because there's nothing to validate
-				if (!validationTypes || !validationTypes.length) {
+				if (!vTypes || !vTypes.length) {
 					console.error("in FieldValidator but there are no validationTypes to run");
 					resolve();
 				}
 
 				// run validations promises specified on field in sequence.
-				var lastValidator = null; // updates with the last promise called (needed for valid and invalid functions)
+				var lastv = null; // updates with the last promise called (needed for valid and invalid functions)
 				function eachSeries(vtypes, f, v) {
 					return vtypes.reduce(function(p, validator) {
 						return p.then(function() {
-							lastValidator = validator;
+							lastv = validator;
 							return self.validators[validator].validator(f, v, validator);
 						});
 					}, new Promise.resolve());
 				}
 
 				// resolve promise sequence
-				eachSeries(validationTypes, field, fieldValue).then(function() {
-					self.valid(field, lastValidator);
-					resolve();
+				eachSeries(vTypes, field, fieldVal).then(function() {
+					resolve(self.valid(field, lastv));
 				}).catch(function(message) {
-					self.invalid(field, lastValidator, message)
-					reject();
+					reject(self.invalid(field, lastv, message));
 				});
 
 			});
@@ -243,21 +240,23 @@ function FieldValidator(field, form, event) {
 		return new Promise(function(resolve, reject) {
 			try {
 				// this field is considered valid, but we also reset it to an unmodified state (not dirty)
-				field.setAttribute(cfg.fieldValidatedAttr, "true");
-				field.removeAttribute(cfg.fieldPreviousVal);
+				field.setAttribute(cfg.fieldIsValid, "true");
+				field.removeAttribute(cfg.prevVal);
 
 				//remove styles
-				var validationContainer = self.getValidationContainer(field);
-				if (validationContainer) {
-					Array.prototype.forEach.call([cfg.fieldValid, cfg.fieldValidIcon, cfg.fieldInvalid, cfg.fieldInvalidIcon], function(c) {
-						validationContainer.classList.remove(c);
+				var vc = self.getValidationContainer(field);
+				if (vc) {
+					Array.prototype.forEach.call(
+					[cfg.fieldValid, cfg.validIcon, cfg.fieldInvalid, cfg.invIcon], 
+					function(c) {
+						vc.classList.remove(c);
 					});
 				}
 
 				//remove any messages
-				var errTarget = self.getErrorContainer(field);
-				if (errTarget) {
-					errTarget.innerText = "";
+				var errTgt = self.getErrorContainer(field);
+				if (errTgt) {
+					errTgt.innerText = "";
 				}
 				resolve();
 			}
@@ -269,47 +268,47 @@ function FieldValidator(field, form, event) {
 	}
 
 	// function sets the state of the UI (form field) to valid
-	this.valid = function(field=self.field, lastValidator) {
+	this.valid = function(field=self.field, lastv) {
 		try {
 
 			var fieldName = field.getAttribute('name');
 			// mark all fields with this name as valid (this will cover multi-value fields)
 			var validFields = self.form.querySelectorAll('[name='+fieldName+']');
 			Array.prototype.forEach.call(validFields, function(f) {
-				f.setAttribute(cfg.fieldValidatedAttr, "true");
+				f.setAttribute(cfg.fieldIsValid, "true");
 			});
 
-			var validationContainer = self.getValidationContainer(field);
-			if (validationContainer) {
-				validationContainer.classList.remove(cfg.fieldInvalid);
-				validationContainer.classList.remove(cfg.fieldInvalidIcon);
-				validationContainer.classList.add(cfg.fieldValid);
+			var vc = self.getValidationContainer(field);
+			if (vc) {
+				vc.classList.remove(cfg.fieldInvalid);
+				vc.classList.remove(cfg.invIcon);
+				vc.classList.add(cfg.fieldValid);
 				//if (self.eventType === 'focusout' &&
-				if (!util.getAttr(self.form, cfg.formDisableIcons) &&
-					!util.getAttr(field, cfg.fieldDisableIcon)
+				if (!util.getAttr(self.form, cfg.disableIcons) &&
+					!util.getAttr(field, cfg.disableIcon)
 				) {
-					validationContainer.classList.add(cfg.fieldValidIcon);
+					vc.classList.add(cfg.validIcon);
 				}
 			}
 
 			//remove any messages
-			var errTarget = self.getErrorContainer(field);
-			if (errTarget) {
-				errTarget.innerText = "";
+			var errTgt = self.getErrorContainer(field);
+			if (errTgt) {
+				errTgt.innerText = "";
 			}
 
 			// see if there are any callbcks to execute on field=valid
-			var callbacks = self.getValidationCallbacks(field);
+			var cb = self.getCallbacks(field);
 			if (self.checkIfCurrent(field) &&
 				self.eventType === 'focusout' &&
-				lastValidator &&
-				lastValidator in callbacks.valid &&
-				callbacks.valid[lastValidator] in window &&
-				typeof window[callbacks.valid[lastValidator]] === 'function'
+				lastv &&
+				lastv in cb.valid &&
+				cb.valid[lastv] in window &&
+				typeof window[cb.valid[lastv]] === 'function'
 			) {
 				try {
-					var debouncedCallback = util.debounce(window[callbacks.valid[lastValidator]], cfg.debounceDefault);
-					debouncedCallback(event, self.form, fieldName, lastValidator, 'invalid');
+					var debouncedCallback = util.debounce(window[cb.valid[lastv]], cfg.debounceDefault);
+					debouncedCallback(event, self.form, fieldName, lastv, 'invalid');
 				} catch(e) {
 					console.error("Problem executing valid callback on field:", fieldName, e);
 				}
@@ -322,7 +321,7 @@ function FieldValidator(field, form, event) {
 	}
 
 	// function sets the state of the UI (form field) to invalid
-	this.invalid = function(field=self.field, lastValidator, messages, current) {
+	this.invalid = function(field=self.field, lastv, messages, current) {
 		//if (self.checkIfCurrent()) { console.log("in self.invalid", messages) }
 		try {
 			var fieldName = field.getAttribute('name');
@@ -336,49 +335,40 @@ function FieldValidator(field, form, event) {
 			// un-mark fields with this name from being valid
 			var invalidFields = self.form.querySelectorAll('[name='+fieldName+']');
 			Array.prototype.forEach.call(invalidFields, function(f) {
-				f.removeAttribute(cfg.fieldValidatedAttr);
+				f.removeAttribute(cfg.fieldIsValid);
 			});
 
 
 			// perform UI changes ONLY if we're operating on the currently-interacted field
 			if (self.checkIfCurrent(field) || current) {
-				//console.log("in invalid checkIfCurrent()", self.checkIfCurrent(), self.eventType, validationContainer);
-				var validationContainer = self.getValidationContainer(field);
-				if (validationContainer) {
-					validationContainer.classList.remove(cfg.fieldValid);
-					validationContainer.classList.remove(cfg.fieldValidIcon);
-					validationContainer.classList.add(cfg.fieldInvalid);
-					//if (self.eventType === 'focusout' &&
-					if (!util.getAttr(self.form, cfg.formDisableIcons) &&
-						!util.getAttr(field, cfg.fieldDisableIcon)
+				var vc = self.getValidationContainer(field);
+				if (vc) {
+					vc.classList.remove(cfg.fieldValid);
+					vc.classList.remove(cfg.validIcon);
+					vc.classList.add(cfg.fieldInvalid);
+					if (!util.getAttr(self.form, cfg.disableIcons) &&
+						!util.getAttr(field, cfg.disableIcon)
 					) {
-						validationContainer.classList.add(cfg.fieldInvalidIcon);
+						vc.classList.add(cfg.invIcon);
 					}
 				}
 				//if (message && self.errorContainer && (self.eventType === 'focusout' || self.eventType === 'change' || self.eventType === 'submit')) {
-				var errTarget = self.getErrorContainer(field);
-				if (message && errTarget) {
-					errTarget.innerText = message;
+				var errTgt = self.getErrorContainer(field);
+				if (message && errTgt) {
+					errTgt.innerText = message;
 				}
 
 				// see if there are any callbcks to execute on field=invalid
-				var callbacks = self.getValidationCallbacks(field);
-				// console.log("callbacks", callbacks);
-				// console.log("self.eventType === 'focusout'", self.eventType === 'focusout');
-				// console.log("lastValidator", lastValidator);
-				// console.log("lastValidator in callbacks.invalid", lastValidator in callbacks.invalid);
-				// console.log("callbacks.invalid[lastValidator] in window", callbacks.invalid[lastValidator] in window);
-				// console.log("typeof window[scallbacks.invalid[lastValidator]] === 'function'", typeof window[callbacks.invalid[lastValidator]] === 'function');
-				// console.log("window[callbacks.invalid[lastValidator]]", window[callbacks.invalid[lastValidator]]);
+				var cb = self.getCallbacks(field);
 				if (
-					lastValidator &&
-					lastValidator in callbacks.invalid &&
-					callbacks.invalid[lastValidator] in window &&
-					typeof window[callbacks.invalid[lastValidator]] === 'function'
+					lastv &&
+					lastv in cb.invalid &&
+					cb.invalid[lastv] in window &&
+					typeof window[cb.invalid[lastv]] === 'function'
 				) {
 					try {
-						var debouncedCallback = util.debounce(window[callbacks.invalid[lastValidator]], cfg.debounceDefault);
-						debouncedCallback(event, self.form, fieldName, lastValidator, 'invalid', message);
+						var debouncedCallback = util.debounce(window[cb.invalid[lastv]], cfg.debounceDefault);
+						debouncedCallback(event, self.form, fieldName, lastv, 'invalid', message);
 					} catch(e) {
 						console.error("Problem executing valid callback on field:", fieldName, e);
 					}
