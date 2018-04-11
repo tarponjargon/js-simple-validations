@@ -41,7 +41,7 @@ module.exports = {
 			new UglifyJSPlugin({
 				uglifyOptions: {
 					compress: {
-						//drop_console: true
+						drop_console: true
 					}
 				}
 			})

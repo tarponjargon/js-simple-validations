@@ -144,7 +144,11 @@ var SimpleValidations = function() {
 			var debounced = debounce(formValidator.validate, dbRate);
 			var debounceWrapper = function(e) {
 				console.log("debounceWrapper", e.type, form.getAttribute('name'), field.getAttribute('name'), field.getAttribute('id'), "debouterate", dbRate);
-				debounced(e, form).then(function(){}).catch(function(){});
+				if (field.offsetParent !== null) {
+					debounced(e, form).then(function(){}).catch(function(){});
+				} else {
+					console.log("EL NOT VISIBLE");
+				}
 			}
 
 			// and add listeners to trigger form revalidation on any changes

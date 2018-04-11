@@ -180,8 +180,10 @@ function FieldValidator(field, form, event) {
 
 	this.forceEvent = function(field=self.field) {
 		setTimeout(function() {
-			var newEvent = new Event('change');
-			field.dispatchEvent(newEvent);
+			try {
+				var newEvent = new Event('change');
+				field.dispatchEvent(newEvent);
+			} catch(e) {} // eslint-disable-line
 		},100);
 		return true;
 	};
@@ -247,7 +249,7 @@ function FieldValidator(field, form, event) {
 				var vc = self.getValidationContainer(field);
 				if (vc) {
 					Array.prototype.forEach.call(
-					[cfg.fieldValid, cfg.validIcon, cfg.fieldInvalid, cfg.invIcon], 
+					[cfg.fieldValid, cfg.validIcon, cfg.fieldInvalid, cfg.invIcon],
 					function(c) {
 						vc.classList.remove(c);
 					});

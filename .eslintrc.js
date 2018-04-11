@@ -1,6 +1,11 @@
 module.exports = {
     "env": {
-        "browser": true
+        "browser": true,
+	"node": true,
+	"mocha": true
+    },
+    "globals": {
+	"expect": true
     },
     parserOptions: {
       ecmaVersion: 2017,
