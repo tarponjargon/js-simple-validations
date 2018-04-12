@@ -10,13 +10,17 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "webpack --mode production",
-    "postbuild": "./deploy-prod.sh",
-    "dev": "webpack --mode development --output ./build/js-simple-validations-dev.js",
+    "dist": "webpack --mode production",
+    "postdist": "./deploy-prod.sh",
+    "dev": "webpack --mode development --output ./build/js-simple-validations.js",
     "postdev": "./deploy-dev.sh",
     "lint:js": "eslint src/ webpack.*.js --cache"
   },
-  "keywords": ["javascript", "form validation", "data attribute"],
+  "keywords": [
+    "javascript",
+    "form validation",
+    "data attribute"
+  ],
   "author": "Rory O'Connor",
   "license": "ISC",
   "devDependencies": {
@@ -27,6 +31,7 @@
     "eslint": "^4.19.1",
     "eslint-loader": "^2.0.0",
     "jest": "^22.4.3",
+    "puppeteer": "^1.2.0",
     "webpack": "^4.5.0",
     "webpack-cli": "^2.0.14"
   },
@@ -40,10 +45,12 @@
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
     },
-	"testPathIgnorePatterns": ["/node_modules/", "shared.js$"],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "shared.js$"
+    ],
     "transform": {
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
     }
   }
-
 }

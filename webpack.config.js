@@ -4,6 +4,7 @@ const path = require('path');
 const PATHS = {
 	src: path.join(__dirname, 'src'),
 	build: path.join(__dirname, 'build'),
+	dist: path.join(__dirname, 'dist'),
 };
 
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -32,8 +33,8 @@ module.exports = {
 		src: PATHS.src,
 	},
 	output: {
-		path: PATHS.build,
-		filename: 'js-simple-validations.js'
+		path: PATHS.dist,
+		filename: 'js-simple-validations.min.js'
 	},
 	//watch: true,
 	optimization: {

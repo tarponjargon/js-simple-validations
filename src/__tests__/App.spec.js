@@ -1,49 +1,54 @@
-import SimpleValidations from '../index.js';
-import FormValidator from '../form-validator';
-//import Promise from '../node_modules/promise-polyfill';
-import FieldValidator from '../field-validator';
-import cfg from '../config';
-import Util from '../utilities';
+import puppeteer from "../../node_modules/puppeteer";
 
-// creates a basic login form
-var createForm = function() {
+const path = require('path');
+const APP = `file:${path.join(__dirname, '../../demo.html')}`;
 
-	let f = document.createElement("form");
-	f.setAttribute(cfg.formValidateAttr,"true");
-
-	let i  = document.createElement("input");
-	i.setAttribute('type',"text");
-	i.setAttribute('name',"Login");
-	i.setAttribute(cfg.fieldValidators,"require, email");
-	f.appendChild(i);
-
-	let p  = document.createElement("input");
-	p.setAttribute('type',"password");
-	p.setAttribute('name',"password");
-	p.setAttribute(cfg.fieldValidators,"require, length");
-	p.setAttribute(cfg.lenMin,"6");
-	p.setAttribute(cfg.lenMax,"14");
-	f.appendChild(p);
-
-	var s = document.createElement("button"); //input element, Submit button
-	s.setAttribute('type',"submit");
-	s.setAttribute('id',"login-button");
-	f.appendChild(s);
-
-	return f;
+const data = {
+  email: 'test@testy.com',
+  badEmail: 'test@test.',
+  password: "Pa$$w0rD",
+  badPassword: "",
+  confirmPassword: "Pa$$w0rD",
+  badConfirmPassword: "Pa$$w0r",
+  custno: 123456,
+  badCustno: "ACR567i",
+  aad: 1234,
+  badAad: 123,
 };
 
+let page;
+let browser;
+const width = 1200;
+const height = 800;
 
-test('SimpleValidations module', () => {
-  let simpl = SimpleValidations;
-  expect(typeof simpl).toBe("object");
+beforeAll(async () => { // eslint-disable-line
+	browser = await puppeteer.launch({
+		headless: false,
+		slowMo: 10,
+		args: [`--window-size=${width},${height}`]
+	});
+	page = await browser.newPage();
+	await page.setViewport({ width, height });
+});
+afterAll(() => { // eslint-disable-line
+	browser.close();
 });
 
-test('FormValidator module', () => {
-	let form = createForm();
-	console.log("FORM", form);
-	let fv = new FormValidator(form);
-	let button = fv.getButton(form);
-	console.log("formValidator", button.getAttribute('id'));
-	expect(true).toBe(true);
+describe("Demo form", async () => {
+	test("Valid e-mail", async () => {
+		await page.goto(APP);
+		await page.waitForSelector("[data-jsv-form]");
+		await page.click("input[name=Login]");
+		await page.type("input[name=Login]", data.email);
+		await page.waitForSelector("input[name=Login][data-jsv-field-isvalid]");
+	}, 2000);
+	test("Invalid e-mail", async () => {
+		await page.goto(APP);
+		await page.waitForSelector("[data-jsv-form]");
+		await page.click("input[name=Login]");
+		await page.type("input[name=Login]", data.badEmail);
+		await page.waitFor(1000);
+		const text = await page.evaluate(() => document.querySelector('.validate-field-error-message').innerText);
+		expect(text).toBe('Please check your E-Mail format');
+	}, 2000);
 });

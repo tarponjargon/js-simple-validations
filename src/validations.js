@@ -466,8 +466,8 @@ var Validations = function(self) {
 									resolve(self.forceEvent(field));
 								};
 								xhr.send();
-							}
-						}
+							} else { resolve(self.forceEvent(field)); }
+						}  else { resolve(self.forceEvent(field)); }
 					} catch(e) {
 						console.error("problem executing ajax validator", e);
 						resolve();

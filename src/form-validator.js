@@ -53,7 +53,7 @@ function FormValidator(form) {
 
 				if (fieldVal) { // has a value
 					if (previousVal) { // does it have a previous value?
-						add = (fieldVal !== previousVal); // required if value is changed, otherwise do not validate
+						add = (util.safeString(fieldVal) !== previousVal); // required if value is changed, otherwise do not validate
 					} else {
 						add = true; // this is a first-time elvauation
 					} // end if/else for previousVal

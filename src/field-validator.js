@@ -198,7 +198,7 @@ function FieldValidator(field, form, event) {
 
 				// mark this field as having been interacted with
 				if (isCurrent) {
-					field.setAttribute(cfg.prevVal, fieldVal);
+					field.setAttribute(cfg.prevVal, util.safeString(fieldVal));
 				}
 
 				//remove any messages if they exist, they can get out of sync otherwise

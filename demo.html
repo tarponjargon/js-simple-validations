@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="utf-8">
+	<title>Demo Form</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<script>
+	var customSubmitHandler = function(e, form, state) {
+		console.log("customSubmitHandler called with", e, form, state);
+		alert('customSubmitHandler called');
+	};
+	var formValidCallback = function(e, form, state) {
+		console.log("formValidCallback called with", e, form, state);
+		alert('formValidCallback called');
+	};
+	var formInvalidCallback = function(e, form, state) {
+		console.log("formInvalidCallback called with", e, form, state);
+	};
+	</script>
+
+</head>
+<body>
+	<div class="container" style="width: 600px;">
+		<h3>Mega Test Form</h3>
+		<p>Please fill out these fields and stuff</p>
+		<form
+			role="form"
+			class="form"
+			data-jsv-form="true"
+			data-jsv-submit-handler="customSubmitHandler"
+			data-jsv-disable-icons="false"
+			data-jsv-disable-invalid="true"
+			data-jsv-form-valid-callback="formValidCallback"
+			data-jsv-form-invalid-callback="formInvalidCallback"
+			data-jsv-form-incomplete="Please complete all fields">
+			<div class="form-group">
+				<label for="test-email">E-Mail Address</label>
+				<input
+					type="text"
+					id="test-email"
+					name="Login"
+					data-jsv-validators="require, email"
+					data-jsv-field-error-require="Please enter an e-mail"
+					data-jsv-field-error-email="Please check your E-Mail format"
+					placeholder="E-Mail Address"
+					class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="test-password">Desired Password</label>
+				<input
+					type="password"
+					name="Password"
+					id="test-password"
+					data-jsv-validators="require,length"
+					data-jsv-min="6"
+					data-jsv-max="20"
+					placeholder="6-20 Characters"
+					class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="test-confirm-password">Confirm Password</label>
+				<input
+					type="password"
+					name="ConfirmPassword"
+					id="test-confirm-password"
+					placeholder="Confirm Password"
+					data-jsv-validators="dependent,require,compare"
+					data-jsv-dependents="Password"
+					data-jsv-compare="Password"
+					class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="test-customer-number">Customer Number</label>
+				<input
+					type="text"
+					id="test-customer-number"
+					name="customerNumber"
+					placeholder="Number"
+					data-jsv-validators="require,number"
+					class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="test-dealer-number">Dealer Number</label>
+				<input
+					type="password"
+					name="aad"
+					id="test-dealer-number"
+					placeholder="4 Digits"
+					data-jsv-validators="require, numberexact"
+					data-jsv-exact="4"
+					class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="test-random-field">Random Field</label>
+				<input
+					type="text"
+					name="random"
+					id="test-random-field"
+					placeholder="Optional, but if exists should contain the word &quot;twelve&quot;"
+					data-jsv-validators="contains"
+					data-jsv-contains="twelve"
+					data-jsv-disable-icon="false"
+					class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="test-date-field">Date Field</label>
+				<input
+					type="text"
+					name="dateField"
+					id="test-date-field"
+					placeholder="Format: YYYY-MM-DD"
+					data-jsv-validators="require,pattern"
+					data-jsv-pattern="^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$"
+					data-jsv-field-error-pattern="Must match pattern YYYY-MM-DD"
+					data-jsv-disable-icon="false"
+					class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="test-url-field">URL Field</label>
+				<input
+					type="text"
+					name="url"
+					id="test-url-field"
+					placeholder="Optionally enter a URL"
+					data-jsv-validators="url"
+					class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="test-random-textarea">Random Textarea</label>
+				<textarea
+					name="random-textarea"
+					id="test-random-textarea"
+					placeholder="I heart textareas"
+					data-jsv-validators="require"
+					class="form-control"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="test-card-type">Card Type</label>
+				<select
+					name="cardType"
+					id="test-card-type"
+					data-jsv-validators="require"
+					data-jsv-error-message="Select a card type"
+					data-jsv-field-error-require="Please select a card type"
+					class="form-control">
+					<option value="">Select Card Type</option>
+					<option value="5">Visa</option>
+					<option value="6">MasterCard</option>
+					<option value="7">American Express</option>
+					<option value="8">Discover</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="test-card-number">Card Number</label>
+				<input
+					name="cardNumber"
+					type="text"
+					placeholder="Number"
+					data-jsv-validators="require, creditcard"
+					data-jsv-field-error-creditcard="Please enter a valid credit card number"
+					id="test-card-number"
+					class="form-control" />
+			</div>
+
+			<div class="form-group">
+				<label for="test-card-cvv">Card CVV (on back or card)</label>
+				<input
+					name="cardCvv"
+					type="text"
+					data-jsv-validators="require, numberrange"
+					data-jsv-min="3"
+					data-jsv-max="4"
+					placeholder="3 or 4 Digits"
+					id="test-card-cvv"
+					class="form-control" />
+			</div>
+
+			<div class="row">
+				<div class="col-sm-6 col-xs-12">
+					<div class="form-group">
+						<label for="test-card-month">Expiration Month</label>
+						<select
+							name="expirationMonth"
+							id="test-card-month"
+							data-jsv-validators="require,expireddate"
+							data-jsv-expiredate="month"
+							data-jsv-field-error-require="Select a month"
+							class="form-control">
+							<option value="">Select Month</option>
+							<option value="1">January</option>
+							<option value="2">February</option>
+							<option value="3">March</option>
+							<option value="04">April</option>
+							<option value="05">May</option>
+							<option value="06">June</option>
+							<option value="07">July</option>
+							<option value="08">August</option>
+							<option value="09">September</option>
+							<option value="10">October</option>
+							<option value="11">November</option>
+							<option value="12">December</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-sm-6 col-xs-12">
+					<div class="form-group">
+						<label for="test-card-year">Expiration Year</label>
+						<select
+							name="expirationYear"
+							id="test-card-year"
+							data-jsv-validators="require,expireddate"
+							data-jsv-expiredate="year"
+							data-jsv-field-error-require="Select a year"
+							class="form-control" >
+							<option value="">Select Year</option>
+							<option value="18">2018</option>
+							<option value="19">2019</option>
+							<option value="20">2020</option>
+							<option value="2021">2021</option>
+							<option value="2022">2022</option>
+							<option value="2023">2023</option>
+							<option value="2024">2024</option>
+							<option value="2025">2025</option>
+							<option value="2026">2026</option>
+							<option value="2027">2027</option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="row">
+					<div class="col-xs-12">
+						<strong>Receive E-Mail Updates?</strong>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-1">
+						<input
+							name="optin"
+							data-jsv-validators="requiremin"
+							data-jsv-min-selected="1"
+							data-jsv-message-target="radio-invalid"
+							type="radio"
+							value="true"
+							id="test-save-email-yes">
+					</div>
+					<div class="col-xs-2">
+						<label for="test-save-email-yes">Yes</label>
+					</div>
+					<div class="col-xs-1">
+						<input
+							name="optin"
+							data-jsv-validators="requiremin"
+							data-jsv-min-selected="1"
+							data-jsv-message-target="radio-invalid"
+							type="radio"
+							value="false"
+							id="test-save-email-no">
+					</div>
+					<div class="col-xs-8">
+						<label for="test-save-email-no">No</label>
+					</div>
+				</div>
+				<div class="validate-field-error-message" id="radio-invalid"></div>
+			</div>
+			<div class="form-group">
+				<div class="row">
+					<div class="col-xs-1">
+						<input
+							data-jsv-validators="requiremin"
+							data-jsv-min-selected="2"
+							id="test-terms-service"
+							data-jsv-message-target="checkbox-invalid"
+							data-jsv-field-error-requiremin="Please agree to both to continue"
+							type="checkbox"
+							name="terms"
+							value="yes">
+					</div>
+					<div class="col-xs-11">
+						<label class="pull-left" for="test-terms-service">Agree to terms of service?</label>
+					</div>
+					<div class="col-xs-1">
+						<input
+							data-jsv-validators="requiremin"
+							data-jsv-min-selected="2"
+							id="test-terms-service-more"
+							data-jsv-message-target="checkbox-invalid"
+							data-jsv-field-error-requiremin="Please agree to both to continue"
+							type="checkbox"
+							name="terms"
+							value="more">
+					</div>
+					<div class="col-xs-11">
+						<label class="pull-left" for="test-terms-service-more">Agree to more stuff?</label>
+					</div>
+				</div>
+				<div class="validate-field-error-message" id="checkbox-invalid"></div>
+			</div>
+
+			<div class="form-group">
+				<button type="submit" id="test-button" class="btn btn-primary btn-block">
+				Sign Up
+				</button>
+			</div>
+		</form>
+
+	</div>
+<script src="build/js-simple-validations.js"></script>
+</body>
+</html>
