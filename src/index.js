@@ -110,10 +110,12 @@ var SimpleValidations = function() {
 					console.error('problem wrapping field ' + field + ' with containing div' + cfg.fieldContainer);
 				}
 
-				// add field-level error container (if not exists)
+				// add field-level error container (if not exists and a custom one doesn't exist)
 				try {
-					var fe = util.createValidationElement(field.parentNode, cfg.fieldError);
-					if (fe) {
+					var ces = util.getAttr(field, cfg.invMessage);
+					var ce = (ces) ? form.querySelector('#' + ces) : null;
+					if (!ce) {
+						var fe = util.createValidationElement(field.parentNode, cfg.fieldError);
 						field.parentNode.parentNode.insertBefore(fe, field.parentNode.nextElementSibling);
 					}
 				}
@@ -143,7 +145,7 @@ var SimpleValidations = function() {
 			var dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
 			var debounced = debounce(formValidator.validate, dbRate);
 			var debounceWrapper = function(e) {
-				console.log("debounceWrapper", e.type, form.getAttribute('name'), field.getAttribute('name'), field.getAttribute('id'), "debouterate", dbRate);
+				//console.log("debounceWrapper", e.type, form.getAttribute('name'), field.getAttribute('name'), field.getAttribute('id'), "debouterate", dbRate);
 				if (field.offsetParent !== null) {
 					debounced(e, form).then(function(){}).catch(function(){});
 				} else {

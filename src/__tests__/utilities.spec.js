@@ -46,7 +46,7 @@ describe('Util suite', function() {
 
 	test('CreateForm', () => {
 		let form = createForm();
-		console.log("FORM", form);
+		//console.log("FORM", form);
 		expect(form.getAttribute('id')).toBe('login-form');
 	});
 

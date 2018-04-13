@@ -197,7 +197,7 @@ function FieldValidator(field, form, event) {
 				var isCurrent = self.checkIfCurrent(field);
 
 				// mark this field as having been interacted with
-				if (isCurrent) {
+				if (isCurrent && fieldVal) {
 					field.setAttribute(cfg.prevVal, util.safeString(fieldVal));
 				}
 

@@ -83,7 +83,10 @@ function Util() {
 				});
 			} catch(e) {
 				console.error("problem creating safeString on text", text, e);
+				return null;
 			}
+		} else {
+			return null;
 		}
 	};
 

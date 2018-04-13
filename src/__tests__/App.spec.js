@@ -1,9 +1,12 @@
 import puppeteer from "../../node_modules/puppeteer";
+import cfg from '../config';
+import FieldValidator from '../field-validator';
 
 const path = require('path');
 const APP = `file:${path.join(__dirname, '../../demo.html')}`;
 
 const data = {
+  formId: 'test-email',
   email: 'test@testy.com',
   badEmail: 'test@test.',
   password: "Pa$$w0rD",
@@ -34,21 +37,67 @@ afterAll(() => { // eslint-disable-line
 	browser.close();
 });
 
-describe("Demo form", async () => {
+const helperFunctions = (cfg) => {
+
+		window.getElement = (selector) => {
+			return (selector) ? document.querySelector(selector) : null;
+		};
+
+		window.getWait = (selector) => {
+			let el = window.getElement(selector);
+			let cdb = el.getAttribute(cfg.fieldDebounce);
+			let db = (cdb) ? cdb : cfg.debounceDefault;
+			return db + 100;
+		};
+
+		window.getErrorText = function(selector) {
+			console.log("IN GETERRORC", selector);
+			let el = window.getElement(selector);
+			var ec = null;
+			var id = el.getAttribute(cfg.invMessage);
+			var cc = (id) ? document.querySelector('#' + id) : null;
+			if (cc) {
+				ec = cc;
+			} else {
+				ec = (el.parentNode.nextElementSibling.classList.contains(cfg.fieldError.className)) ?
+					  el.parentNode.nextElementSibling :
+					  null;
+			}
+			console.log("in getErrorText return", ec.innerText);
+			return (ec) ? ec.innerText : null;
+		};
+};
+
+let formSelector = `[${cfg.formValidateAttr}]`;
+
+
+describe("Demo form", async() => {
+
 	test("Valid e-mail", async () => {
 		await page.goto(APP);
-		await page.waitForSelector("[data-jsv-form]");
+		await page.waitForSelector(formSelector);
 		await page.click("input[name=Login]");
 		await page.type("input[name=Login]", data.email);
-		await page.waitForSelector("input[name=Login][data-jsv-field-isvalid]");
+		await page.waitForSelector("input[name=Login]["+cfg.fieldIsValid+"]");
 	}, 2000);
-	test("Invalid e-mail", async () => {
+	test("Invalid e-mail", async() => {
+		page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+		let selector = 'input[name=Login]';
+		let expectStr = 'Please check your E-Mail format';
 		await page.goto(APP);
-		await page.waitForSelector("[data-jsv-form]");
-		await page.click("input[name=Login]");
-		await page.type("input[name=Login]", data.badEmail);
-		await page.waitFor(1000);
-		const text = await page.evaluate(() => document.querySelector('.validate-field-error-message').innerText);
-		expect(text).toBe('Please check your E-Mail format');
+		await page.evaluate(helperFunctions, cfg);
+		await page.click(selector);
+		await page.type(selector, data.badEmail);
+		const waitLength = await page.evaluate(selector => {
+			return window.getWait(selector);
+		},selector);
+		console.log("waitLength", waitLength);
+		await page.waitFor(waitLength);
+		const text = await page.evaluate(selector => {
+			return window.getErrorText(selector);
+		}, selector);
+		console.log("text", text);
+		//expect(text).toBe('Please check your E-Mail format');
+		expect(text).toBe(expectStr);
 	}, 2000);
 });
