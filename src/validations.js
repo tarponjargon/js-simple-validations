@@ -88,7 +88,7 @@ var Validations = function(self) {
 					var v = (f) ? util.getValue(f) : null;
 					var errorMessage = function() {
 						var message = "Does not match";
-						var label = self.getLabel(field);
+						var label = self.getLabel(f);
 						if (label) { message += " " + label }
 						return message;
 					}();

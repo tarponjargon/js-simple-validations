@@ -75,7 +75,6 @@ function FieldValidator(field, form, event) {
 	};
 
 	this.getContainer = function(field=self.field, type) {
-		console.log("getContainer", type);
 		var id = (type) ? util.getAttr(field, type) : null;
 		return (id) ? self.form.querySelector('#' + id) : null;
 	};
