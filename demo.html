@@ -11,11 +11,16 @@
 	};
 	var formValidCallback = function(e, form, state) {
 		console.log("formValidCallback called with", e, form, state);
-		alert('formValidCallback called');
 	};
 	var formInvalidCallback = function(e, form, state) {
 		console.log("formInvalidCallback called with", e, form, state);
 	};
+	var usernameFail = function(e, form, fieldName, validator, state) {
+		console.log("usernameFail callback", e, form, fieldName, validator, state);
+	}
+	var usernameSuccess = function(e, form, fieldName, validator, state) {
+		console.log("usernameSuccess callback", e, form, fieldName, validator, state);
+	}
 	</script>
 
 </head>
@@ -26,6 +31,7 @@
 		<form
 			role="form"
 			class="form"
+			name="demoForm"
 			data-jsv-form="true"
 			data-jsv-submit-handler="customSubmitHandler"
 			data-jsv-disable-icons="false"
@@ -35,19 +41,28 @@
 			data-jsv-form-incomplete="Please complete all fields">
 			<div class="form-group">
 				<label for="test-email">E-Mail Address</label>
-				<input
-					type="text"
-					id="test-email"
-					name="Login"
-					data-jsv-validators="require, email"
-					data-jsv-field-error-require="Please enter an e-mail"
-					data-jsv-field-error-email="Please check your E-Mail format"
-					placeholder="E-Mail Address"
-					data-jsv-message-target="customerror"
-					class="form-control" />
-					<div id="customerror">
-
-					</div>
+				<div class="validate-input" id="customvalidate">
+					<input
+						type="text"
+						id="test-email"
+						name="Login"
+						data-jsv-validators="require, email, ajax"
+						data-jsv-ajax-endpoint="https://api.github.com/users/tarponjargon"
+						data-jsv-ajax-key="company"
+						data-jsv-ajax-value=""
+						data-jsv-ajax-processing="Checking login..."
+						data-jsv-field-invalid-callback-ajax="usernameFail"
+						data-jsv-field-valid-callback-ajax="usernameSuccess"
+						data-jsv-field-error-ajax="Login does not exist"
+						data-jsv-field-error-require="Please enter an e-mail"
+						data-jsv-field-error-email="Please check your E-Mail format"
+						placeholder="E-Mail Address (yardy@yarr.com will validate via ajax)"
+						data-jsv-message-target="customerror"
+						data-jsv-validation-target="customvalidate"
+						data-jsv-debounce="800"
+						class="form-control" />
+				</div>
+				<div class="validate-field-error-message" id="customerror"></div>
 			</div>
 			<div class="form-group">
 				<label for="test-password">Desired Password</label>
@@ -233,7 +248,26 @@
 				</div>
 			</div>
 
-			<div class="form-group">
+			<div class="form-group validate-input" id="singlecheckvalidate">
+				<div class="row">
+					<div class="col-xs-1">
+						<input
+							data-jsv-validators="require"
+							id="test-single-checkbox"
+							data-jsv-message-target="single-checkbox-invalid"
+							data-jsv-validation-target="singlecheckvalidate"
+							type="checkbox"
+							name="single"
+							value="true">
+					</div>
+					<div class="col-xs-11">
+						<label class="pull-left" for="test-single-checkbox">Just a regular single checkbox</label>
+					</div>
+				</div>
+				<div class="validate-field-error-message" id="single-checkbox-invalid"></div>
+			</div>
+
+			<div class="form-group validate-input" id="radiovalidate">
 				<div class="row">
 					<div class="col-xs-12">
 						<strong>Receive E-Mail Updates?</strong>
@@ -246,6 +280,7 @@
 							data-jsv-validators="requiremin"
 							data-jsv-min-selected="1"
 							data-jsv-message-target="radio-invalid"
+							data-jsv-validation-target="radiovalidate"
 							type="radio"
 							value="true"
 							id="test-save-email-yes">
@@ -259,6 +294,7 @@
 							data-jsv-validators="requiremin"
 							data-jsv-min-selected="1"
 							data-jsv-message-target="radio-invalid"
+							data-jsv-validation-target="radiovalidate"
 							type="radio"
 							value="false"
 							id="test-save-email-no">
@@ -269,7 +305,7 @@
 				</div>
 				<div class="validate-field-error-message" id="radio-invalid"></div>
 			</div>
-			<div class="form-group">
+			<div class="form-group validate-input" id="checkboxvalidate">
 				<div class="row">
 					<div class="col-xs-1">
 						<input
@@ -278,6 +314,7 @@
 							id="test-terms-service"
 							data-jsv-message-target="checkbox-invalid"
 							data-jsv-field-error-requiremin="Please agree to both to continue"
+							data-jsv-validation-target="checkboxvalidate"
 							type="checkbox"
 							name="terms"
 							value="yes">
@@ -291,6 +328,7 @@
 							data-jsv-min-selected="2"
 							id="test-terms-service-more"
 							data-jsv-message-target="checkbox-invalid"
+							data-jsv-validation-target="checkboxvalidate"
 							data-jsv-field-error-requiremin="Please agree to both to continue"
 							type="checkbox"
 							name="terms"
@@ -302,6 +340,8 @@
 				</div>
 				<div class="validate-field-error-message" id="checkbox-invalid"></div>
 			</div>
+
+
 
 			<div class="form-group">
 				<button type="submit" id="test-button" class="btn btn-primary btn-block">

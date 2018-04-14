@@ -14,14 +14,14 @@ function FormValidator(form) {
 		try {
 			return form.getElementsByTagName("button")[0];
 		} catch(e) {
-			console.error("FormValidator problem getting button", e);
+			console.error("FormValidator problem getting button");
 		}
 	};
 	this.hasValid = function(form=self.form) {
 		try {
 			return util.getAttr(form, cfg.formIsValid);
 		} catch(e) {
-			console.error("FormValidator hasValid function failed", e)
+			console.error("FormValidator hasValid function failed")
 		}
 	};
 	this.getFields = function(form=self.form) {
@@ -30,7 +30,7 @@ function FormValidator(form) {
 			fields = form.querySelectorAll('[' + cfg.fieldValidators + ']');
 			//console.log("in formFields(), getting data attr", cfg.fieldValidators, "from", form);
 		} catch(e) {
-			console.error("could not get nodeList for [" + cfg.fieldValidators + "]", e);
+			console.error("could not get nodeList for [" + cfg.fieldValidators + "]");
 		}
 		return fields;
 	};
@@ -48,31 +48,33 @@ function FormValidator(form) {
 				var reset = false;
 				var vtypes = util.getAttr(field, cfg.fieldValidators);
 				var isRequired = (vtypes && vtypes.toLowerCase().indexOf("require") !== -1);
+				var isMulti = (field.type === 'radio' || field.type === 'checkbox');
 				var fieldVal = util.getValue(field);
 				var previousVal = field.getAttribute(cfg.prevVal);
 
 				if (fieldVal) { // has a value
 					if (previousVal) { // does it have a previous value?
-						add = (util.safeString(fieldVal) !== previousVal); // required if value is changed, otherwise do not validate
+						add = (util.safeString(fieldVal) !== previousVal || isMulti); // required if value is changed OR if it's a multi-valued input like radio/checkbox
 					} else {
 						add = true; // this is a first-time elvauation
 					} // end if/else for previousVal
 				} else { // no value...
 					if (isRequired) { // if field has a 'require' validator, add to validation list
 						add = true;
-					} else { // if it's not a required field and doesn't have a value, any UI changes and call it valid
+					} else { // if it's not a required field and doesn't have a value, reset any UI changes and call it valid
 						reset = true;
 					}
 				} // end if/esle for has field value
 
 				if (add) {
+					//console.log("adding to fields to validate", field.getAttribute('name'));
 					vfields.validate.push(field);
 				}
 				if (reset) {
 					vfields.reset.push(field);
 				}
 			} catch(e) {
-				console.error("could not determine if field is needs validation", e);
+				console.error("could not determine if field is needs validation");
 			}
 		});
 		//console.log("retrieved vfields", vfields);

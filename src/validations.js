@@ -423,7 +423,7 @@ var Validations = function(self) {
 				return new Promise(function(resolve, reject) {
 					try {
 						if (self.checkIfCurrent(field)) {
-							var errTgt = self.getErrorContainer(field);
+							var errTgt = self.getContainer(field, cfg.invMessage);
 							if (errTgt) {
 								var msg = util.getAttr(field, cfg.ajaxProcessing);
 								errTgt.innerText = msg || "Checking...";
@@ -431,10 +431,12 @@ var Validations = function(self) {
 							var fname = field.getAttribute('name')
 							var endp = util.getAttr(field, cfg.ajaxEndpoint);
 							var key = util.getAttr(field, cfg.ajaxKey);
-							var val = util.getAttr(field, cfg.ajaxValue);
-							if (endp && key && val !== null && !/^http/.test(endp.toLowerCase())) { // crude way to make ajax safe - don't allow absolute URLs
+							var safe = true;
+							if (endp && cfg.safeEndpoints && /^http/.test(endp.toLowerCase())) { safe = false; } // crude way to make ajax safe - don't allow absolute URLs
+							if (safe && endp && key) {
 
-								var url = endp + '?' + fname + '=' + util.getValue(field);
+								var fieldVal = util.getValue(field);
+								var url = endp + '?' + fname + '=' + fieldVal;
 
 								var xhr = new XMLHttpRequest();
 								xhr.open('GET', url);
@@ -444,6 +446,7 @@ var Validations = function(self) {
 									if (xhr.status === 200) {
 										var data = JSON.parse(xhr.responseText);
 										//console.log("raw ajax response", data, "data[ajaxKey]", data[ajaxKey]);
+										var val = util.getAttr(field, cfg.ajaxValue) || fieldVal;
 										if (data && data[key] === val) {
 											resolve(self.forceEvent(field));
 										} else {

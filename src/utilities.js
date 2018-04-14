@@ -48,10 +48,7 @@ function Util() {
 	};
 
 	// function inserts DOM elements needed by this program
-	this.createValidationElement = function(el, selectorObj, tag) {
-		if (tag === 'undefined' || !tag) {
-			tag = 'div';
-		}
+	this.createValidationElement = function(el, selectorObj, id, tag='div') {
 		var newEl = null;
 		try {
 			if (!el.querySelector('.' + selectorObj.className)) {
@@ -61,6 +58,9 @@ function Util() {
 					Array.prototype.forEach.call(selectorObj.addClasses, function(addClass) {
 						newEl.classList.add(addClass);
 					})
+				}
+				if (id) {
+					newEl.setAttribute('id', id)
 				}
 			}
 		}
@@ -72,20 +72,17 @@ function Util() {
 
 	// crude way of making strings htm-safe
 	this.safeString = function(text) {
-		if (text) {
-			try {
-				var table = {
-					'<': 'lt','>': 'gt','"': 'quot','\'': 'apos','&': 'amp',
-					'\r': '#10','\n': '#13'
-				};
-				return text.toString().replace(/[<>"'\r\n&]/g, function(chr) {
-					return '&' + table[chr] + ';';
-				});
-			} catch(e) {
-				console.error("problem creating safeString on text", text, e);
-				return null;
-			}
-		} else {
+		if (!text) { return null }
+		try {
+			var table = {
+				'<': 'lt','>': 'gt','"': 'quot','\'': 'apos','&': 'amp',
+				'\r': '#10','\n': '#13'
+			};
+			return text.toString().replace(/[<>"'\r\n&]/g, function(chr) {
+				return '&' + table[chr] + ';';
+			});
+		} catch(e) {
+			console.error("problem creating safeString on text", text, e);
 			return null;
 		}
 	};
@@ -335,6 +332,10 @@ function Util() {
 	this.alphaNum = function(str) {
 		if (!str) { return null; }
 		return str.replace(/[^a-z0-9 \-]/gi,'');
+	};
+
+	this.createId = function () {
+		return Math.random().toString(36).substr(2, 8);
 	};
 
 

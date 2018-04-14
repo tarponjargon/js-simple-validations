@@ -51,7 +51,7 @@ function FieldValidator(field, form, event) {
 				eligible = true;
 			}
 		} catch(e) {
-			console.error("Problem getting eligible events for validator", validator, e);
+			console.error("Problem getting eligible events for validator", validator);
 		}
 		return eligible;
 	}
@@ -74,31 +74,10 @@ function FieldValidator(field, form, event) {
 		return validators;
 	};
 
-	this.getErrorContainer = function(field=self.field) {
-		try {
-			var ec = null;
-			// if there is a custom target cfgured for the field error message AND it exists, use that
-			var id = util.getAttr(field, cfg.invMessage);
-			var cc = (id) ? form.querySelector('#' + id) : null;
-			if (cc) {
-				ec = cc;
-			} else {
-				ec = (field.parentNode.nextElementSibling.classList.contains(cfg.fieldError.className)) ?
-					  field.parentNode.nextElementSibling :
-					  null;
-			}
-			return ec;
-		} catch(e) {
-			console.error("problem finding errorcontainer on", field, e);
-		}
-	};
-
-	this.getValidationContainer = function(field=self.field) {
-		try {
-			return (field.parentNode.classList.contains(cfg.fieldContainer.className)) ? field.parentNode : null;
-		} catch(e) {
-			console.error("problem finding getValidationContainer on", field, e);
-		}
+	this.getContainer = function(field=self.field, type) {
+		console.log("getContainer", type);
+		var id = (type) ? util.getAttr(field, type) : null;
+		return (id) ? self.form.querySelector('#' + id) : null;
 	};
 
 	this.getCustomErrors = function(field=self.field) {
@@ -155,13 +134,13 @@ function FieldValidator(field, form, event) {
 			}
 			return true;
 		} catch(e) {
-			console.error("problem running setFieldsValid", e);
+			console.error("problem running setFieldsValid");
 			return false;
 		}
 	};
 
 	this.setFieldsInvalid = function(fields, validator) {
-		console.log("SETFIELDSINVALID", fields);
+		//console.log("SETFIELDSINVALID", fields);
 		try {
 			if (Array.isArray(fields) && fields.length) {
 				Array.prototype.forEach.call(fields, function(f) {
@@ -173,7 +152,7 @@ function FieldValidator(field, form, event) {
 			}
 			return true;
 		} catch(e) {
-			console.error("problem running setFieldsInvalid", e);
+			console.error("problem running setFieldsInvalid");
 			return false;
 		}
 	};
@@ -201,12 +180,6 @@ function FieldValidator(field, form, event) {
 					field.setAttribute(cfg.prevVal, util.safeString(fieldVal));
 				}
 
-				//remove any messages if they exist, they can get out of sync otherwise
-				//var errTarget = self.getErrorContainer(field);
-				// if (isCurrent && errTarget && errTarget.innerText.length) {
-				//  	errTarget.innerText = "";
-				// }
-
 				// if there are no validationTypes set, resolve because there's nothing to validate
 				if (!vTypes || !vTypes.length) {
 					console.error("in FieldValidator but there are no validationTypes to run");
@@ -233,7 +206,7 @@ function FieldValidator(field, form, event) {
 
 			});
 		} catch(e) {
-			console.error("Problem performing validation on", field, e);
+			console.error("Problem performing validation on", field);
 		}
 	} // end validate func
 
@@ -246,7 +219,7 @@ function FieldValidator(field, form, event) {
 				field.removeAttribute(cfg.prevVal);
 
 				//remove styles
-				var vc = self.getValidationContainer(field);
+				var vc = self.getContainer(field, cfg.valTarget);
 				if (vc) {
 					Array.prototype.forEach.call(
 					[cfg.fieldValid, cfg.validIcon, cfg.fieldInvalid, cfg.invIcon],
@@ -256,14 +229,14 @@ function FieldValidator(field, form, event) {
 				}
 
 				//remove any messages
-				var errTgt = self.getErrorContainer(field);
+				var errTgt = self.getContainer(field, cfg.invMessage);
 				if (errTgt) {
 					errTgt.innerText = "";
 				}
 				resolve();
 			}
 			catch(e) {
-				console.error('FieldValidator problem in reset field function', e);
+				console.error('FieldValidator problem in reset field function');
 				reject();
 			}
 		});
@@ -280,7 +253,7 @@ function FieldValidator(field, form, event) {
 				f.setAttribute(cfg.fieldIsValid, "true");
 			});
 
-			var vc = self.getValidationContainer(field);
+			var vc = self.getContainer(field, cfg.valTarget);
 			if (vc) {
 				vc.classList.remove(cfg.fieldInvalid);
 				vc.classList.remove(cfg.invIcon);
@@ -294,7 +267,7 @@ function FieldValidator(field, form, event) {
 			}
 
 			//remove any messages
-			var errTgt = self.getErrorContainer(field);
+			var errTgt = self.getContainer(field, cfg.invMessage);
 			if (errTgt) {
 				errTgt.innerText = "";
 			}
@@ -302,7 +275,7 @@ function FieldValidator(field, form, event) {
 			// see if there are any callbcks to execute on field=valid
 			var cb = self.getCallbacks(field);
 			if (self.checkIfCurrent(field) &&
-				self.eventType === 'focusout' &&
+				//self.eventType === 'focusout' &&
 				lastv &&
 				lastv in cb.valid &&
 				cb.valid[lastv] in window &&
@@ -312,12 +285,12 @@ function FieldValidator(field, form, event) {
 					var debouncedCallback = util.debounce(window[cb.valid[lastv]], cfg.debounceDefault);
 					debouncedCallback(event, self.form, fieldName, lastv, 'invalid');
 				} catch(e) {
-					console.error("Problem executing valid callback on field:", fieldName, e);
+					console.error("Problem executing valid callback on field:", fieldName);
 				}
 			} // end callback check
 
 		} catch(e) {
-			console.error('FieldValidator problem in valid function', e);
+			console.error('FieldValidator problem in valid function');
 		}
 		return true;
 	}
@@ -343,7 +316,7 @@ function FieldValidator(field, form, event) {
 
 			// perform UI changes ONLY if we're operating on the currently-interacted field
 			if (self.checkIfCurrent(field) || current) {
-				var vc = self.getValidationContainer(field);
+				var vc = self.getContainer(field, cfg.valTarget);
 				if (vc) {
 					vc.classList.remove(cfg.fieldValid);
 					vc.classList.remove(cfg.validIcon);
@@ -355,15 +328,14 @@ function FieldValidator(field, form, event) {
 					}
 				}
 				//if (message && self.errorContainer && (self.eventType === 'focusout' || self.eventType === 'change' || self.eventType === 'submit')) {
-				var errTgt = self.getErrorContainer(field);
+				var errTgt = self.getContainer(field, cfg.invMessage);
 				if (message && errTgt) {
 					errTgt.innerText = message;
 				}
 
 				// see if there are any callbcks to execute on field=invalid
 				var cb = self.getCallbacks(field);
-				if (
-					lastv &&
+				if (lastv &&
 					lastv in cb.invalid &&
 					cb.invalid[lastv] in window &&
 					typeof window[cb.invalid[lastv]] === 'function'
@@ -372,14 +344,14 @@ function FieldValidator(field, form, event) {
 						var debouncedCallback = util.debounce(window[cb.invalid[lastv]], cfg.debounceDefault);
 						debouncedCallback(event, self.form, fieldName, lastv, 'invalid', message);
 					} catch(e) {
-						console.error("Problem executing valid callback on field:", fieldName, e);
+						console.error("Problem executing valid callback on field:", fieldName);
 					}
 				} // end callback check
 
 			}
 		}
 		catch(e) {
-			console.error('FieldValidator problem in field invalid function', e);
+			console.error('FieldValidator problem in field invalid function');
 		}
 		return false;
 	};

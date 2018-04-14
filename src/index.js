@@ -95,28 +95,41 @@ var SimpleValidations = function() {
 		// loop thru fields in this form marked for validation
 		Array.prototype.forEach.call(form.querySelectorAll('[' + cfg.fieldValidators + ']'), function(field) {
 
+			// reference ID to tie message container, etc to this field
+			var baseId = util.getAttr(field, cfg.baseId);
+			if (!baseId) {
+				baseId = util.createId();
+				field.setAttribute(cfg.baseId, baseId);
+			}
+
 			// add containing div around field to be validated (if not exists)
-			// radio buttons are excluded.  the <div class="validate-input"></div> needs to be added manually
-			// around all radio inputs with the same name (for now)
+			// radio/checkboxes excluded because they have multiple elements
+			// so the divs need to be added manually (if wanted)
 			if (field.type !== 'radio' && field.type !== 'checkbox') {
 				try {
-					var fc = util.createValidationElement(field.parentNode, cfg.fieldContainer);
-					if (fc) {
+					var cvt = util.getAttr(field, cfg.valTarget);
+					var cv = (cvt) ? form.querySelector('#' + cvt) : null;
+					if (!cv) {
+						var wrapId = 'w-' + baseId;
+						var fc = util.createValidationElement(field.parentNode, cfg.fieldContainer, wrapId);
 						field.parentNode.appendChild(fc);
 						fc.appendChild(field);
+						field.setAttribute(cfg.valTarget, wrapId);
 					}
 				}
 				catch(e) {
 					console.error('problem wrapping field ' + field + ' with containing div' + cfg.fieldContainer);
 				}
 
-				// add field-level error container (if not exists and a custom one doesn't exist)
+				// add field-level error container (if not exists and not a custom one )
 				try {
 					var ces = util.getAttr(field, cfg.invMessage);
 					var ce = (ces) ? form.querySelector('#' + ces) : null;
 					if (!ce) {
-						var fe = util.createValidationElement(field.parentNode, cfg.fieldError);
+						var errId = 'e-' + baseId;
+						var fe = util.createValidationElement(field.parentNode, cfg.fieldError, errId);
 						field.parentNode.parentNode.insertBefore(fe, field.parentNode.nextElementSibling);
+						field.setAttribute(cfg.invMessage, errId);
 					}
 				}
 				catch(e) {
@@ -148,8 +161,6 @@ var SimpleValidations = function() {
 				//console.log("debounceWrapper", e.type, form.getAttribute('name'), field.getAttribute('name'), field.getAttribute('id'), "debouterate", dbRate);
 				if (field.offsetParent !== null) {
 					debounced(e, form).then(function(){}).catch(function(){});
-				} else {
-					console.log("EL NOT VISIBLE");
 				}
 			}
 

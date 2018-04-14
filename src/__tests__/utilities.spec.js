@@ -1,4 +1,3 @@
-import createForm from './fakeform-shared';
 import Util from '../utilities';
 import cfg from '../config';
 
@@ -44,10 +43,5 @@ describe('Util suite', function() {
 		cfg.safeStringInput = true;
 	});
 
-	test('CreateForm', () => {
-		let form = createForm();
-		//console.log("FORM", form);
-		expect(form.getAttribute('id')).toBe('login-form');
-	});
 
 }); // end Util suite

@@ -26,7 +26,8 @@ var cfg = {
 	"invErrPrefix": "data-jsv-field-error-", //data attribute, if populated (in the field element) this message overrides the default when field is invalid.  the suffix is validator name
 	"fieldInvalidCallback": "data-jsv-field-invalid-callback-", //data attribute, if populated (in the field element) this callback function will be called on invalid.  suffix is validator name
 	"fieldValidCallback": "data-jsv-field-valid-callback-", //data attribute, if populated (in the field element) this callback function will be called on valid.  suffix is validator name
-	"invMessage": "data-jsv-message-target", //data attribute, contains an id (selector).  if exists field-level error messages will be targeted to this container
+	"valTarget": "data-jsv-validation-target", //data attribute, contains an id (selector).  if exists the UI validation indicators will be targeted to this container.  otherwise this is creted & assigned
+	"invMessage": "data-jsv-message-target", //data attribute, contains an id (selector).  if exists field-level error messages will be targeted to this container.  otherwise this is creted & assigned
 	"disableIcon": "data-jsv-disable-icon", // data attribute on a field denoting valid/invalid icons should not be shown
 	"fieldValid": "form-field-valid", //class name denoting the field has been validated (for field wrapper)
 	"validIcon": "form-field-valid-focusout", //class name denoting the field is valid, inserted AFTER focusout
@@ -48,12 +49,14 @@ var cfg = {
 		"className": "validate-field-error-message", // field-level error container class name
 		"addClasses": [], // ARRAY additional classes to add to field error container
 	},
+	"baseId": "data-jsv-base-id", // a random id assigned to each field that will be used to create selector IDs for associated elements (error, validation container)
 	"messageHidden": "validate-form-hidden-message", // classname that toggles visibility onform-level message container(s)
 	"buttonSuccess": "success-button", // class name added to <button> element after successful submit (like if you want to change it green)
 	"buttonTooltip": "data-jsv-form-tooltip", // data attribute for button tooltip
 	"buttonOriginalText": "data-original-text", // data attribute that stores original text of <button> element (ex: if swapped with "sending..." during submit)
 	"formIncompleteText": "data-jsv-form-incomplete", // data attribute on <form> that stores the text to be shown in tooltip when form is in invalid state
 	"safeStringInput": true, // passes any entered field values thru a santiizer
+	"safeEndpoints": false, // if true endpoints can only be relative urls (i.e. no http://)
 	"ajaxTimeout": 8000, // milliseconds
 	"debounceDefault": 300, // milliseconds
 
