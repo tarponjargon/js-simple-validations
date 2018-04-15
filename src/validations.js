@@ -202,8 +202,7 @@ var Validations = function(self) {
 					} else {
 						var err = self.getCustomErrors(field);
 						var error = (validator && validator in err) ?
-							err[validator] :
-							"Please check your credit card number";
+							err[validator] : "Please enter a valid credit card number (no spaces)";
 						reject(error);
 					}
 				});
