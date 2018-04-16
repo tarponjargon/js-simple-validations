@@ -163,9 +163,52 @@ const toValidate = [{
 	},{
 		name: 'Month is selected',
 		type: 'valid',
-		testVal: '04',
+		testVal: '3',
 		selector: 'select[name=expirationMonth]'
-	},
+	},{
+		name: 'No year selected',
+		type: 'invalid',
+		testVal: '',
+		selector: 'select[name=expirationYear]',
+		expectMessage: "Select a year"
+	},{
+		name: 'Year selection with year + month in past',
+		type: 'invalid',
+		testVal: '18',
+		selector: 'select[name=expirationYear]',
+		expectMessage: "Appears to be expired - please check date"
+	},{
+		name: 'Month selection with month + year in past',
+		type: 'invalid',
+		testVal: '2',
+		selector: 'select[name=expirationMonth]',
+		expectMessage: "Appears to be expired - please check date"
+	},{
+		name: 'Future year is selected',
+		type: 'valid',
+		testVal: '2026',
+		selector: 'select[name=expirationYear]'
+	},{
+		name: 'Future (or current) month is selected',
+		type: 'valid',
+		testVal: '11',
+		selector: 'select[name=expirationMonth]'
+	},{
+		name: 'Valid single checkbox',
+		type: 'valid',
+		testVal: ' ',
+		selector: 'input[name=single]'
+	},{
+		name: 'Valid subscribe choice - yes',
+		type: 'valid',
+		testVal: ' ',
+		selector: '#test-save-email-yes'
+	},{
+		name: 'Valid subscribe choice - no',
+		type: 'valid',
+		testVal: ' ',
+		selector: '#test-save-email-no'
+	}
 ];
 
 // puppeteer setup
@@ -177,7 +220,7 @@ const height = 1000;
 beforeAll(async () => { // eslint-disable-line
 	browser = await puppeteer.launch({
 		headless: false,
-		slowMo: 10,
+		slowMo: 0,
 		args: [`--window-size=${width},${height}`]
 	});
 	page = await browser.newPage();
@@ -188,14 +231,24 @@ afterAll(() => { // eslint-disable-line
 });
 
 // helper functions for the window scope
-const helperFunctions = (cfg) => {
+const helperFunctions = () => {
 
 	window.clearField = (selector) => {
-		return document.querySelector(selector).value = '';
-	}
-	window.getContainer = (selector, cfgKey) => {
+		let field = document.querySelector(selector);
+		if (field.type === 'select-one') {
+			return field.selectedIndex = 0;
+		} else if (field.type === 'checkbox' || field.type === 'radio') {
+			return field.checked = false;
+		} else {
+			return field.value = '';
+		}
+	};
+	window.getAttr = (selector, attr) => {
+		return document.querySelector(selector).getAttribute(attr);
+	};
+	window.getContainer = (selector, targetAttr) => {
 		let thisField = (selector) ? document.querySelector(selector) : null;
-		let targetId = (thisField) ? thisField.getAttribute(cfg[cfgKey]) : null;
+		let targetId = (thisField) ? thisField.getAttribute(targetAttr) : null;
 		return (targetId) ? document.querySelector('#' + targetId) : null;
 	};
 	window.unFocus = (selector) => {
@@ -204,17 +257,17 @@ const helperFunctions = (cfg) => {
 	window.inputType = (selector) => {
 		return document.querySelector(selector).type;
 	};
-
+	window.alertBox = (message) => {
+		alert(message);
+	};
 };
+
+let toValidateCtr = 0;
 
 // test suite
 describe("Demo form", async () => {
 
 	// TODO test for ConfirmPassword dependent validator
-
-	// TODO test for expiredate validator
-
-	// TODO test check/uncheck/check checkboxes ensure validations update
 
 	// TODO test form validates, change a value and is invalid, then correct value
 
@@ -223,41 +276,108 @@ describe("Demo form", async () => {
 	test("Form loads", async () => {
 		page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 		await page.goto(APP);
-		await page.evaluate(helperFunctions, cfg);
+		await page.evaluate(helperFunctions);
 		await page.waitForSelector(formSelector);
 	});
 
 	// loop thru field validation collection
 	toValidate.forEach(t => {
 
-		if (t.type === 'invalid') {
-			test(t.name, async () => {
-				await page.evaluate(selector => window.clearField(selector), t.selector);
-				await page.evaluate(() => window.scrollBy(0, window.innerHeight));
-				await page.focus(t.selector);
+		test(t.name, async () => {
+			const fieldType = await page.evaluate(selector => window.inputType(selector), t.selector);
+			await page.evaluate(selector => window.clearField(selector), t.selector);
+			if (toValidateCtr > 8) {
+				await page.evaluate(() => window.scrollBy(0, document.body.scrollHeight));
+			}
+			await page.focus(t.selector);
+			if (fieldType === 'select-one') {
+				await page.select(t.selector, t.testVal);
+			} else {
 				await page.type(t.selector, t.testVal);
-				await page.evaluate(selector => window.unFocus(selector), t.selector);
-				await page.waitForFunction((args) => {
-					return window.getContainer(args[0], 'invMessage').innerText === args[1];
-				}, {}, [t.selector, t.expectMessage]);
-			}, 4000);
-		}
-
-		if (t.type === 'valid') {
-			test(t.name, async () => {
-				await page.evaluate(selector => window.clearField(selector), t.selector);
-				const fieldType = await page.evaluate(selector => window.inputType(selector), t.selector);
-				console.log("fieldType", fieldType);
-				await page.focus(t.selector);
-				if (fieldType === 'select-one') {
-					await page.select(t.selector, t.testVal);
-				} else {
-					await page.type(t.selector, t.testVal);
-				}
-				await page.evaluate(selector => window.unFocus(selector), t.selector);
+			}
+			await page.evaluate(selector => window.unFocus(selector), t.selector);
+			if (t.type === 'invalid') {
+				await page.waitForFunction(([selector, attr, message]) => {
+					return window.getContainer(selector, attr).innerText === message;
+				}, {}, [t.selector, cfg.invMessage, t.expectMessage]);
+			} else {
 				await page.waitForSelector(t.selector + '['+cfg.fieldIsValid+']');
-			}, 4000);
-		}
+			}
+			toValidateCtr++;
+		}, 4000);
 
+	});
+
+	test("Invalid multi-value checkbox", async () => {
+		const selector = '#test-terms-service';
+		const expectMessage = "Please agree to both to continue";
+		await page.type(selector, " ");
+		await page.waitForFunction(([selector, attr, message]) => {
+			return window.getContainer(selector, attr).innerText === message;
+		}, {}, [selector, cfg.invMessage, expectMessage]);
+	});
+
+	test("Invalid multi-value checkbox 2", async () => {
+		const selector = '#test-terms-service-more';
+		const selector2 = "#test-terms-service";
+		await page.evaluate(selector => window.clearField(selector), selector2);
+		const expectMessage = "Please agree to both to continue";
+		await page.type(selector, " ");
+		await page.waitForFunction(([selector, attr, message]) => {
+			return window.getContainer(selector, attr).innerText === message;
+		}, {}, [selector, cfg.invMessage, expectMessage]);
+	});
+
+	test("Valid multi-value checkbox", async () => {
+		const selector = '#test-terms-service';
+		const selector2 = '#test-terms-service-more';
+		await page.type(selector, " ");
+		await page.waitForSelector(selector + '['+cfg.fieldIsValid+']');
+		await page.waitForSelector(selector2 + '['+cfg.fieldIsValid+']');
+	});
+
+	test("Form is valid", async () => {
+		await page.waitForSelector(formSelector + '['+cfg.formIsValid+']');
+	});
+
+	test("Un-check multi-value checkbox 1", async () => {
+		const selector = '#test-terms-service';
+		const expectMessage = "Please agree to both to continue";
+		await page.type(selector, " ");
+		await page.waitForFunction(([selector, attr, message]) => {
+			return window.getContainer(selector, attr).innerText === message;
+		}, {}, [selector, cfg.invMessage, expectMessage]);
+	});
+
+	test("Form is invalid", async () => {
+		const validAttr = await page.evaluate(([selector, attr]) => window.getAttr(selector, attr), ([formSelector, cfg.formIsValid]));
+		expect(validAttr).toBeFalsy();
+	});
+
+	test("Un-check multi-value checkbox 2", async () => {
+		const selector = '#test-terms-service-more';
+		const expectMessage = "Please agree to both to continue";
+		await page.type(selector, " ");
+		await page.waitForFunction(([selector, attr, message]) => {
+			return window.getContainer(selector, attr).innerText === message;
+		}, {}, [selector, cfg.invMessage, expectMessage]);
+	});
+
+	test("Check both multi-value checkboxes", async () => {
+		const selector = '#test-terms-service';
+		const selector2 = '#test-terms-service-more';
+		await page.type(selector, " ");
+		await page.type(selector2, " ");
+		await page.waitForSelector(selector + '['+cfg.fieldIsValid+']');
+		await page.waitForSelector(selector2 + '['+cfg.fieldIsValid+']');
+	});
+
+	test("Form is valid 2", async () => {
+		await page.waitForSelector(formSelector + '['+cfg.formIsValid+']');
+	});
+
+	test("Deliberate pause", async () => {
+		await page.waitFor(2000);
+		expect(true).toBe(true);
 	});
 });
