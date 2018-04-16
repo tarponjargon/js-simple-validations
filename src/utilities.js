@@ -302,7 +302,6 @@ function Util() {
 	};
 
 	this.debounce = function(func, wait, immediate) {
-		console.log("DEBOUNCE CALLED", func, wait);
 		var timeout;
 		return function() {
 			var context = this, args = arguments;

@@ -231,7 +231,7 @@ afterAll(() => { // eslint-disable-line
 });
 
 // helper functions for the window scope
-const helperFunctions = () => {
+const helperFunctions = (cfg) => {
 
 	window.clearField = (selector) => {
 		let field = document.querySelector(selector);
@@ -260,6 +260,25 @@ const helperFunctions = () => {
 	window.alertBox = (message) => {
 		alert(message);
 	};
+	window.filterClassListFor = (selector, attr, str) => {
+		let matcher = new RegExp("^" + str);
+		let contains = 0;
+		window.getContainer(selector, attr).classList.forEach(c => {
+			if (matcher.test(c)) {
+				contains++
+			}
+		});
+		return contains;
+	};
+	window.getWait = (selector) => {
+		let el = document.querySelector(selector);
+		let cdb = el.getAttribute(cfg.fieldDebounce);
+		let db = (cdb) ? cdb : cfg.debounceDefault;
+		return db + 100;
+	};
+	window.isDisabled = (selector) => {
+		return document.querySelector(selector).disabled;
+	};
 };
 
 let toValidateCtr = 0;
@@ -267,16 +286,65 @@ let toValidateCtr = 0;
 // test suite
 describe("Demo form", async () => {
 
-	// TODO test for ConfirmPassword dependent validator
 
-	// TODO test form validates, change a value and is invalid, then correct value
+	// TODO form submits
 
 	// TODO test callbacks work
 
 	test("Form loads", async () => {
 		page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 		await page.goto(APP);
-		await page.evaluate(helperFunctions);
+		await page.evaluate(helperFunctions, cfg);
+		await page.waitForSelector(formSelector);
+	});
+
+	// field invalid callback
+	test("Field invalid callback fires", async () => {
+		const selector = 'input[name=Login]';
+		const expectMessage = "usernameFail callback fired";
+		await page.focus(selector);
+		await page.type(selector, "yurdy@yurr.com");
+		await page.evaluate(selector => window.unFocus(selector), selector);
+		await page.waitForFunction(m => {
+			return window.usernameFail().message === m;
+		}, {}, expectMessage);
+	});
+
+	// field invalid callback
+	test("Field valid callback fires", async () => {
+		await page.waitFor(2000); // deliberate pause
+		const selector = 'input[name=Login]';
+		const expectMessage = "usernameSuccess callback fired";
+		await page.evaluate(selector => window.clearField(selector), selector);
+		await page.focus(selector);
+		await page.type(selector, "yardy@yarr.com");
+		await page.evaluate(selector => window.unFocus(selector), selector);
+		await page.waitForFunction(m => {
+			return window.usernameSuccess().message === m;
+		}, {}, expectMessage);
+	});
+
+	test("Submit button is disabled", async () => {
+		const isDisabled = await page.evaluate(s => window.isDisabled(s), 'button[type=submit]');
+		expect(isDisabled).toBeTruthy();
+	});
+
+	// test dependent validator on confirm password field
+	test("Invalid dependent validator on confirm password field", async () => {
+		const selector = 'input[name=ConfirmPassword]';
+		const expectMessage = "Please complete Desired Password";
+		await page.focus(selector);
+		await page.type(selector, "yrrrrd");
+		await page.evaluate(selector => window.unFocus(selector), selector);
+		await page.waitForFunction(([selector, attr, message]) => {
+			return window.getContainer(selector, attr).innerText === message;
+		}, {}, [selector, cfg.invMessage, expectMessage]);
+	});
+
+
+	test("Form reloads", async () => {
+		await page.goto(APP);
+		await page.evaluate(helperFunctions, cfg);
 		await page.waitForSelector(formSelector);
 	});
 
@@ -374,6 +442,61 @@ describe("Demo form", async () => {
 
 	test("Form is valid 2", async () => {
 		await page.waitForSelector(formSelector + '['+cfg.formIsValid+']');
+	});
+
+	test("Remove value in required field (random textarea), field invalid", async () => {
+		const selector = 'textarea[name=random-textarea]';
+		const expectMessage = "This field can't be empty";
+		await page.focus(selector);
+		await page.evaluate(selector => window.clearField(selector), selector);
+		await page.evaluate(selector => window.unFocus(selector), selector);
+		await page.waitForFunction(([selector, attr, message]) => {
+			return window.getContainer(selector, attr).innerText === message;
+		}, {}, [selector, cfg.invMessage, expectMessage]);
+	});
+
+	test("Form is invalid 2", async () => {
+		const validAttr = await page.evaluate(([selector, attr]) => window.getAttr(selector, attr), ([formSelector, cfg.formIsValid]));
+		expect(validAttr).toBeFalsy();
+	});
+
+	test("Add back value in required field formValidCallback fires", async () => {
+		const selector = 'textarea[name=random-textarea]';
+		const expectMessage = "formValidCallback callback fired";
+		await page.focus(selector);
+		await page.type(selector, "yardy yard yard yarr");
+		await page.evaluate(selector => window.unFocus(selector), selector);
+		await page.waitForFunction(m => {
+			return window.formValidCallback().message === m;
+		}, {}, expectMessage);
+	});
+
+	test("Form is valid 3", async () => {
+		await page.waitForSelector(formSelector + '['+cfg.formIsValid+']');
+	});
+
+	test("Value removed from optional field, UI on field resets", async () => {
+		const selector = 'input[name=random]';
+		await page.focus(selector);
+		await page.evaluate(selector => window.clearField(selector), selector);
+		await page.evaluate(selector => window.unFocus(selector), selector);
+		const waitLength = await page.evaluate(s => window.getWait(s), selector);
+		await page.waitFor(waitLength); // bypass any debounce wait
+		const hasClasses = await page.evaluate(([selector, attr, str]) => {
+			return window.filterClassListFor(selector, attr, str);
+		}, ([selector, cfg.valTarget, 'form-field-']));
+		const hasMessage = await page.evaluate(([selector, attr]) => window.getAttr(selector, attr).innerText, ([formSelector, cfg.formIsValid]));
+		expect(hasClasses).toEqual(0);
+		expect(hasMessage).toBeFalsy();
+	});
+
+	test("Form is valid 4", async () => {
+		await page.waitForSelector(formSelector + '['+cfg.formIsValid+']');
+	});
+
+	test("Submit button NOT disabled", async () => {
+		const isDisabled = await page.evaluate(s => window.isDisabled(s), 'button[type=submit]');
+		expect(isDisabled).toBeFalsy();
 	});
 
 	test("Deliberate pause", async () => {

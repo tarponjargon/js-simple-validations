@@ -5,22 +5,46 @@
 	<title>Demo Form</title>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<script>
-	var customSubmitHandler = function(e, form, state) {
-		console.log("customSubmitHandler called with", e, form, state);
-		alert('customSubmitHandler called');
-	};
-	var formValidCallback = function(e, form, state) {
-		console.log("formValidCallback called with", e, form, state);
-	};
-	var formInvalidCallback = function(e, form, state) {
-		console.log("formInvalidCallback called with", e, form, state);
-	};
-	var usernameFail = function(e, form, fieldName, validator, state) {
-		console.log("usernameFail callback", e, form, fieldName, validator, state);
-	}
-	var usernameSuccess = function(e, form, fieldName, validator, state) {
-		console.log("usernameSuccess callback", e, form, fieldName, validator, state);
-	}
+		var customSubmitHandler = function(e, form, state) {
+			var returnVal = {
+				message: "customSubmitHandler callback fired",
+				args: arguments
+			}
+			console.log("customSubmitHandler", returnVal);
+			return returnVal;
+		};
+		var formValidCallback = function(e, form, state) {
+			var returnVal = {
+				message: "formValidCallback callback fired",
+				args: arguments
+			}
+			console.log("formValidCallback", returnVal);
+			return returnVal;
+		};
+		var formInvalidCallback = function(e, form, state) {
+			var returnVal = {
+				message: "formInvalidCallback callback fired",
+				args: arguments
+			}
+			console.log("formInvalidCallback", returnVal);
+			return returnVal;
+		};
+		var usernameFail = function(e, form, fieldName, validator, state) {
+			var returnVal = {
+				message: "usernameFail callback fired",
+				args: arguments
+			}
+			console.log("usernameFail", returnVal);
+			return returnVal;
+		}
+		var usernameSuccess = function(e, form, fieldName, validator, state) {
+			var returnVal = {
+				message: "usernameSuccess callback fired",
+				args: arguments
+			}
+			console.log("usernameSuccess", returnVal);
+			return returnVal;
+		}
 	</script>
 
 </head>
@@ -175,7 +199,7 @@
 				<input
 					name="cardNumber"
 					type="text"
-					placeholder="Number"
+					placeholder="4111111111111111 will validate"
 					data-jsv-validators="require, creditcard"
 					data-jsv-field-error-creditcard="Please enter a valid credit card number (no spaces)"
 					id="test-card-number"
