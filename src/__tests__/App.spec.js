@@ -276,6 +276,10 @@ const helperFunctions = (cfg) => {
 		let db = (cdb) ? cdb : cfg.debounceDefault;
 		return db + 100;
 	};
+	window.enableButton = (selector) => {
+		document.querySelector(selector).disabled = false;
+		return true;
+	};
 	window.isDisabled = (selector) => {
 		return document.querySelector(selector).disabled;
 	};
@@ -460,6 +464,30 @@ describe("Demo form", async () => {
 		expect(validAttr).toBeFalsy();
 	});
 
+	test("Submit form in invalid state, check for formInvalidCallback", async () => {
+		const selector = 'button[type=submit]';
+		const expectMessage = "formInvalidCallback callback fired";
+		await page.evaluate(s => { document.querySelector(s).disabled=false; }, selector);
+		await page.evaluate(s => { document.querySelector(s).click(); }, selector);
+		await page.waitForFunction(m => {
+			return window.formInvalidCallback().message === m;
+		}, {}, expectMessage);
+	});
+
+	test("Invalid form message", async () => {
+		const errSelector = '.' + cfg.formError.className;
+		const expectMessage = "Please correct the errors below";
+		const errText = await page.evaluate(s => document.querySelector(s).innerText, errSelector);
+		expect(errText).toBe(expectMessage);
+	});
+
+	test("Button is disabled", async () => {
+		const selector = 'button[type=submit]';
+		await page.evaluate(s => { document.querySelector(s).disabled=true; }, selector);
+		const isDisabled = await page.evaluate(s => window.isDisabled(s), selector);
+		expect(isDisabled).toBeTruthy();
+	});
+
 	test("Add back value in required field formValidCallback fires", async () => {
 		const selector = 'textarea[name=random-textarea]';
 		const expectMessage = "formValidCallback callback fired";
@@ -497,6 +525,20 @@ describe("Demo form", async () => {
 	test("Submit button NOT disabled", async () => {
 		const isDisabled = await page.evaluate(s => window.isDisabled(s), 'button[type=submit]');
 		expect(isDisabled).toBeFalsy();
+	});
+
+	test("Submit valid form, check for formValidCallback", async () => {
+		const selector = 'button[type=submit]';
+		const expectMessage = "formValidCallback callback fired";
+		await page.evaluate(s => { document.querySelector(s).disabled=false; }, selector);
+		await page.evaluate(s => { document.querySelector(s).click(); }, selector);
+		await page.waitForFunction(m => {
+			return window.formValidCallback().message === m;
+		}, {}, expectMessage);
+	});
+
+	test("Form is valid 5", async () => {
+		await page.waitForSelector(formSelector + '['+cfg.formIsValid+']');
 	});
 
 	test("Deliberate pause", async () => {

@@ -66,32 +66,6 @@ var SimpleValidations = function() {
 
 		var formValidator = new FormValidator(form);
 
-		// form submit handler
-		form.addEventListener('submit', function(e) {
-			e.preventDefault(); // we need to do a final validation first
-			console.log("SUBMIT event", form);
-			formValidator.validate(e, form).then(function() {
-				console.log("success!");
-
-				var afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
-				var afterSubmit = (
-					afterSubmitRef &&
-					afterSubmitRef in window &&
-					typeof window[afterSubmitRef] === 'function'
-				) ? window[afterSubmitRef] : null;
-
-				if (afterSubmit) {
-					console.log("AFTERSUBMIT", e, form, 'valid');
-					afterSubmit(e, form, 'valid');
-				} else {
-					console.log("submitting form the traditional way");
-					form.submit();
-				}
-			}).catch(function() {
-				util.showFormMessage(form, cfg.formError.className, cfg.formInvalidMessage);
-			});
-		});
-
 		// loop thru fields in this form marked for validation
 		Array.prototype.forEach.call(form.querySelectorAll('[' + cfg.fieldValidators + ']'), function(field) {
 
@@ -170,6 +144,32 @@ var SimpleValidations = function() {
 			field.addEventListener('focusout', debounceWrapper, false);
 
 		}); // end loop thru fields in form
+
+		// form submit handler
+		form.addEventListener('submit', function(e) {
+			console.log("SUBMIT event", form);
+			e.preventDefault(); // we need to do a final validation first
+			formValidator.validate(e, form).then(function() {
+				console.log("success!");
+
+				var afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
+				var afterSubmit = (
+					afterSubmitRef &&
+					afterSubmitRef in window &&
+					typeof window[afterSubmitRef] === 'function'
+				) ? window[afterSubmitRef] : null;
+
+				if (afterSubmit) {
+					console.log("AFTERSUBMIT", e, form, 'valid');
+					afterSubmit(e, form, 'valid');
+				} else {
+					console.log("submitting form the traditional way");
+					form.submit();
+				}
+			}).catch(function() {
+				util.showFormMessage(form, cfg.formError.className, cfg.formInvalidMessage);
+			});
+		});
 
 	}); // end loop thru forms in window
 
