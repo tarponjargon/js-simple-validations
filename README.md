@@ -8,4 +8,3 @@ Yet another form validation library.  Features:
  - No separate CSS  (unless you want)
  - Promise-based, with AJAX support
  - ES5-compatible, tested back to IE11
- - <20k gzipped
