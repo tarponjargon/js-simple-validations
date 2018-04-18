@@ -159,6 +159,9 @@ function FormValidator(form) {
 				button.removeAttribute(cfg.buttonTooltip);
 			}
 
+			// remove any form-level errors
+			util.hideFormMessage(form, cfg.formError.className);
+
 			// see if there are any callbcks to execute on form=valid
 			var validCallback = util.getAttr(form, cfg.formValidCallback);
 			if (e.type !== 'submit' &&

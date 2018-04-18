@@ -139,9 +139,8 @@ function Util() {
 						cfg.useTooltip &&
 						cfg.buttonTooltip
 					) {
-						var override = this.getAttr(form, cfg.formIncompleteText);
-						var message = (override) ? override : cfg.formIncompleteMessage;
-						button.setAttribute(cfg.buttonTooltip, message);
+						var m = this.getAttr(form, cfg.formIncompleteText) || cfg.formIncompleteMessage;
+						button.setAttribute(cfg.buttonTooltip, m);
 					}
 				}
 				return true;

@@ -59,10 +59,11 @@
 			data-jsv-form="true"
 			data-jsv-submit-handler="customSubmitHandler"
 			data-jsv-disable-icons="false"
-			data-jsv-disable-invalid="true"
+			data-jsv-disable-invalid="false"
 			data-jsv-form-valid-callback="formValidCallback"
 			data-jsv-form-invalid-callback="formInvalidCallback"
-			data-jsv-form-incomplete="Please complete all fields">
+			data-jsv-form-invalid-message="Please correct the errors in red"
+			data-jsv-form-incomplete-tooltip="Please complete all fields">
 			<div class="form-group">
 				<label for="test-email">E-Mail Address</label>
 				<div class="validate-input" id="customvalidate">
@@ -364,8 +365,6 @@
 				</div>
 				<div class="validate-field-error-message" id="checkbox-invalid"></div>
 			</div>
-
-
 
 			<div class="form-group">
 				<button type="submit" id="test-button" class="btn btn-primary btn-block">

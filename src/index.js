@@ -167,7 +167,8 @@ var SimpleValidations = function() {
 					form.submit();
 				}
 			}).catch(function() {
-				util.showFormMessage(form, cfg.formError.className, cfg.formInvalidMessage);
+				var m = util.getAttr(form, cfg.formInvalidMessage) || "Please correct the errors below";
+				util.showFormMessage(form, cfg.formError.className, m);
 			});
 		});
 

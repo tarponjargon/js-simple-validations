@@ -54,7 +54,8 @@ var cfg = {
 	"buttonSuccess": "success-button", // class name added to <button> element after successful submit (like if you want to change it green)
 	"buttonTooltip": "data-jsv-form-tooltip", // data attribute for button tooltip
 	"buttonOriginalText": "data-original-text", // data attribute that stores original text of <button> element (ex: if swapped with "sending..." during submit)
-	"formIncompleteText": "data-jsv-form-incomplete", // data attribute on <form> that stores the text to be shown in tooltip when form is in invalid state
+	"formIncompleteText": "data-jsv-form-incomplete-tooltip", // data attribute on <form> that stores the text to be shown in tooltip when form is in invalid state
+	"formInvalidMessage": "data-jsv-form-invalid-message", // data attribute on <form> that stores the text to be shown in in error container when form submitted is invalid
 	"safeStringInput": true, // passes any entered field values thru a santiizer
 	"safeEndpoints": false, // if true endpoints can only be relative urls (i.e. no http://)
 	"ajaxTimeout": 8000, // milliseconds
@@ -70,7 +71,6 @@ var cfg = {
 	"fieldErrorFont": "normal 12px Helvetica, Arial, sans-serif",
 	"formShowMessages": true,
 	"formSubmitHandler": "data-jsv-submit-handler",
-	"formInvalidMessage": "Please correct the errors below",
 	"formIncompleteMessage": "Please complete all required fields" // default text to show when formIncompleteText is not specified in <form>
 };
 
