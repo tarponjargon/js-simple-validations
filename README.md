@@ -1,13 +1,15 @@
 
 # JS Simple Validations
-
 Another form validation library? Not again!  This one's for when you need more than what HTML5 field validation offers, but don't want to mess with pile of Javascript, CSS or dependencies.  
+
+![enter image description here](https://i.imgur.com/C0cDlOx.gif)
 
  - Validates as you type
  - No dependency on any other library or framework (vanilla JS)
  - Configures with HTML only, using data attributes (write no JS, unless you want)
  - No separate styling needed (unless you want to customize)
- - Promise-based, with AJAX support
+ - Promise-based, debounced
+ - AJAX support
  - ES5-compatible, tested back to IE11
  - Can be used for multiple forms on a page
  - Only 10kb gzipped
@@ -95,7 +97,7 @@ Inputted value is a number is between (or equals) `data-jsv-min` to `data-jsv-ma
 
 **contains**
 
-Input contains this string.  Specify in `data-jsv-contains`.
+Input contains this string.  Specify in `data-jsv-contains`.  Case-insensitive.
 
     <!--make sure value contains (or IS) the word "twelve"-->
 	<input type="text" name="userInput" data-jsv-validators="contains" data-jsv-contains="twelve" />
@@ -110,7 +112,7 @@ Inputted value is a properly-formatted US zip code (plus 4 optional, but validat
 
 Inputted value is a properly-formatted phone number.  This is a fairly liberal validation and will accept international numbers.
 
-	<!-- will accept:
+	<!-- examples of valid input:
 		773-555-1212
 		(330) 555-1212
 		5045551212
@@ -121,14 +123,60 @@ Inputted value is a properly-formatted phone number.  This is a fairly liberal v
 
 **creditcard**
 
-Inputted value is a properly-formatted credit card number.  Uses the [Luhn Algorithm](https://en.wikipedia.org/wiki/Luhn_algorithm).
+Inputted value is a properly-formatted credit card number using the [Luhn Algorithm](https://en.wikipedia.org/wiki/Luhn_algorithm).
 
     <input type="text" name="cardno" data-jsv-validators="creditcard" />
 
- - compare
+**pattern**
 
+Validate input against a custom regular expression specified in `data-jsv-pattern`.  
 
- - pattern
- - dependent
- - expireddate
- - ajax
+     <input type="text" name="birthdate" data-jsv-validators="pattern" data-jsv-pattern="^\d{4}\-\d{2}\-\d{2}$" placeholder="Enter a date in the format YYYY-MM-DD" />
+
+**compare**
+
+Compare inputted value against the value of another field.  Specify the `name` of the field to compare to in `data-jsv-compare`.  Case sensitive.
+
+    <!-- validates if the value entered into ConfirmPassword matches the value entered into Password-->
+    <input type="password" name="ConfirmPassword" data-jsv-validators="compare" data-jsv-compare="Password" placeholder="Confirm Password" />
+
+**dependent**
+
+Will not validate until fields specified in `data-jsv-dependents` (comma delimited if more than one) are validated first.  
+
+    <input type="password" name="ConfirmPassword" data-jsv-validators="dependent, require" data-jsv-dependents="Login, Password" />
+
+**expireddate**
+
+Checks if year, month and day (optional) combined field values are in the past.  The year field in the form is specified with `data-jsv-expiredate="year"`, month, `data-jsv-expiredate="month"` and (optional) day `data-jsv-expiredate="day"`.  All get the `expireddate` validator.
+
+	<select name="expirationMonth" data-jsv-validators="expireddate" data-jsv-expiredate="month">
+		<option value="">Select Month</option>
+		<option value="1">January</option>
+		...
+	</select>
+	<select name="expirationYear" data-jsv-validators="expireddate" data-jsv-expiredate="year">
+		<option value="">Select Year</option>
+		<option value="2019">2019</option>
+		...
+	</select>
+
+**ajax**
+
+An AJAX GET request is made to the endpoint in `data-jsv-ajax-endpoint`.  The field's name is used as the key, and the input as its value.  
+
+If the JSON response has the key specified in `data-jsv-ajax-key` and that matches `data-jsv-ajax-value`, the field validates.  
+
+	<!--generates an AJAX request to /username_check?Login=[input]
+	validates if the JSON response looks like:
+	{ "usernameAvailable": true }
+	-->
+    <input  
+    	type="text"
+    	name="Login"
+    	data-jsv-validators="ajax"
+    	data-jsv-ajax-endpoint="/username_check"
+    	data-jsv-ajax-key="usernameAvailable"
+    	data-jsv-ajax-value="true"
+    />
+   If `data-jsv-ajax-value` is left empty, the input is used to match.
