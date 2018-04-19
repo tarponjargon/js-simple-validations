@@ -290,11 +290,6 @@ let toValidateCtr = 0;
 // test suite
 describe("Demo form", async () => {
 
-
-	// TODO form submits
-
-	// TODO test callbacks work
-
 	test("Form loads", async () => {
 		page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 		await page.goto(APP);
