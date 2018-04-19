@@ -6,10 +6,10 @@ Another form validation library? Not again!  This one's for when you need more t
 
  - Validates as you type
  - No dependency on any other library or framework (vanilla JS)
- - Configures with HTML only, using data attributes (write no JS, unless you want)
+ - Configures with HTML, using data attributes (write no JS, unless you want)
  - No separate styling needed (unless you want to customize)
- - Promise-based, debounced
- - AJAX support
+ - Promise-based and debounced
+ - Supports AJAX validations
  - ES5-compatible, tested back to IE11
  - Can be used for multiple forms on a page
  - Only 10kb gzipped
@@ -19,7 +19,7 @@ Include in your HTML:
 
     <script src="https://unpkg.com/js-simple-validations@0.1.1/dist/js-simple-validations.min.js"></script>
 
-Or include in your build pipeline:
+Or install with npm:
 
     npm install js-simple-validations
 
@@ -28,13 +28,13 @@ Or include in your build pipeline:
 When the page is ready, it attaches validations to forms that have this data-attribute:
 
     data-jsv-form="true"
-Like:
+Example:
 
     <form action="/processform" method="POST" data-jsv-form="true">
 Then for each field you want to validate, add a data attribute specifying the validation type:
 
     data-jsv-validators="[TYPE]"
-Like:
+Example:
 
     <input type="text" name="firstname" data-jsv-validators="require" />
 Or multiple validators like:
@@ -49,7 +49,7 @@ And that's it!
 
 **require**
 
-Field can't be empty, or contain only whitespace.  NOTE: If `require` is not specified, other validators will only trigger *if* there's a value entered, so always use this one (optionally in conjunction with others) if you require some input.
+Input value exists and is not all whitespace.  NOTE: If `require` is not specified, other validators will only trigger *if* there's a value entered, so always use `require` (optionally in conjunction with others) if you require *some* input in the field.
 
     <input type="text" name="firstname" data-jsv-validators="require" />
 
@@ -160,6 +160,7 @@ Checks if year, month and day (optional) combined field values are in the past. 
 		<option value="2019">2019</option>
 		...
 	</select>
+Field values should be numbers like "12" rather than names like "December" (therefore, best used with select boxes).
 
 **ajax**
 
@@ -180,3 +181,26 @@ If the JSON response has the key specified in `data-jsv-ajax-key` and that match
     	data-jsv-ajax-value="true"
     />
    If `data-jsv-ajax-value` is left empty, the input is used to match.
+
+**requiremin**
+
+Used to validate radio buttons and checkboxes (multiple form elements with the same `name`).  Validates that the minimum number specified in `data-jsv-min-selected` have been selected.  All elements with the same `name` should have the `requiremin` validator and the same number in `data-jsv-min-selected`.
+
+	<!--Validates that both checkboxes have been checked-->
+	<label>Agree to terms of service?</label>
+	<input
+		data-jsv-validators="requiremin"
+		data-jsv-min-selected="2"
+		type="checkbox"
+		name="terms"
+		value="1"
+	/>
+
+	<label>Agree to more stuff?</label>
+	<input
+		data-jsv-validators="requiremin"
+		data-jsv-min-selected="2"
+		type="checkbox"
+		name="terms"
+		value="2"
+	/>
