@@ -2,21 +2,21 @@ import Promise from '../node_modules/promise-polyfill';
 import cfg from './config';
 import Util from './utilities';
 
-var Validations = function(self) {
+let Validations = function(self) {
 
-	var util = new Util();
+	let util = new Util();
 
-	var validations = {
+	let validations = {
 		"require": {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value));
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value));
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"This field can't be empty";
 						reject(error);
@@ -28,13 +28,13 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(String(value).toLowerCase()));
+					let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(String(value).toLowerCase()));
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Please enter a valid e-mail address";
 						reject(error);
@@ -46,14 +46,14 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var lengthMin = util.getAttr(field, cfg.lenMin) || 1;
-					var lengthMax = util.getAttr(field, cfg.lenMax) || 1;
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && (value.length >= lengthMin && value.length <= lengthMax));
+					let lengthMin = util.getAttr(field, cfg.lenMin) || 1;
+					let lengthMax = util.getAttr(field, cfg.lenMax) || 1;
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && (value.length >= lengthMin && value.length <= lengthMax));
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Should be between " + lengthMin + " and " + lengthMax + " characters";
 						reject(error);
@@ -65,13 +65,13 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var lengthExact = util.getAttr(field, cfg.lenExact) || 1;
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && value.length === lengthExact);
+					let lengthExact = util.getAttr(field, cfg.lenExact) || 1;
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && value.length === lengthExact);
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Should be " + lengthExact + " characters";
 						reject(error);
@@ -83,22 +83,22 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var n = util.getAttr(field, cfg.fieldCompare);
-					var f = (n) ? self.form.querySelector('[name="' + n + '"]') : null;
-					var v = (f) ? util.getValue(f) : null;
-					var errorMessage = function() {
-						var message = "Does not match";
-						var label = self.getLabel(f);
+					let n = util.getAttr(field, cfg.fieldCompare);
+					let f = (n) ? self.form.querySelector('[name="' + n + '"]') : null;
+					let v = (f) ? util.getValue(f) : null;
+					let errorMessage = function() {
+						let message = "Does not match";
+						let label = self.getLabel(f);
 						if (label) { message += " " + label }
 						return message;
 					}();
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && value === v);
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && value === v);
 
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							errorMessage;
 						reject(error);
@@ -110,12 +110,12 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && !isNaN(value));
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && !isNaN(value));
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Should be a number";
 						reject(error);
@@ -127,13 +127,13 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var numExact = util.getAttr(field, cfg.lenExact) || 1;
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && !isNaN(value) && value.length === numExact);
+					let numExact = util.getAttr(field, cfg.lenExact) || 1;
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && !isNaN(value) && value.length === numExact);
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Should be a " + numExact + " character number";
 						reject(error);
@@ -145,14 +145,14 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var rangeMin = util.getAttr(field, cfg.lenMin) || 1;
-					var rangeMax = util.getAttr(field, cfg.lenMax) || 1;
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && (value.length >= rangeMin && value.length <= rangeMax));
+					let rangeMin = util.getAttr(field, cfg.lenMin) || 1;
+					let rangeMax = util.getAttr(field, cfg.lenMax) || 1;
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && (value.length >= rangeMin && value.length <= rangeMax));
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Should be a number between " + rangeMin + " and " + rangeMax + " characters";
 						reject(error);
@@ -164,13 +164,13 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var re = /^\d{5}(?:[-\s]\d{4})?$/;
-					var isValid= (typeof value !== 'undefined' && /\S/.test(value) && re.test(value));
+					let re = /^\d{5}(?:[-\s]\d{4})?$/;
+					let isValid= (typeof value !== 'undefined' && /\S/.test(value) && re.test(value));
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Please check your Zip/Postal Code";
 						reject(error);
@@ -182,9 +182,9 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var luhnChk = (function(arr) {
+					let luhnChk = (function(arr) {
 						return function(ccNum) {
-							var len = ccNum.length,
+							let len = ccNum.length,
 								bit = 1,
 								sum = 0,
 								val;
@@ -195,13 +195,13 @@ var Validations = function(self) {
 							return sum && sum % 10 === 0;
 						};
 					}([0, 2, 4, 6, 8, 1, 3, 5, 7, 9]));
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && /^\d{13,}$/.test(value) && luhnChk(value));
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && /^\d{13,}$/.test(value) && luhnChk(value));
 
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] : "Please enter a valid credit card number (no spaces)";
 						reject(error);
 					}
@@ -212,13 +212,13 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var re = /((?:\+|00)[17](?: |\-)?|(?:\+|00)[1-9]\d{0,2}(?: |\-)?|(?:\+|00)1\-\d{3}(?: |\-)?)?(0\d|\([0-9]{3}\)|[1-9]{0,3})(?:((?: |\-)[0-9]{2}){4}|((?:[0-9]{2}){4})|((?: |\-)[0-9]{3}(?: |\-)[0-9]{4})|([0-9]{7}))/;
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(value));
+					let re = /((?:\+|00)[17](?: |\-)?|(?:\+|00)[1-9]\d{0,2}(?: |\-)?|(?:\+|00)1\-\d{3}(?: |\-)?)?(0\d|\([0-9]{3}\)|[1-9]{0,3})(?:((?: |\-)[0-9]{2}){4}|((?:[0-9]{2}){4})|((?: |\-)[0-9]{3}(?: |\-)[0-9]{4})|([0-9]{7}))/;
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(value));
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Please enter a valid phone number";
 						reject(error);
@@ -230,15 +230,15 @@ var Validations = function(self) {
 			"events": [],
 				"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var regex = field.getAttribute(cfg.fieldPattern);
+					let regex = field.getAttribute(cfg.fieldPattern);
 					if (typeof regex !== 'undefined' && regex && regex.length) {
-						var re = new RegExp(regex, "g");
-						var isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(value));
+						let re = new RegExp(regex, "g");
+						let isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(value));
 						if (isValid) {
 							resolve();
 						} else {
-							var err = self.getCustomErrors(field);
-							var error = (validator && validator in err) ?
+							let err = self.getCustomErrors(field);
+							let error = (validator && validator in err) ?
 								err[validator] :
 								"Incorrect format";
 							reject(error);
@@ -253,14 +253,14 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var neededStr = util.getAttr(field, cfg.fieldContains);
+					let neededStr = util.getAttr(field, cfg.fieldContains);
 					neededStr = (neededStr && neededStr.length) ? neededStr.toLowerCase() : null;
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && value.toLowerCase().indexOf(neededStr) !== -1);
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && value.toLowerCase().indexOf(neededStr) !== -1);
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							'Should contain "' + neededStr + '"';
 						reject(error);
@@ -272,15 +272,15 @@ var Validations = function(self) {
 			"events": [],
 			"validator": function(field, value, validator) {
 				return new Promise(function(resolve, reject) {
-					var re =
+					let re =
 					/^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
 
-					var isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(String(value).toLowerCase()));
+					let isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(String(value).toLowerCase()));
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							'Please enter a valid URL (starts with "http" or "https")';
 						reject(error);
@@ -294,25 +294,25 @@ var Validations = function(self) {
 				return new Promise(function(resolve, reject) {
 					// this is for radio, checkbox and multi-select menus, and you want to require a minimum number of them to be selected.
 
-					var fieldName = field.getAttribute('name');
-					var minThreshold = util.getAttr(field, cfg.minThresh) || 1;
-					var allNamedElements = self.form.querySelectorAll('[name='+fieldName+']');
-					var countSelected = 0;
+					let fieldName = field.getAttribute('name');
+					let minThreshold = util.getAttr(field, cfg.minThresh) || 1;
+					let allNamedElements = self.form.querySelectorAll('[name='+fieldName+']');
+					let countSelected = 0;
 
 					if (allNamedElements && allNamedElements[0]) {
-						Array.prototype.forEach.call(allNamedElements, function(thisElement) {
+						allNamedElements.forEach(thisElement => {
 							if (util.getValue(thisElement)) {
 								countSelected++;
 							}
 						});
 					}
 
-					var isValid = (countSelected >= minThreshold);
+					let isValid = (countSelected >= minThreshold);
 					if (isValid) {
 						resolve();
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Please select " + util.digitWord(minThreshold);
 						reject(error);
@@ -326,29 +326,29 @@ var Validations = function(self) {
 			"validator": function(field, value, validator) { // eslint-disable-line
 				try {
 					return new Promise(function(resolve, reject) {
-						var n = util.getAttr(field, cfg.dependentFields);
-						var d = (n) ? util.splitString(n) : [];
-						var f = (d.length) ? Array.prototype.map.call(d, function(i) { return '[name="'+i+'"]' }) : [];
-						var q = (f.length) ? self.form.querySelectorAll(f.join(',')) : [];
-						var v = 0;
-						var b = [];
-						Array.prototype.forEach.call(q, function(c) {
+						let n = util.getAttr(field, cfg.dependentFields);
+						let d = (n) ? util.splitString(n) : [];
+						let f = (d.length) ? d.map(i => '[name="'+i+'"]') : [];
+						let q = (f.length) ? self.form.querySelectorAll(f.join(',')) : [];
+						let v = 0;
+						let b = [];
+						q.forEach(c => {
 							if (self.checkValid(c)) {
 								v++;
 							} else {
 								b.push(c);
 							}
 						});
-						var isValid = (v >= q.length);
+						let isValid = (v >= q.length);
 						if (isValid) {
 							resolve();
 						} else {
-							var error = null;
-							var err = self.getCustomErrors(field);
+							let error = null;
+							let err = self.getCustomErrors(field);
 							if (validator && validator in err) {
 								error = err[validator];
 							} else {
-								var da = (b.length) ? Array.prototype.map.call(b, function(i) { return self.getLabel(i) }) : [];
+								let da = (b.length) ? b.map(i => self.getLabel(i)) : [];
 								error = (da.length) ? "Please complete " + da.join(", ") : null;
 								if (b.length && self.checkIfCurrent(field)) {
 									self.setFieldsInvalid(b, validator);
@@ -372,12 +372,12 @@ var Validations = function(self) {
 				*/
 				return new Promise(function(resolve, reject) {
 
-					var dateHash = {};
-					var setFieldsToValid = []; // fields to to force state of 'valid' on if this valiation succeeds
+					let dateHash = {};
+					let setFieldsToValid = []; // fields to to force state of 'valid' on if this valiation succeeds
 					// get year, month and day values (if exist), force them to 3 or 4 digit format
-					Array.prototype.forEach.call(['year','month','day'], function(k) {
-						var f = self.form.querySelector('[' + cfg.expireDate + '="' + k + '"]');
-						var v = (f) ? util.getValue(f) : null;
+					['year','month','day'].forEach(k => {
+						let f = self.form.querySelector('[' + cfg.expireDate + '="' + k + '"]');
+						let v = (f) ? util.getValue(f) : null;
 						if (f && v) { setFieldsToValid.push(f) }
 						if (k === 'year') {
 							 dateHash[k] = (v && !isNaN(v) && v.length === 2) ? '20'+v.toString() : v;
@@ -394,17 +394,17 @@ var Validations = function(self) {
 						return true;
 					}
 
-					var today = (new Date()).toISOString().slice(0,10).replace(/-/g,""); // format current date to YYYYMMDD
+					let today = (new Date()).toISOString().slice(0,10).replace(/-/g,""); // format current date to YYYYMMDD
 					today = (!dateHash['day']) ? parseInt(today.substring(0, 6)) : parseInt(today); // format to YYYYMM if there's no 'day' in hash
-					var compareDate = parseInt(dateHash['year']+dateHash['month']+dateHash['day']);
+					let compareDate = parseInt(dateHash['year']+dateHash['month']+dateHash['day']);
 
-					var isValid = (compareDate >= today);
+					let isValid = (compareDate >= today);
 					if (isValid) {
 						console.log("expiredate validator resolving");
 						resolve(self.setFieldsValid(setFieldsToValid, validator));
 					} else {
-						var err = self.getCustomErrors(field);
-						var error = (validator && validator in err) ?
+						let err = self.getCustomErrors(field);
+						let error = (validator && validator in err) ?
 							err[validator] :
 							"Appears to be expired - please check date";
 
@@ -422,35 +422,35 @@ var Validations = function(self) {
 				return new Promise(function(resolve, reject) {
 					try {
 						if (self.checkIfCurrent(field)) {
-							var errTgt = self.getContainer(field, cfg.invMessage);
+							let errTgt = self.getContainer(field, cfg.invMessage);
 							if (errTgt) {
-								var msg = util.getAttr(field, cfg.ajaxProcessing);
+								let msg = util.getAttr(field, cfg.ajaxProcessing);
 								errTgt.innerText = msg || "Checking...";
 							}
-							var fname = field.getAttribute('name')
-							var endp = util.getAttr(field, cfg.ajaxEndpoint);
-							var key = util.getAttr(field, cfg.ajaxKey);
-							var safe = true;
+							let fname = field.getAttribute('name')
+							let endp = util.getAttr(field, cfg.ajaxEndpoint);
+							let key = util.getAttr(field, cfg.ajaxKey);
+							let safe = true;
 							if (endp && cfg.safeEndpoints && /^http/.test(endp.toLowerCase())) { safe = false; } // crude way to make ajax safe - don't allow absolute URLs
 							if (safe && endp && key) {
 
-								var fieldVal = util.getValue(field);
-								var url = endp + '?' + fname + '=' + fieldVal;
+								let fieldVal = util.getValue(field);
+								let url = endp + '?' + fname + '=' + fieldVal;
 
-								var xhr = new XMLHttpRequest();
+								let xhr = new XMLHttpRequest();
 								xhr.open('GET', url);
 								xhr.timeout = cfg.ajaxTimeout;
 								xhr.setRequestHeader('Content-Type', 'application/json');
 								xhr.onload = function() {
 									if (xhr.status === 200) {
-										var data = JSON.parse(xhr.responseText);
+										let data = JSON.parse(xhr.responseText);
 										//console.log("raw ajax response", data, "data[ajaxKey]", data[ajaxKey]);
-										var val = util.getAttr(field, cfg.ajaxValue) || fieldVal;
+										let val = util.getAttr(field, cfg.ajaxValue) || fieldVal;
 										if (data && data[key] === val) {
 											resolve(self.forceEvent(field));
 										} else {
-											var err = self.getCustomErrors(field);
-											var error = (validator && validator in err) ? err[validator] : "Does not validate";
+											let err = self.getCustomErrors(field);
+											let error = (validator && validator in err) ? err[validator] : "Does not validate";
 											reject(error);
 										}
 									}

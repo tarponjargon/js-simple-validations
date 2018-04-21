@@ -1,6 +1,6 @@
 
-# JS Simple Validations
-Another form validation library? Not again!  This one's for when you need more than what HTML5 field validation offers, but don't want to mess with pile of Javascript, CSS or dependencies.  
+# Simple Validations
+Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations when don't want to mess with *any* Javascript, CSS or dependencies.  It's sort of a roided-out version of [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
 
 ![enter image description here](https://i.imgur.com/C0cDlOx.gif)
 
@@ -9,7 +9,7 @@ Another form validation library? Not again!  This one's for when you need more t
  - Configures with HTML, using data attributes (write no JS, unless you want)
  - No separate styling needed (unless you want to customize)
  - Promise-based and debounced
- - Supports AJAX validations
+ - Supports async validations
  - ES5-compatible, tested back to IE11
  - Can be used for multiple forms on a page
  - Only 10kb gzipped
@@ -31,17 +31,15 @@ When the page is ready, it attaches validations to forms that have this data-att
 Example:
 
     <form action="/processform" method="POST" data-jsv-form="true">
-Then for each field you want to validate, add a data attribute specifying the validation type:
+It will apply validation to each field containing a data attribute that specifies the validation type(s):
 
     data-jsv-validators="[TYPE]"
 Example:
 
     <input type="text" name="firstname" data-jsv-validators="require" />
-Or multiple validators like:
+Or apply multiple types (in order) like:
 
     <input type="text" name="email" data-jsv-validators="require, email" />
-
-Which will be run in order.  
 
 And that's it!
 
@@ -49,9 +47,11 @@ And that's it!
 
 **require**
 
-Input value exists and is not all whitespace.  NOTE: If `require` is not specified, other validators will only trigger *if* there's a value entered, so always use `require` (optionally in conjunction with others) if you require *some* input in the field.
+Input value exists and is not all whitespace.  
 
     <input type="text" name="firstname" data-jsv-validators="require" />
+
+If `require` is not specified, other validators will only trigger *if* there's a value entered, by design.  So always use `require` (with others, optionally) if you require *some* input in the field.
 
 **email**
 
@@ -204,3 +204,15 @@ Used to validate radio buttons and checkboxes (multiple form elements with the s
 		name="terms"
 		value="2"
 	/>
+
+## Styling
+
+## Form-Level Configuration
+
+## Field-Level Configuration
+
+## Callbacks
+
+## Custom Validators
+
+## Acknowledgements

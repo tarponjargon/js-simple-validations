@@ -11,7 +11,7 @@ if (typeof window !== 'undefined' && window) {
 	});
 }
 
-var SimpleValidations = function() {
+let SimpleValidations = function() {
 
 	// if (typeof window.validateOptions === 'undefined' ||
 	// 	window.validateOptions === null ||
@@ -20,11 +20,11 @@ var SimpleValidations = function() {
 	// 	window.validateOptions = {};
 	// }
 
-	var util = new Util();
+	let util = new Util();
 
 	// merge any user-defined options into cfg
 	// if ('cfg' in window.validateOptions && typeof window.validateOptions.cfg === 'object') {
-	// 	for (var key in window.validateOptions.cfg) {
+	// 	for (let key in window.validateOptions.cfg) {
 	// 		cfg[key] = window.validateOptions.cfg[key];
 	// 	}
 	// }
@@ -38,7 +38,7 @@ var SimpleValidations = function() {
 	// add stylesheet/styles to window (if enabled)
 	if (cfg.useCss) {
 		try {
-			var sht = document.createElement('style');
+			let sht = document.createElement('style');
 			sht.innerHTML = styles;
 			document.head.appendChild(sht);
 		} catch(e) {
@@ -47,16 +47,16 @@ var SimpleValidations = function() {
 	} // end if for useCss
 
 	// loop thru forms in DOM marked for validation
-	Array.prototype.forEach.call(document.querySelectorAll('[' + cfg.formValidateAttr + ']'), function(form) {
+	document.querySelectorAll('[' + cfg.formValidateAttr + ']').forEach(form => {
 
 		// add form-level error container (if not exists)
-		var ferr = util.createValidationElement(form, cfg.formError);
+		let ferr = util.createValidationElement(form, cfg.formError);
 		if (ferr) {
 			form.insertBefore(ferr, form.firstChild);
 		}
 
 		// add form-level success container (if not exists)
-		var fsucc = util.createValidationElement(form, cfg.formSuccess);
+		let fsucc = util.createValidationElement(form, cfg.formSuccess);
 		if (fsucc) {
 			form.appendChild(fsucc);
 		}
@@ -64,13 +64,13 @@ var SimpleValidations = function() {
 		// disable form by default
 		util.disableForm(form, true);
 
-		var formValidator = new FormValidator(form);
+		let formValidator = new FormValidator(form);
 
 		// loop thru fields in this form marked for validation
-		Array.prototype.forEach.call(form.querySelectorAll('[' + cfg.fieldValidators + ']'), function(field) {
+		form.querySelectorAll('[' + cfg.fieldValidators + ']').forEach(field => {
 
 			// reference ID to tie message container, etc to this field
-			var baseId = util.getAttr(field, cfg.baseId);
+			let baseId = util.getAttr(field, cfg.baseId);
 			if (!baseId) {
 				baseId = util.createId();
 				field.setAttribute(cfg.baseId, baseId);
@@ -81,11 +81,11 @@ var SimpleValidations = function() {
 			// so the divs need to be added manually (if wanted)
 			if (field.type !== 'radio' && field.type !== 'checkbox') {
 				try {
-					var cvt = util.getAttr(field, cfg.valTarget);
-					var cv = (cvt) ? form.querySelector('#' + cvt) : null;
+					let cvt = util.getAttr(field, cfg.valTarget);
+					let cv = (cvt) ? form.querySelector('#' + cvt) : null;
 					if (!cv) {
-						var wrapId = 'w-' + baseId;
-						var fc = util.createValidationElement(field.parentNode, cfg.fieldContainer, wrapId);
+						let wrapId = 'w-' + baseId;
+						let fc = util.createValidationElement(field.parentNode, cfg.fieldContainer, wrapId);
 						field.parentNode.appendChild(fc);
 						fc.appendChild(field);
 						field.setAttribute(cfg.valTarget, wrapId);
@@ -97,11 +97,11 @@ var SimpleValidations = function() {
 
 				// add field-level error container (if not exists and not a custom one )
 				try {
-					var ces = util.getAttr(field, cfg.invMessage);
-					var ce = (ces) ? form.querySelector('#' + ces) : null;
+					let ces = util.getAttr(field, cfg.invMessage);
+					let ce = (ces) ? form.querySelector('#' + ces) : null;
 					if (!ce) {
-						var errId = 'e-' + baseId;
-						var fe = util.createValidationElement(field.parentNode, cfg.fieldError, errId);
+						let errId = 'e-' + baseId;
+						let fe = util.createValidationElement(field.parentNode, cfg.fieldError, errId);
 						field.parentNode.parentNode.insertBefore(fe, field.parentNode.nextElementSibling);
 						field.setAttribute(cfg.invMessage, errId);
 					}
@@ -114,7 +114,7 @@ var SimpleValidations = function() {
 			// check if field has a value already (like from the backend)
 			// simulate a focusout event by sending an explicit event object
 			try {
-				var val = util.getValue(field);
+				let val = util.getValue(field);
 				if (val && /\S/.test(val)) {
 					formValidator.validate({
 						"type": "focusout",
@@ -128,10 +128,10 @@ var SimpleValidations = function() {
 			}
 
 			// set up debouncing of input
-			var dbField = util.getAttr(field, cfg.fieldDebounce);
-			var dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
-			var debounced = debounce(formValidator.validate, dbRate);
-			var debounceWrapper = function(e) {
+			let dbField = util.getAttr(field, cfg.fieldDebounce);
+			let dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
+			let debounced = debounce(formValidator.validate, dbRate);
+			let debounceWrapper = function(e) {
 				//console.log("debounceWrapper", e.type, form.getAttribute('name'), field.getAttribute('name'), field.getAttribute('id'), "deboucerate", dbRate);
 				if (field.offsetParent !== null) {
 					debounced(e, form).then(function(){}).catch(function(){});
@@ -152,8 +152,8 @@ var SimpleValidations = function() {
 			formValidator.validate(e, form).then(function() {
 				console.log("success!");
 
-				var afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
-				var afterSubmit = (
+				let afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
+				let afterSubmit = (
 					afterSubmitRef &&
 					afterSubmitRef in window &&
 					typeof window[afterSubmitRef] === 'function'
@@ -167,7 +167,7 @@ var SimpleValidations = function() {
 					form.submit();
 				}
 			}).catch(function() {
-				var m = util.getAttr(form, cfg.formInvalidMessage) || "Please correct the errors below";
+				let m = util.getAttr(form, cfg.formInvalidMessage) || "Please correct the errors below";
 				util.showFormMessage(form, cfg.formError.className, m);
 			});
 		});
