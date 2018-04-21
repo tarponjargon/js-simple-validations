@@ -1,6 +1,7 @@
 import Util from './utilities';
 import FormValidator from './form-validator';
 import debounce from './debounce-promise';
+import 'nodelist-foreach-polyfill';
 import cfg from './config';
 import styles from './styles.js'
 

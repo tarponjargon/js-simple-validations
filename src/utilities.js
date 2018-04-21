@@ -1,4 +1,5 @@
 import cfg from './config';
+import 'nodelist-foreach-polyfill';
 
 function Util() {
 

@@ -1,12 +1,28 @@
 {
-	"presets": [
-    	["env", { "targets": { "node": "current" }}]
-	],
-	"env": {
-	  "test": {
-		"presets": [
-		  ["env", { "targets": { "node": "current" }}]
-		]
-	  }
-	}
+   "presets":[
+      [
+         "env",
+         {
+            "targets":{
+               "node":"current",
+			   "browsers": ["last 2 versions", "ie >= 11"]
+            }
+         }
+      ]
+   ],
+   "env":{
+      "test":{
+         "presets":[
+            [
+               "env",
+               {
+                  "targets":{
+                     "node":"current",
+					 "browsers": ["last 2 versions", "ie >= 11"]
+                  }
+               }
+            ]
+         ]
+      }
+   }
 }

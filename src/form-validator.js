@@ -1,4 +1,5 @@
 import Promise from '../node_modules/promise-polyfill';
+import 'nodelist-foreach-polyfill';
 import FieldValidator from './field-validator';
 import cfg from './config';
 import Util from './utilities';
