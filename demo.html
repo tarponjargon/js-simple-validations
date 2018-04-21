@@ -128,7 +128,7 @@
 					name="random-textarea"
 					id="test-random-textarea"
 					placeholder="I heart textareas"
-					data-jsv-validators="require"
+					data-jsv-validators="require, alphanum"
 					class="form-control"></textarea>
 			</div>
 			<div class="form-group">
@@ -328,9 +328,39 @@
 
 	</div>
 
-<script src="build/js-simple-validations.js"></script>
-
 <script>
+
+	// customizations for js-simple-valiadtions
+	window.validateOptions = {
+		// config overrides
+		cfg: {
+			useCss: true,
+		},
+
+		// custom validators
+		customValidators: {
+			"alphanum": { // name of custom validator
+				"events": [], // array containing events this validator should fire on, [] = all
+				"validator": function(field, value, validator) { // boilerplate
+					return new Promise(function(resolve, reject) { // boilerplate
+
+						// start custom validator code
+						let re = /^[a-z0-9]+$/;
+						let isValid = (typeof value !== 'undefined' && /\S/.test(value) && re.test(value));
+						if (isValid) {
+							resolve();
+						} else {
+							reject("Should be only letters and numbers"); // include message in reject
+						}
+						// end custom validator code
+
+					});
+				}
+			} // end 'alphaNum' customvalidator
+			
+		}
+	};
+
 	<!--callback tests-->
 	var customSubmitHandler = function(e, form, state) {
 		var returnVal = {
@@ -373,6 +403,9 @@
 		return returnVal;
 	}
 </script>
+
+
+<script src="build/js-simple-validations.js"></script>
 
 </body>
 </html>

@@ -262,7 +262,7 @@ function Util() {
 		return "";
 	}, // end getValue function
 
-	this.showFormMessage = function(form, targetId, message) {
+	this.showMsg = function(form, targetId, message) {
 		if (!form || !targetId || !message || !cfg.formShowMessages) {
 			return false;
 		}

@@ -7,28 +7,20 @@ import styles from './styles.js'
 
 // make sure we're in a browser environment
 if (typeof window !== 'undefined' && window) {
-	document.addEventListener("DOMContentLoaded", function() {
-		SimpleValidations();
-	});
+	document.addEventListener("DOMContentLoaded", () => SimpleValidations());
 }
 
 let SimpleValidations = function() {
 
-	// if (typeof window.validateOptions === 'undefined' ||
-	// 	window.validateOptions === null ||
-	// 	typeof window.validateOptions !== 'object'
-	// ) {
-	// 	window.validateOptions = {};
-	// }
-
 	let util = new Util();
 
-	// merge any user-defined options into cfg
-	// if ('cfg' in window.validateOptions && typeof window.validateOptions.cfg === 'object') {
-	// 	for (let key in window.validateOptions.cfg) {
-	// 		cfg[key] = window.validateOptions.cfg[key];
-	// 	}
-	// }
+	//merge any user-defined options into cfg
+	window.validateOptions = window.validateOptions || {};
+	if ('cfg' in window.validateOptions && typeof window.validateOptions.cfg === 'object') {
+		for (let key in window.validateOptions.cfg) {
+			cfg[key] = window.validateOptions.cfg[key];
+		}
+	}
 
 	// exit if cfg disableValidations === true
 	if (cfg.disableValidations !== 'undefined' && cfg.disableValidations) {
@@ -130,19 +122,19 @@ let SimpleValidations = function() {
 
 			// set up debouncing of input
 			let dbField = util.getAttr(field, cfg.fieldDebounce);
-			let dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
-			let debounced = debounce(formValidator.validate, dbRate);
-			let debounceWrapper = function(e) {
+			let dbr = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
+			let dbf = debounce(formValidator.validate, dbr);
+			let dbw = function(e) {
 				//console.log("debounceWrapper", e.type, form.getAttribute('name'), field.getAttribute('name'), field.getAttribute('id'), "deboucerate", dbRate);
 				if (field.offsetParent !== null) {
-					debounced(e, form).then(function(){}).catch(function(){});
+					dbf(e, form).then(function(){}).catch(function(){});
 				}
 			}
 
 			// and add listeners to trigger form revalidation on any changes
-			field.addEventListener('input', debounceWrapper, false);
-			field.addEventListener('change', debounceWrapper, false);
-			field.addEventListener('focusout', debounceWrapper, false);
+			field.addEventListener('input', dbw, false);
+			field.addEventListener('change', dbw, false);
+			field.addEventListener('focusout', dbw, false);
 
 		}); // end loop thru fields in form
 
@@ -153,23 +145,23 @@ let SimpleValidations = function() {
 			formValidator.validate(e, form).then(function() {
 				console.log("success!");
 
-				let afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
-				let afterSubmit = (
-					afterSubmitRef &&
-					afterSubmitRef in window &&
-					typeof window[afterSubmitRef] === 'function'
-				) ? window[afterSubmitRef] : null;
+				let ref = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
+				let aftr = (
+					ref &&
+					ref in window &&
+					typeof window[ref] === 'function'
+				) ? window[ref] : null;
 
-				if (afterSubmit) {
+				if (aftr) {
 					console.log("AFTERSUBMIT", e, form, 'valid');
-					afterSubmit(e, form, 'valid');
+					aftr(e, form, 'valid');
 				} else {
 					console.log("submitting form the traditional way");
 					form.submit();
 				}
 			}).catch(function() {
 				let m = util.getAttr(form, cfg.formInvalidMessage) || "Please correct the errors below";
-				util.showFormMessage(form, cfg.formError.className, m);
+				util.showMsg(form, cfg.formError.className, m);
 			});
 		});
 
