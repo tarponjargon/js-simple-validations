@@ -55,7 +55,7 @@ JSV listens for `input`, `change` and `focusout` events on each field in the for
 ## Installation
 Include in your HTML:
 
-    <script src="https://unpkg.com/js-simple-validations@0.1.4/dist/js-simple-validations.min.js"></script>
+    <script src="https://unpkg.com/js-simple-validations@0.1.5/dist/js-simple-validations.min.js"></script>
 
 Or install with npm:
 
