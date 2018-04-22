@@ -60,8 +60,6 @@ let cfg = {
 	"safeEndpoints": false, // if true endpoints can only be relative urls (i.e. no http://)
 	"ajaxTimeout": 8000, // milliseconds
 	"debounceDefault": 300, // milliseconds
-
-	// optional stuff passed from user
 	"useCss": true,
 	"useTooltip": true,
 	"isValidColor": "#13bd3a",

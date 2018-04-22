@@ -17,12 +17,13 @@ Another form validation library! There are already some [good ones out there](ht
 
 ## Documentation
 
- 1. [How it works](#How%20it%20works)
- 2. Installation
+ 1. [How it works](#howitworks)
+ 2. [Installation](#installation)
  3. [Validation Types](#validationtypes)
- 4. Customizing Validation Messages
+ 4. [Customizing Validation Messages](#validationmessages)
  5. Containers and Styling
 
+<a name="howitworks"></a>
 ## How it works
 
 When the page is ready, it attaches validations to forms that have this data-attribute:
@@ -215,6 +216,7 @@ Used to validate radio buttons and checkboxes (multiple form elements with the s
 		value="2"
 	/>
 
+<a name="validationmessages"></a>
 ## Customizing Validation Messages
 
 You can customize the error message for each validator in the field itself.  The format is:
@@ -243,7 +245,7 @@ You can override the styles if you wish.  Each form gets an error container with
 
 ![enter image description here](https://i.imgur.com/mdvVl24.png)
 
-
+<a name="radiobuttons"></a>
 *&nbsp;Multiple form elements with the same `name` - like radio buttons or multi-value checkboxes - need to have the error message container and validation container (optional) added to the form manually.
 
 Put this container where you want to target your error messages for the group of elements:
@@ -293,30 +295,65 @@ Looks like:
 
 ![enter image description here](https://i.imgur.com/KUlN1cy.png)
 
+<a href="formlevelconfig"></a>
 ## Form-Level Configuration
 
 The following data attributes can be added to the `<form>` tag
 
 | Attribute  | Description |
-|---|---|
+|--------------------------|---|
 | `data-jsv-form="true"` *(required)* | Attaches JSV to the form  |
 | `data-jsv-disable-icons="true\|false"` | Toggles field validation icons for all elements of the form  |
 | `data-jsv-disable-invalid="true\|false"` | Toggles disabling of the `<button>` element for valid and invalid form states  |
 | `data-jsv-form-invalid-message="[MESSAGE]"` | Message to show in the form-level error container upon submit of an invalid form  |
 | `data-jsv-form-incomplete-tooltip="[MESSAGE]"` | Message that appears in a tooltip when customer hovers the `<button>` element of an invalid form |
 | `data-jsv-submit-handler="[JAVASCRIPT FUNCTION NAME]"` | If you want to handle submit of the form with Javascript, the specified function will be called upon submit of a valid form.  It's called with the arguments: `event`, `form` (the entire form element) and the string '`valid`'.  If no function is specified, the form submits normally.  |
-| `data-jsv-form-invalid-callback="[JAVASCRIPT FUNCTION NAME]"` | If specified, the function is called when a form is submitted but is not valid.  |
-| `data-jsv-form-valid-callback="[JAVASCRIPT FUNCTION NAME]"` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| If specified, the function is called when a form becomes valid.  If used, be prepared for the possibility that it can be called many times.  Also, this is not to be used as a submit handler. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  |
+| `data-jsv-form-invalid-callback="[JAVASCRIPT FUNCTION NAME]"` | If specified, the function is called when a form is submitted but is not valid.  Arguments: `event`, `form` (the entire form element) and the string '`invalid`'.  |
+| `data-jsv-form-valid-callback="[JAVASCRIPT FUNCTION NAME]"` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| If specified, the function is called when a form becomes valid.  If used, be prepared for the possibility that it can be called many times.  Also, this is not to be used as a submit handler.  Arguments: `event`, `form` (the entire form element) and the string '`valid`'. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  |
 
-
+<a href="fieldlevelconfig"></a>
 ## Field-Level Configuration
 The following attributes can be added to the form field elements (like `<input>)`:
 
 | Attribute | Description |
 |--|--|
 | `data-jsv-validators="[VALIDATORS]"` (*required*)| One, or a comma-separated list of the [validations](#validationtypes) to add to this field.  If multiple, they are evaluated left to right |
+| `data-jsv-field-error-[VALIDATOR]="[MESSAGE]"` | Specify the error message for a particular validator on this field.  See [Customizing Validation Messages](#validationmessages). |
+| `data-jsv-message-target="[ID]"` | Specify a target for field invalid error messages. Required for use with radio buttons and multi-value checkboxes, but can also be used to override default automatic behavior on any field. [Details](#radiobuttons) |
+| `data-jsv-validation-target="[ID]"` | Specify a target for field validation container. Recommended for use with radio buttons and multi-value checkboxes, but can also be used to override default automatic behavior on any field. [Details](#radiobuttons) |
+| `data-jsv-disable-icon="true\|false"` | Toggles disabling of valid or invalid icon for this field only. |
+| `data-jsv-debounce="[MILLISECONDS]"` | Wait for [MILLISECONDS] before triggering any validations on this field. |
+| `data-jsv-field-invalid-callback-[VALIDATOR]="[JAVASCRIPT FUNCTION NAME]"` | If specified, the function is called when [VALIDATOR] is triggered but is invalid. Arguments: `event`, `form`, `name`, name of the last validation performed, The string '`invalid`', the error message.|
+| `data-jsv-field-valid-callback-[VALIDATOR]="[JAVASCRIPT FUNCTION NAME]"` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|  If specified, the function is called when [VALIDATOR] is triggered and returns valid. Arguments: `event`, `form`, `name`, name of the last validation performed, The string '`valid`'. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
 
 ## App Configuration
+Further configuration of JSV can be done by delcaring a `validateOptions` object in the window (before JSV instantiates), with a '`cfg`' key:
+
+    <script>
+    var window.validateOptions = {
+    	cfg: { // config options }
+    };
+    </script>
+
+Any [configuration settings](https://github.com/tarponjargon/js-simple-validations/blob/master/src/config.js) can be customized, though there are only a few that make sense to do that for:
+
+| Config Key | Description |
+|--|--|
+| `"useCss": true\|false` | Toggles injection of the built-in CSS for UI valid/invalid states.  If you want to add your own CSS to the window, set to `false` |
+| `"useTooltip": true\|false` | Toggles enabling of a tooltip that appears over the `<button>` element when the form is in an invalid state. |
+| `"isValidColor": "[HEX COLOR]"` | Customize the color for the field valid state.  Default: `#13bd3a` (green) |
+| `"isInvalidColor": "[HEX COLOR]"` | Customize the color for the field valid state.  Default: `#ff0000` (red) |
+| `"isValidIcon": "[UNICODE]"` | Customize the field valid icon unicode character.  Default: `\\2713` ([checkmark](https://www.compart.com/en/unicode/U+2713))|
+| `"isInvalidIcon": "[UNICODE]"` | Customize the field invalid icon unicode character.  Default: `\\2716` ([heavy multiplication X](https://www.compart.com/en/unicode/U+2716)) |
+| `"fieldErrorFont": "[FONT DECLARATION]"` | Use unified CSS font "[shorthand](https://css-tricks.com/almanac/properties/f/font/)" format.  Default: `normal 12px Helvetica, Arial, sans-serif`  |
+| `"formShowMessages": true\|false` | If false, no form-level error messages will be shown when a form submit is attempted on an invalid form. |
+| `"safeStringInput": true\|false` | If true, all inputted values are passed through a basic XSS sanitizer. |
+| `"safeEndpoints": true\|false` | If true, endpoints can only be relative urls (i.e. no http:// allowed) |
+| `"ajaxTimeout": [MILLISECONDS]` | Time out an AJAX request after [MILLISECONDS].  Default: 8000 |
+| `"debounceDefault": [MILLISECONDS]` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Wait time before any validations are triggered.  Allows user to type without being bothered by error messages.  Default: 300. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|
+
+
+NOTE If modifying config settings other than the ones above: [form](#formlevelconfig) and [field](#fieldlevelconfig)-level configuration data attributes always takes precedence over config settings.  
 
 ## Callbacks
 
