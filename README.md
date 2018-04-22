@@ -15,8 +15,8 @@ Another form validation library! There are already some [good ones out there](ht
  - Can be used for multiple forms on a page
  - Only 10kb gzipped
 
-<p data-height="265" data-theme-id="0" data-slug-hash="mLeQMg" data-default-tab="html,result" data-user="tarponjargon" data-embed-version="2" data-pen-title="mLeQMg" class="codepen"><a href="https://codepen.io/tarponjargon/pen/mLeQMg/">Try it out on CodePen</a>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+<a href="https://codepen.io/tarponjargon/pen/mLeQMg/">Try it out on CodePen</a>
+
 
 ## Documentation
 1. [How it works](#howitworks)
@@ -183,6 +183,7 @@ Checks if year, month and day (optional) combined field values are in the past. 
 		...
 	</select>
 Field values should be numbers like "12" rather than names like "December" (therefore, best used with select boxes).
+
 <a href="ajaxvalidator"></a>
 **ajax**
 
