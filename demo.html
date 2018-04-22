@@ -20,7 +20,7 @@
 			data-jsv-disable-invalid="true"
 			data-jsv-form-valid-callback="formValidCallback"
 			data-jsv-form-invalid-callback="formInvalidCallback"
-			data-jsv-form-invalid-message="Please correct the errors in red"
+			data-jsv-form-invalid-message="Please correct the errors below"
 			data-jsv-form-incomplete-tooltip="Please complete all fields">
 			<div class="form-group">
 				<label for="test-email">E-Mail Address</label>
@@ -155,7 +155,8 @@
 					type="text"
 					placeholder="4111111111111111 will validate"
 					data-jsv-validators="require, creditcard"
-					data-jsv-field-error-creditcard="Please enter a valid credit card number (no spaces)"
+					data-jsv-field-error-require="Please enter a credit card number (no spaces)"
+					data-jsv-field-error-creditcard="Please check your credit card nubmer" 
 					id="test-card-number"
 					class="form-control" />
 			</div>
@@ -295,7 +296,7 @@
 							data-jsv-validation-target="checkboxvalidate"
 							type="checkbox"
 							name="terms"
-							value="yes">
+							value="yes" />
 					</div>
 					<div class="col-xs-11">
 						<label class="pull-left" for="test-terms-service">Agree to terms of service?</label>
@@ -310,7 +311,7 @@
 							data-jsv-field-error-requiremin="Please agree to both to continue"
 							type="checkbox"
 							name="terms"
-							value="more">
+							value="more" />
 					</div>
 					<div class="col-xs-11">
 						<label class="pull-left" for="test-terms-service-more">Agree to more stuff?</label>
@@ -335,6 +336,7 @@
 		// config overrides
 		cfg: {
 			useCss: true,
+			disableInvalid: false
 		},
 
 		// custom validators
@@ -357,7 +359,6 @@
 					});
 				}
 			} // end 'alphaNum' customvalidator
-			
 		}
 	};
 

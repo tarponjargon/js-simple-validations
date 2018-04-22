@@ -471,7 +471,7 @@ describe("Demo form", async () => {
 
 	test("Invalid form message", async () => {
 		const errSelector = '.' + cfg.formError.className;
-		const expectMessage = "Please correct the errors in red";
+		const expectMessage = "Please correct the errors below";
 		const errText = await page.evaluate(s => document.querySelector(s).innerText, errSelector);
 		expect(errText).toBe(expectMessage);
 	});

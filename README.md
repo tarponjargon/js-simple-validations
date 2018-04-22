@@ -1,6 +1,6 @@
 
 # Simple Validations
-Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations when don't want to mess with *any* Javascript, CSS or dependencies.  It's sort of a roided-out version of [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
+Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations (JSV) when don't want to mess with *any* Javascript, CSS or dependencies.  Think of it as enhanced [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
 
 ![enter image description here](https://i.imgur.com/C0cDlOx.gif)
 
@@ -205,8 +205,71 @@ Used to validate radio buttons and checkboxes (multiple form elements with the s
 		value="2"
 	/>
 
-## Styling
+## Customizing Validation Messages
 
+You can customize the error message for each validator in the field itself.  The format is:
+
+    data-jsv-field-error-[validator]="[custom error message]"
+
+Example of a custom error messages for validators on a credit card field:
+
+	<input
+		name="cardNumber"
+		type="text"
+		data-jsv-validators="require, creditcard"
+		data-jsv-field-error-require="Please enter a credit card number (no spaces)"
+		data-jsv-field-error-creditcard="Please check your credit card nubmer"
+	/>
+
+Looks like this on invalid input:
+
+![enter image description here](https://i.imgur.com/ly8mbIo.png)
+
+## Containers and Styling
+
+JSV applies containers* and styles automatically.  Each form gets an error container with the class `validate-form-error-message`.  Each input field is wrapped in a validation container with the class `validate-input` so that the it can be styled as *valid* or *invalid*.  A sibling container with class `validate-field-error-message` immediately follows, where error messages appear.  The CSS is included but can be overridden in your own stylesheet if desired.
+
+![enter image description here](https://i.imgur.com/mdvVl24.png)
+
+
+*&nbsp;Multiple form elements with the same `name` - like radio buttons or multi-value checkboxes - need to have the error message container and validation container (optional) added to the form manually.
+
+		<!-- Example of multi-value checkbox inputs that have the
+		     validation and error containers added.  Note addition
+		     of the ".validate-input" and ".validate-field-error-message"
+		     elements.  Link the inputs to the containers by specifying
+		     the IDs in "data-jsv-message-target" and "data-jsv-validation-target"
+		     data attributes. -->
+
+		<div class="validate-input" id="checkboxvalidate">
+			<input
+				data-jsv-validators="requiremin"
+				data-jsv-min-selected="2"
+				id="test-terms-service"
+				data-jsv-message-target="checkbox-invalid"
+				data-jsv-validation-target="checkboxvalidate"
+				type="checkbox"
+				name="terms"
+				value="yes"
+			/>
+			<label for="test-terms-service">Agree to terms of service?</label>
+
+			<input
+				data-jsv-validators="requiremin"
+				data-jsv-min-selected="2"
+				id="test-terms-service-more"
+				data-jsv-message-target="checkbox-invalid"
+				data-jsv-validation-target="checkboxvalidate"
+				type="checkbox"
+				name="terms"
+				value="more"
+			/>
+			<label for="test-terms-service-more">Agree to more stuff?</label>		
+			<div class="validate-field-error-message" id="checkbox-invalid"></div>
+		</div>
+Example:
+
+![enter image description here](https://i.imgur.com/SL120Fp.png)
 ## Form-Level Configuration
 
 ## Field-Level Configuration
@@ -214,5 +277,7 @@ Used to validate radio buttons and checkboxes (multiple form elements with the s
 ## Callbacks
 
 ## Custom Validators
+
+## Testing
 
 ## Acknowledgements
