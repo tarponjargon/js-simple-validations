@@ -1,6 +1,6 @@
 
 # Simple Validations
-Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations (JSV) when don't want to mess with *any* Javascript, CSS or dependencies.  Think of it as enhanced [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
+Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations (JSV) when don't want to mess with *any* Javascript, CSS or dependencies.  Forms are a big enough pain as it is!  Think of it as enhanced [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
 
 ![enter image description here](https://i.imgur.com/C0cDlOx.gif)
 
@@ -14,14 +14,13 @@ Another form validation library! There are already some [good ones out there](ht
  - Can be used for multiple forms on a page
  - Only 10kb gzipped
 
-## Installation
-Include in your HTML:
+## Documentation
 
-    <script src="https://unpkg.com/js-simple-validations@0.1.1/dist/js-simple-validations.min.js"></script>
-
-Or install with npm:
-
-    npm install js-simple-validations
+ 1. [How it works](#How%20it%20works)
+ 2. Installation
+ 3. [Validation Types](#validationtypes)
+ 4. Customizing Validation Messages
+ 5. Containers and Styling
 
 ## How it works
 
@@ -43,6 +42,16 @@ Or apply multiple types (in order) like:
 
 And that's it!
 
+## Installation
+Include in your HTML:
+
+    <script src="https://unpkg.com/js-simple-validations@0.1.1/dist/js-simple-validations.min.js"></script>
+
+Or install with npm:
+
+    npm install js-simple-validations
+
+<a name="validationtypes"></a>
 ## Validation Types
 
 **require**
@@ -227,12 +236,24 @@ Looks like this on invalid input:
 
 ## Containers and Styling
 
-JSV applies containers* and styles automatically.  Each form gets an error container with the class `validate-form-error-message`.  Each input field is wrapped in a validation container with the class `validate-input` so that the it can be styled as *valid* or *invalid*.  A sibling container with class `validate-field-error-message` immediately follows, where error messages appear.  The CSS is included but can be overridden in your own stylesheet if desired.
+JSV applies containers and styles automatically.  There's nothing you need to do, the exception being radio buttons and some checkboxes (see below).
+
+You can override the styles if you wish.  Each form gets an error container with the class `validate-form-error-message`.  Each input field is wrapped in a validation container with the class `validate-input` so that the it can be styled as *valid* or *invalid*.  A sibling container with class `validate-field-error-message` immediately follows, where error messages appear.  The CSS is included but can be overridden in your own stylesheet if desired.
 
 ![enter image description here](https://i.imgur.com/mdvVl24.png)
 
 
 *&nbsp;Multiple form elements with the same `name` - like radio buttons or multi-value checkboxes - need to have the error message container and validation container (optional) added to the form manually.
+
+Put this container where you want to target your error messages for the group of elements:
+
+    <div class="validate-field-error-message" id="[YOUR ID NAME]"></div>
+
+Then link each element of the group to the message target by adding the message target's ID to the element's data-jsv-message-target data attribute:
+
+    data-jsv-message-target="[YOUR ID NAME]"
+
+Below is a full example of a multi-value checkbox with the error message and the optional validation container specified:
 
 		<!-- Example of multi-value checkbox inputs that have the
 		     validation and error containers added.  Note addition
@@ -267,12 +288,33 @@ JSV applies containers* and styles automatically.  Each form gets an error conta
 			<label for="test-terms-service-more">Agree to more stuff?</label>		
 			<div class="validate-field-error-message" id="checkbox-invalid"></div>
 		</div>
-Example:
+Looks like:
 
-![enter image description here](https://i.imgur.com/SL120Fp.png)
+![enter image description here](https://i.imgur.com/KUlN1cy.png)
+
 ## Form-Level Configuration
 
+The following data attributes can be added to the `<form>` tag
+|Attribute|Description  |
+|--|--|
+| `data-jsv-form="true"` *(required)* | Attaches JSV to the form  |
+| `data-jsv-disable-icons="true|false"`| Toggles field validation icons for all elements of the form  |
+| `data-jsv-disable-invalid="true|false"`| Toggles disabling of the `<button>` element for valid and invalid form states  |
+| `data-jsv-form-invalid-message="[MESSAGE]"`| Message to show in the form-level error container upon submit of an invalid form  |
+| `data-jsv-form-incomplete-tooltip="[MESSAGE]"` | Message that appears in a tooltip when customer hovers the `<button>` element of an invalid form |
+| `data-jsv-submit-handler="[JAVASCRIPT FUNCTION NAME]"` | If you want to handle submit of the form with Javascript, the specified function will be called upon submit of a valid form.  It's called with the arguments: `event`, `form` (the entire form element) and the string '`valid`'.  If no function is specified, the form submits normally.  |
+| `data-jsv-form-invalid-callback="[JAVASCRIPT FUNCTION NAME]"` | If specified, the function is called when a form is submitted but is not valid.  |
+| `data-jsv-form-valid-callback="[JAVASCRIPT FUNCTION NAME]"` | If specified, the function is called when a form becomes valid.  If used, be prepared for the possibility that it can be called many times.  Also, this is not to be used as a submit handler.  |
+
+
 ## Field-Level Configuration
+The following attributes can be added to the form field elements (like `<input>)`:
+
+| Attribute | Description |
+|--|--|
+| `data-jsv-validators="[VALIDATORS]"` (*required*)| One, or a comma-separated list of the [validations](#validationtypes) to add to this field.  If multiple, they are evaluated left to right |
+
+## App Configuration
 
 ## Callbacks
 

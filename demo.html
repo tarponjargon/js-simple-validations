@@ -156,7 +156,7 @@
 					placeholder="4111111111111111 will validate"
 					data-jsv-validators="require, creditcard"
 					data-jsv-field-error-require="Please enter a credit card number (no spaces)"
-					data-jsv-field-error-creditcard="Please check your credit card nubmer" 
+					data-jsv-field-error-creditcard="Please check your credit card nubmer"
 					id="test-card-number"
 					class="form-control" />
 			</div>
@@ -342,7 +342,7 @@
 		// custom validators
 		customValidators: {
 			"alphanum": { // name of custom validator
-				"events": [], // array containing events this validator should fire on, [] = all
+				"events": [], // experimental - array containing events this validator should fire on, [] = all
 				"validator": function(field, value, validator) { // boilerplate
 					return new Promise(function(resolve, reject) { // boilerplate
 
