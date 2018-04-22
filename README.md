@@ -1,7 +1,7 @@
 
 
 # Simple Validations
-Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations (JSV) when don't want to mess with *any* Javascript, CSS or dependencies.  Forms are a big enough pain as it is!  Think of it as enhanced [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
+Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations (JSV) when don't want to mess with *any* Javascript, CSS or dependencies (aren't forms painful enough already?)   Think of it as enhanced [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
 
 ![enter image description here](https://i.imgur.com/C0cDlOx.gif)
 
@@ -16,15 +16,21 @@ Another form validation library! There are already some [good ones out there](ht
  - Only 10kb gzipped
 
 ## Documentation
-
- 1. [How it works](#howitworks)
- 2. [Installation](#installation)
- 3. [Validation Types](#validationtypes)
- 4. [Customizing Validation Messages](#validationmessages)
- 5. Containers and Styling
+1. [How it works](#howitworks)
+2. [Installation](#installation)
+3. [Validation Types](#validationtypes)
+4. [Customizing Validation Messages](#validationmessages)
+5. [Containers and Styling](#containersandstyling)
+6. [Form Configuration](#formlevelconfig)
+7. [Field Configuration](#fieldlevelconfig)
+8. [App Configuration](#appconfig)
+9. [Custom Validators](#customvalidators)
+10. [Callbacks](#callbacks)
+11. [Testing](#testing)
+12. [Acknowledgements](#acknowledgements)
 
 <a name="howitworks"></a>
-## How it works
+## How it Works
 
 When the page is ready, it attaches validations to forms that have this data-attribute:
 
@@ -42,12 +48,14 @@ Or apply multiple types (in order) like:
 
     <input type="text" name="email" data-jsv-validators="require, email" />
 
-And that's it!
+That's all you need to do to configure it.
 
+JSV listens for `input`, `change` and `focusout` events on each field in the form, and the `submit` event on the form itself.  Validations are triggered on each of those events.  When all fields pass validation, the form is in a "valid" state and can be submitted.  
+<a name="installation"></a>
 ## Installation
 Include in your HTML:
 
-    <script src="https://unpkg.com/js-simple-validations@0.1.1/dist/js-simple-validations.min.js"></script>
+    <script src="https://unpkg.com/js-simple-validations@0.1.4/dist/js-simple-validations.min.js"></script>
 
 Or install with npm:
 
@@ -172,7 +180,7 @@ Checks if year, month and day (optional) combined field values are in the past. 
 		...
 	</select>
 Field values should be numbers like "12" rather than names like "December" (therefore, best used with select boxes).
-
+<a href="ajaxvalidator"></a>
 **ajax**
 
 An AJAX GET request is made to the endpoint in `data-jsv-ajax-endpoint`.  The field's name is used as the key, and the input as its value.  
@@ -237,9 +245,10 @@ Looks like this on invalid input:
 
 ![enter image description here](https://i.imgur.com/ly8mbIo.png)
 
+<a name="containersandstyling"></a>
 ## Containers and Styling
 
-JSV applies containers and styles automatically.  There's nothing you need to do, the exception being radio buttons and some checkboxes (see below).
+JSV applies containers and styles automatically.  There's nothing you need to do, the exception being radio buttons and some checkboxes (see [below](#radiobuttons)).
 
 You can override the styles if you wish.  Each form gets an error container with the class `validate-form-error-message`.  Each input field is wrapped in a validation container with the class `validate-input` so that the it can be styled as *valid* or *invalid*.  A sibling container with class `validate-field-error-message` immediately follows, where error messages appear.  The CSS is included but can be overridden in your own stylesheet if desired.
 
@@ -296,7 +305,7 @@ Looks like:
 ![enter image description here](https://i.imgur.com/KUlN1cy.png)
 
 <a href="formlevelconfig"></a>
-## Form-Level Configuration
+## Form Configuration
 
 The following data attributes can be added to the `<form>` tag
 
@@ -312,7 +321,7 @@ The following data attributes can be added to the `<form>` tag
 | `data-jsv-form-valid-callback="[JAVASCRIPT FUNCTION NAME]"` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| If specified, the function is called when a form becomes valid.  If used, be prepared for the possibility that it can be called many times.  Also, this is not to be used as a submit handler.  Arguments: `event`, `form` (the entire form element) and the string '`valid`'. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  |
 
 <a href="fieldlevelconfig"></a>
-## Field-Level Configuration
+## Field Configuration
 The following attributes can be added to the form field elements (like `<input>)`:
 
 | Attribute | Description |
@@ -324,18 +333,17 @@ The following attributes can be added to the form field elements (like `<input>)
 | `data-jsv-disable-icon="true\|false"` | Toggles disabling of valid or invalid icon for this field only. |
 | `data-jsv-debounce="[MILLISECONDS]"` | Wait for [MILLISECONDS] before triggering any validations on this field. |
 | `data-jsv-field-invalid-callback-[VALIDATOR]="[JAVASCRIPT FUNCTION NAME]"` | If specified, the function is called when [VALIDATOR] is triggered but is invalid. Arguments: `event`, `form`, `name`, name of the last validation performed, The string '`invalid`', the error message.|
-| `data-jsv-field-valid-callback-[VALIDATOR]="[JAVASCRIPT FUNCTION NAME]"` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|  If specified, the function is called when [VALIDATOR] is triggered and returns valid. Arguments: `event`, `form`, `name`, name of the last validation performed, The string '`valid`'. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+| `data-jsv-field-valid-callback-[VALIDATOR]="[JAVASCRIPT FUNCTION NAME]"` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|  If specified, the function is called when [VALIDATOR] is triggered and returns valid. Arguments: `event`, `form`, `name`, name of the last validation performed, The string '`valid`'. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
 
+<a name="appconfig"></a>
 ## App Configuration
-Further configuration of JSV can be done by delcaring a `validateOptions` object in the window (before JSV instantiates), with a '`cfg`' key:
+Further configuration of JSV can be done by declaring a `validateOptions` object in the window (before JSV instantiates), with a '`cfg`' key:
 
-    <script>
     var window.validateOptions = {
     	cfg: { // config options }
     };
-    </script>
 
-Any [configuration settings](https://github.com/tarponjargon/js-simple-validations/blob/master/src/config.js) can be customized, though there are only a few that make sense to do that for:
+Any [configuration settings](https://github.com/tarponjargon/js-simple-validations/blob/master/src/config.js) can be customized, though there are only a few that make sense to change:
 
 | Config Key | Description |
 |--|--|
@@ -355,10 +363,63 @@ Any [configuration settings](https://github.com/tarponjargon/js-simple-validatio
 
 NOTE If modifying config settings other than the ones above: [form](#formlevelconfig) and [field](#fieldlevelconfig)-level configuration data attributes always takes precedence over config settings.  
 
+<a name="customvalidators"></a>
+## Custom Validators
+You can write your own validators for JSV by declaring a `validateOptions` object in the window (before JSV instantiates), with a '`customValidators`' key:
+
+    var window.validateOptions = {
+    	cfg: { // any app config options (see previous section) },
+    	customValidators: {
+			"[VALIDATOR NAME]": { // name of custom validator
+				"events": [], // experimental - array of events this validator should fire on, [] = default
+				"validator": function(field, value, validator) { // required
+					return new Promise(function(resolve, reject) { // required
+
+						// start custom validator code
+						if (true) {
+							resolve(); // required();
+						} else {
+							reject("[MESSAGE]"); // required, include message in reject
+						}		
+						// end custom validator code
+
+					});
+				}
+			}
+    	}
+    };
+
+Validations are promises, so the custom validation must also be a promise with a `resolve` and `reject`.  See the bottom of the [demo form](https://github.com/tarponjargon/js-simple-validations/blob/master/demo.html) for a working example of a custom validator.
+
+<a name="callbacks"></a>
 ## Callbacks
 
-## Custom Validators
+Callbacks to custom window functions can be configured for the following events:
 
+ - Field validator returns invalid
+ - Field validator returns valid
+ - Form becomes valid
+ - Form submit occurs, form is invalid
+ - Form submit occurs, form is valid
+
+See [form](#formlevelconfig) and [field](#fieldlevelconfig) configuration to see how to specify callback functions, and how they are triggered.  Also see examples of usage at the bottom of the [demo form](https://github.com/tarponjargon/js-simple-validations/blob/master/demo.html).
+
+JSV listens for for and prevents the form `submit` event to perform a final validation.  If the form is valid, it continues `submit` and the submission happens using the default `method` and `action` on the form
+
+**Use cases**
+
+*AJAX form submit* - To use AJAX to submit the form, you'll want to configure `data-jsv-submit-handler="[FUNCTION]"` on the `<form>` element.  When the form `submit` happens and the form is valid, the function specified in `data-jsv-submit-handler` is called with the arguments: `event` object, `form` object and the string '`valid`'.
+
+*Username does not exist* - Let's assume you're working on a user login form and you want to set up an [AJAX validator](#ajaxvalidator) to check that the username entered exists before the form is even submitted.  A potential use for the "field invalid" callback on the ajax validator is: if the username does not exist, call a function that performs UI changes to direct the user to the sign-up form.
+
+<a name="testing"></a>
 ## Testing
+There is an E2E test suite that uses Jest and Puppeteer.  To perform the tests on the demo form, you can run the following commands:
 
+    git clone https://github.com/tarponjargon/js-simple-validations.git
+    npm install
+    npm test
+
+<a name="acknowledgements"></a>
 ## Acknowledgements
+The idea behind JSV is to basically mimic some of the functionality of [ember-cp-validations](https://github.com/offirgolan/ember-cp-validations) using vanilla JS.
