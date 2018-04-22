@@ -111,7 +111,13 @@ const toValidate = [{
 		selector: 'textarea[name=random-textarea]',
 		expectMessage: "This field can't be empty"
 	},{
-		name: 'Invalid Random Textarea field',
+		name: 'Invalid Random Textarea field 2',
+		type: 'invalid',
+		testVal: '"yuuurd"',
+		selector: 'textarea[name=random-textarea]',
+		expectMessage: "Should be only letters and numbers"
+	},{
+		name: 'Valid Random Textarea field',
 		type: 'valid',
 		testVal: 'yardy yar yar yarr',
 		selector: 'textarea[name=random-textarea]'
@@ -131,7 +137,7 @@ const toValidate = [{
 		type: 'invalid',
 		testVal: '4122344512348765',
 		selector: 'input[name=cardNumber]',
-		expectMessage: "Please enter a valid credit card number (no spaces)"
+		expectMessage: "Please check your credit card number"
 	},{
 		name: 'Valid Credit Card',
 		type: 'valid',
