@@ -295,12 +295,13 @@ Looks like:
 ## Form-Level Configuration
 
 The following data attributes can be added to the `<form>` tag
-|Attribute|Description  |
-|--|--|
+
+| Attribute | Description |
+|---|---|
 | `data-jsv-form="true"` *(required)* | Attaches JSV to the form  |
-| `data-jsv-disable-icons="true\|false"`| Toggles field validation icons for all elements of the form  |
-| `data-jsv-disable-invalid="true\|false"`| Toggles disabling of the `<button>` element for valid and invalid form states  |
-| `data-jsv-form-invalid-message="[MESSAGE]"`| Message to show in the form-level error container upon submit of an invalid form  |
+| `data-jsv-disable-icons="true\|false"` | Toggles field validation icons for all elements of the form  |
+| `data-jsv-disable-invalid="true\|false"` | Toggles disabling of the `<button>` element for valid and invalid form states  |
+| `data-jsv-form-invalid-message="[MESSAGE]"` | Message to show in the form-level error container upon submit of an invalid form  |
 | `data-jsv-form-incomplete-tooltip="[MESSAGE]"` | Message that appears in a tooltip when customer hovers the `<button>` element of an invalid form |
 | `data-jsv-submit-handler="[JAVASCRIPT FUNCTION NAME]"` | If you want to handle submit of the form with Javascript, the specified function will be called upon submit of a valid form.  It's called with the arguments: `event`, `form` (the entire form element) and the string '`valid`'.  If no function is specified, the form submits normally.  |
 | `data-jsv-form-invalid-callback="[JAVASCRIPT FUNCTION NAME]"` | If specified, the function is called when a form is submitted but is not valid.  |
