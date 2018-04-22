@@ -297,7 +297,7 @@ Looks like:
 The following data attributes can be added to the `<form>` tag
 
 | Attribute | Description |
-|---|---|
+|---------------------------------------|---|
 | `data-jsv-form="true"` *(required)* | Attaches JSV to the form  |
 | `data-jsv-disable-icons="true\|false"` | Toggles field validation icons for all elements of the form  |
 | `data-jsv-disable-invalid="true\|false"` | Toggles disabling of the `<button>` element for valid and invalid form states  |
