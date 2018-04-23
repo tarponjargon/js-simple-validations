@@ -242,12 +242,12 @@ Example of a custom error messages for validators on a credit card field:
 		type="text"
 		data-jsv-validators="require, creditcard"
 		data-jsv-field-error-require="Please enter a credit card number (no spaces)"
-		data-jsv-field-error-creditcard="Please check your credit card nubmer"
+		data-jsv-field-error-creditcard="Please check your credit card number"
 	/>
 
 Looks like this on invalid input:
 
-![enter image description here](https://i.imgur.com/ly8mbIo.png)
+![enter image description here](https://i.imgur.com/V9rOqBL.png)
 
 <a name="containersandstyling"></a>
 ## Containers and Styling
@@ -421,6 +421,7 @@ JSV listens for for and prevents the form `submit` event to perform a final vali
 There is an E2E test suite that uses Jest and Puppeteer.  To perform the tests on the demo form, you can run the following commands:
 
     git clone https://github.com/tarponjargon/js-simple-validations.git
+	cd js-simple-validations
     npm install
     npm test
 
