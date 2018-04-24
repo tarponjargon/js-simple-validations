@@ -185,6 +185,7 @@ let Validations = function(self) {
 				return new Promise(function(resolve, reject) {
 					let luhnChk = (function(arr) {
 						return function(ccNum) {
+							ccNum = ccNum.toString();
 							let len = ccNum.length,
 								bit = 1,
 								sum = 0,

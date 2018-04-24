@@ -1,5 +1,6 @@
 
 
+
 # Simple Validations
 Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations (JSV) when don't want to mess with *any* Javascript, CSS or dependencies (aren't forms painful enough already?)   Think of it as enhanced [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
 
@@ -35,34 +36,41 @@ Another form validation library! There are already some [good ones out there](ht
 <a name="howitworks"></a>
 ## How it Works
 
-When the page is ready, it attaches validations to forms that have this data-attribute:
-
-    data-jsv-form="true"
-Example:
-
-    <form action="/processform" method="POST" data-jsv-form="true">
-It will apply validation to each field containing a data attribute that specifies the validation type(s):
-
-    data-jsv-validators="[TYPE]"
-Example:
-
-    <input type="text" name="firstname" data-jsv-validators="require" />
-Or apply multiple types (in order) like:
-
-    <input type="text" name="email" data-jsv-validators="require, email" />
-
-That's all you need to do to configure it.
-
 JSV listens for `input`, `change` and `focusout` events on each field in the form, and the `submit` event on the form itself.  Validations are triggered on each of those events.  When all fields pass validation, the form is in a "valid" state and can be submitted.  
+
 <a name="installation"></a>
 ## Installation
 Include in your HTML:
 
-    <script src="https://unpkg.com/js-simple-validations@0.1.6/dist/js-simple-validations.min.js"></script>
+    <script src="https://unpkg.com/js-simple-validations@0.1.7/dist/js-simple-validations.min.js"></script>
 
 Or install with npm:
 
     npm install js-simple-validations
+
+**How to use on your forms**
+
+Add this data attribute to any form(s) you want to validate:
+
+    data-jsv-form="true"
+
+Example:
+
+    <form action="/processform" method="POST" data-jsv-form="true">
+
+For each field in the form you want to validate, specify the field [validation type(s)](#validationtypes) in this data attribute:
+
+    data-jsv-validators="[TYPE]"
+
+Example:
+
+    <input type="text" name="firstname" data-jsv-validators="require" />
+
+Or apply multiple types like:
+
+    <input type="text" name="email" data-jsv-validators="require, email" />
+
+*That's all you need to do*
 
 <a name="validationtypes"></a>
 ## Validation Types
