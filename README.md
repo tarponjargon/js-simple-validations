@@ -1,3 +1,4 @@
+
 # Simple Validations
 Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations (JSV) when don't want to mess with *any* Javascript, CSS or dependencies (aren't forms painful enough already?)   Think of it as enhanced [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
 
@@ -14,7 +15,6 @@ Another form validation library! There are already some [good ones out there](ht
  - Only 10kb gzipped
 
 <a href="https://codepen.io/tarponjargon/pen/mLeQMg/">Try it out on CodePen</a>
-
 
 ## Documentation
 1. [How it works](#howitworks)
@@ -35,9 +35,11 @@ Another form validation library! There are already some [good ones out there](ht
 
 JSV listens for `input`, `change` and `focusout` events on each field in the form, and the `submit` event on the form itself.  Validations are triggered on each of those events.  When all fields pass validation, the form is in a "valid" state and can be submitted.  
 
+JSV is intended for "traditional" server-side rendered HTML forms.  So if you're using a framework or otherwise creating your forms with Javascript, it's probably not for you.  To avoid you having to write *any* Javascript, JSV is an [IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE) that executes (attaches to form elements) when the page is ready.
+
 <a name="installation"></a>
 ## Installation
-Include in your HTML:
+Download the [javascript file](https://raw.githubusercontent.com/tarponjargon/js-simple-validations/master/dist/js-simple-validations.min.js), or just include this script tag in your HTML:
 
     <script src="https://unpkg.com/js-simple-validations@0.1.7/dist/js-simple-validations.min.js"></script>
 
@@ -431,3 +433,4 @@ There is an E2E test suite that uses Jest and Puppeteer.  To perform the tests o
 <a name="acknowledgements"></a>
 ## Acknowledgements
 The idea behind JSV is to basically mimic some of the functionality of [ember-cp-validations](https://github.com/offirgolan/ember-cp-validations) using vanilla JS.
+
