@@ -35,7 +35,7 @@ Another form validation library! There are already some [good ones out there](ht
 
 JSV listens for `input`, `change` and `focusout` events on each field in the form, and the `submit` event on the form itself.  Validations are triggered on each of those events.  When all fields pass validation, the form is in a "valid" state and can be submitted.  
 
-JSV is intended for "traditional" server-side rendered HTML forms.  So if you're using a framework or otherwise creating your forms with Javascript, it's probably not for you.  To avoid you having to write *any* Javascript, JSV is an [IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE) that executes (attaches to form elements) when the page is ready.
+To avoid you having to write *any* Javascript, JSV instantiates and attaches to form elements when the page is ready.  JSV is intended for use with "traditional" server-side rendered HTML forms.  So if you're using a framework or otherwise creating your forms with Javascript, it probably won't work.  
 
 <a name="installation"></a>
 ## Installation
@@ -47,19 +47,11 @@ Or install with npm:
 
     npm install js-simple-validations
 
-On your form(s) add this data attribute to any form(s) you want to validate:
-
-    data-jsv-form="true"
-
-Example:
+On your form(s) add this `data-jsv-form="true"` to any form(s) you want to validate:
 
     <form action="/processform" method="POST" data-jsv-form="true">
 
-For each field in the form you want to validate, specify the field [validation type(s)](#validationtypes) in this data attribute:
-
-    data-jsv-validators="[TYPE]"
-
-Example:
+For each field in the form you want to validate, specify the field [validation type(s)](#validationtypes) like `data-jsv-validators="[TYPE]"` 
 
     <input type="text" name="firstname" data-jsv-validators="require" />
 
