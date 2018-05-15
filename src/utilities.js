@@ -14,7 +14,7 @@ function Util() {
 	// removes empty or whitespace elements, trims each element
 	this.cleanArray = function(arr) {
 		if (Array.isArray(arr) && arr.length) {
-			for (let i=0; i<arr.length; i++) {
+			for (var i=0; i<arr.length; i++) {
 				arr[i] = (arr[i]) ? arr[i].trim() : ""; // handles null
 			}
 			arr = arr.filter(function(e) { return /\S/.test(e) });
@@ -31,9 +31,9 @@ function Util() {
 	// convert int to it's english word equiv.  1-10 only, else just returns argument
 	this.digitWord = function(digit) {
 		try {
-			let num = (digit && !isNaN(digit)) ? digit : parseInt(digit);
+			var num = (digit && !isNaN(digit)) ? digit : parseInt(digit);
 			num = num.toString();
-			let digitWords = {
+			var digitWords = {
 				'0': 'zero','1': 'one','2': 'two','3': 'three','4': 'four',
 				'5': 'five','6': 'six','7': 'seven','8': 'eight','9': 'nine'
 			};
@@ -49,7 +49,7 @@ function Util() {
 
 	// function inserts DOM elements needed by this program
 	this.createValidationElement = function(el, selectorObj, id, tag='div') {
-		let newEl = null;
+		var newEl = null;
 		try {
 			if (!el.querySelector('.' + selectorObj.className)) {
 				newEl = document.createElement(tag);
@@ -74,7 +74,7 @@ function Util() {
 	this.safeString = function(text) {
 		if (!text) { return null }
 		try {
-			let table = {
+			var table = {
 				'<': 'lt','>': 'gt','"': 'quot','\'': 'apos','&': 'amp',
 				'\r': '#10','\n': '#13'
 			};
@@ -101,7 +101,7 @@ function Util() {
 
 	// safely toggle disabling an element - takea a true/false
 	this.disableElement = function(element, isDisabled) {
-		let b = isDisabled || false;
+		var b = isDisabled || false;
 		try {
 			if (element && this.isElement(element)) {
 				if (element.tagName === 'FORM') {
@@ -126,11 +126,11 @@ function Util() {
 	// toggle disabling the form && button but only if cfg value is true.  takes a true/false
 	this.disableForm = function(form, isDisabled) {
 		if (this.getAttr(form, cfg.disableInvalid)) {
-			let b = isDisabled || false;
+			var b = isDisabled || false;
 			// disable button on form
 			try {
-				let button = null;
-				let buttons = form.getElementsByTagName("button");
+				var button = null;
+				var buttons = form.getElementsByTagName("button");
 				if (buttons && buttons.length) {
 					button = buttons[0];
 					this.disableElement(button, b);
@@ -139,7 +139,7 @@ function Util() {
 						cfg.useTooltip &&
 						cfg.buttonTooltip
 					) {
-						let m = this.getAttr(form, cfg.formIncompleteText) || cfg.formIncompleteMessage;
+						var m = this.getAttr(form, cfg.formIncompleteText) || cfg.formIncompleteMessage;
 						button.setAttribute(cfg.buttonTooltip, m);
 					}
 				}
@@ -156,12 +156,12 @@ function Util() {
 
 	// get an attribute and sanitize it
 	this.getAttr = function(element, attrName) {
-		let attrValue = null;
+		var attrValue = null;
 		if (!element || !attrName || !this.isElement(element)) {
 			return null;
 		}
 		try {
-			let curVal = element.getAttribute(attrName) || null;
+			var curVal = element.getAttribute(attrName) || null;
 			if (curVal) {
 				attrValue = this.safeString(curVal.trim());
 
@@ -184,8 +184,7 @@ function Util() {
 	this.getValue = function(field) {
 		//console.log("getValue Called");
 		try {
-			let allChecked = [];
-			let allCheckedDefault = [];
+
 			switch (field.type) {
 				case "text":
 				case "textarea":
@@ -209,7 +208,8 @@ function Util() {
 					return this.safeStringInput(field.value);
 
 				case "select-multiple":
-					for (let i = 0; i < field.options.length; i++) {
+					var allChecked = [];
+					for (i = 0; i < field.options.length; i++) {
 						if (field.options[i].selected) {
 							allChecked[allChecked.length] = this.safeStringInput(field.options[i].value) || "";
 						}
@@ -217,11 +217,12 @@ function Util() {
 					return allChecked;
 
 				case "select-one":
-					if (field.selectedIndex == -1) {
+					var i = field.selectedIndex;
+					if (i == -1) {
 						return "";
 					}
 					else {
-						return this.safeStringInput(field.options[field.selectedIndex].value) || "";
+						return this.safeStringInput(field.options[i].value) || "";
 					}
 
 				case "button":
@@ -236,15 +237,15 @@ function Util() {
 				default:
 					// multiple-value handling for radio and checkbox
 					if (field[0].type === "radio") {
-						for (let i = 0; i < field.length; i++) {
+						for (i = 0; i < field.length; i++) {
 							if (field[i].checked) {
 								return this.safeStringInput(field[i].value);
 							}
 						}
 						return "";
 					} else if (field[0].type == "checkbox") {
-
-						for (let i = 0; i < field.length; i++) {
+						var allCheckedDefault = [];
+						for (i = 0; i < field.length; i++) {
 							if (field[i].checked) {
 								allCheckedDefault[allChecked.length] = this.safeStringInput(field[i].value);
 							}
@@ -261,12 +262,12 @@ function Util() {
 		return "";
 	}, // end getValue function
 
-	this.showMsg = function(form, targetId, message) {
+	this.showFormMessage = function(form, targetId, message) {
 		if (!form || !targetId || !message || !cfg.formShowMessages) {
 			return false;
 		}
 		try {
-			let target = form.querySelector('.' + targetId);
+			var target = form.querySelector('.' + targetId);
 			if (target && this.isElement(target)) {
 				target.innerHTML = message;
 				target.classList.remove(cfg.messageHidden);
@@ -285,7 +286,7 @@ function Util() {
 			return false;
 		}
 		try {
-			let target = form.querySelector('.' + targetId);
+			var target = form.querySelector('.' + targetId);
 			if (target) {
 				target.innerHTML = "";
 				target.classList.add(cfg.messageHidden);
@@ -300,9 +301,9 @@ function Util() {
 	};
 
 	this.debounce = function(func, wait, immediate) {
-		let timeout;
+		var timeout;
 		return function() {
-			let context = this, args = arguments;
+			var context = this, args = arguments;
 			if (timeout) {
 				console.log("there is a timeout");
 			}
@@ -322,7 +323,7 @@ function Util() {
 
 	this.nameToString = function(name){
 		if (!name) { return null; }
-    	let words = name.match(/[A-Za-z][a-z]*/g);
+    	var words = name.match(/[A-Za-z][a-z]*/g);
 		return words.map(this.capitalize).join(" ");
 	}.bind(this);
 

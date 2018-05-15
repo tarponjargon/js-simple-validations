@@ -5,9 +5,9 @@ import Util from './utilities';
 
 function FormValidator(form) {
 
-	let util = new Util();
+	var util = new Util();
 
-	let self = this;
+	var self = this;
 	this.form = form;
 
 	this.getButton = function(form=self.form) {
@@ -25,7 +25,7 @@ function FormValidator(form) {
 		}
 	};
 	this.getFields = function(form=self.form) {
-		let fields = [];
+		var fields = [];
 		try {
 			fields = form.querySelectorAll('[' + cfg.fieldValidators + ']');
 			//console.log("in formFields(), getting data attr", cfg.fieldValidators, "from", form);
@@ -38,19 +38,19 @@ function FormValidator(form) {
 	// the rules are complex and messy, but the idea is we don't want to run validations over and over unnecessarily,
 	// since the form revalidates with every interaction
 	this.getValidationFields = function(form=self.form) {
-		let vfields = {
+		var vfields = {
 			"validate": [],
 			"reset": []
 		}
 		Array.prototype.forEach.call(self.getFields(form), function(field) {
 			try {
-				let add = false;
-				let reset = false;
-				let vtypes = util.getAttr(field, cfg.fieldValidators);
-				let isRequired = (vtypes && vtypes.toLowerCase().indexOf("require") !== -1);
-				let isMulti = (field.type === 'radio' || field.type === 'checkbox');
-				let fieldVal = util.getValue(field);
-				let previousVal = field.getAttribute(cfg.prevVal);
+				var add = false;
+				var reset = false;
+				var vtypes = util.getAttr(field, cfg.fieldValidators);
+				var isRequired = (vtypes && vtypes.toLowerCase().indexOf("require") !== -1);
+				var isMulti = (field.type === 'radio' || field.type === 'checkbox');
+				var fieldVal = util.getValue(field);
+				var previousVal = field.getAttribute(cfg.prevVal);
 
 				if (fieldVal) { // has a value
 					if (previousVal) { // does it have a previous value?
@@ -83,14 +83,14 @@ function FormValidator(form) {
 
 	// check <form> element and default to formInvalidMessage
 	this.getIncompleteMessage = function(form=self.form) {
-		let customMsg = util.getAttr(form, cfg.formIncompleteText);
+		var customMsg = util.getAttr(form, cfg.formIncompleteText);
 		return (customMsg) ? customMsg : cfg.formIncompleteMessage;
 	};
 
 	this.checkValid = function(form=self.form) {
 		//console.log("in checkValid");
-		let fields = self.getFields(form);
-		let v = 0;
+		var fields = self.getFields(form);
+		var v = 0;
 		Array.prototype.forEach.call(fields, function(field) {
 			if (field.getAttribute(cfg.fieldIsValid)) {
 				v++;
@@ -104,19 +104,19 @@ function FormValidator(form) {
 		try {
 			return new Promise(function(resolve, reject) {
 
-				let vfields = self.getValidationFields(form) || [];
+				var vfields = self.getValidationFields(form) || [];
 
 				// loop thru all validation fields fields and validate each
-				let proms = [ new Promise.resolve() ];  // give it a resolving promise in case there are none
+				var proms = [ new Promise.resolve() ];  // give it a resolving promise in case there are none
 				Array.prototype.forEach.call(vfields.validate, function(field) {
 					//console.log("vfields current field", field);
-					let fieldValidator = new FieldValidator(field, form, e);
+					var fieldValidator = new FieldValidator(field, form, e);
 					proms.push(fieldValidator.validate(field));
 				});
 
 				// reset UI on any field in 'reset'
 				Array.prototype.forEach.call(vfields.reset, function(field) {
-					let fieldValidator = new FieldValidator(field, form, e);
+					var fieldValidator = new FieldValidator(field, form, e);
 					proms.push(fieldValidator.reset(field));
 				});
 
@@ -141,7 +141,7 @@ function FormValidator(form) {
 	this.valid = function(e, form=self.form) {
 		try {
 
-			let button = self.getButton(form);
+			var button = self.getButton(form);
 
 			// set form data attribute to valid
 			if (!self.hasValid(form)) {
@@ -163,14 +163,14 @@ function FormValidator(form) {
 			util.hideFormMessage(form, cfg.formError.className);
 
 			// see if there are any callbcks to execute on form=valid
-			let validCallback = util.getAttr(form, cfg.formValidCallback);
+			var validCallback = util.getAttr(form, cfg.formValidCallback);
 			if (e.type !== 'submit' &&
 				validCallback &&
 				validCallback in window &&
 				typeof window[validCallback] === 'function'
 			) {
 				try {
-					let debouncedCallback = util.debounce(window[validCallback], cfg.debounceDefault);
+					var debouncedCallback = util.debounce(window[validCallback], cfg.debounceDefault);
 					debouncedCallback(e, form, 'valid');
 				} catch(e) {
 					console.error("Problem executing valid callback on form:", validCallback, e);
@@ -189,7 +189,7 @@ function FormValidator(form) {
 	this.invalid = function(e, form=self.form) {
 		try {
 
-			let button = self.getButton(form);
+			var button = self.getButton(form);
 
 			// remove form "valid" data attribute (if any)
 			if (self.hasValid(form)) {
@@ -222,7 +222,7 @@ function FormValidator(form) {
 			util.hideFormMessage(form, cfg.formSuccess.className);
 
 			// see if there are any callbcks to execute on form=invalid
-			let invalidCallback = util.getAttr(form, cfg.formInvalidCallback);
+			var invalidCallback = util.getAttr(form, cfg.formInvalidCallback);
 
 			if (e.type === 'submit' &&
 				invalidCallback &&
@@ -230,7 +230,7 @@ function FormValidator(form) {
 				typeof window[invalidCallback] === 'function'
 			) {
 				try {
-					let debouncedCallback = util.debounce(window[invalidCallback], cfg.debounceDefault);
+					var debouncedCallback = util.debounce(window[invalidCallback], cfg.debounceDefault);
 					debouncedCallback(e, form, 'invalid');
 				} catch(e) {
 					console.error("Problem executing invalid callback on form:", invalidCallback, e);

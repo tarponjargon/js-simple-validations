@@ -6,20 +6,28 @@ import styles from './styles.js'
 
 // make sure we're in a browser environment
 if (typeof window !== 'undefined' && window) {
-	document.addEventListener("DOMContentLoaded", () => SimpleValidations());
+	document.addEventListener("DOMContentLoaded", function() {
+		SimpleValidations();
+	});
 }
 
-let SimpleValidations = function() {
+var SimpleValidations = function() {
 
-	let util = new Util();
+	// if (typeof window.validateOptions === 'undefined' ||
+	// 	window.validateOptions === null ||
+	// 	typeof window.validateOptions !== 'object'
+	// ) {
+	// 	window.validateOptions = {};
+	// }
 
-	//merge any user-defined options into cfg
-	window.validateOptions = window.validateOptions || {};
-	if ('cfg' in window.validateOptions && typeof window.validateOptions.cfg === 'object') {
-		for (let key in window.validateOptions.cfg) {
-			cfg[key] = window.validateOptions.cfg[key];
-		}
-	}
+	var util = new Util();
+
+	// merge any user-defined options into cfg
+	// if ('cfg' in window.validateOptions && typeof window.validateOptions.cfg === 'object') {
+	// 	for (var key in window.validateOptions.cfg) {
+	// 		cfg[key] = window.validateOptions.cfg[key];
+	// 	}
+	// }
 
 	// exit if cfg disableValidations === true
 	if (cfg.disableValidations !== 'undefined' && cfg.disableValidations) {
@@ -30,7 +38,7 @@ let SimpleValidations = function() {
 	// add stylesheet/styles to window (if enabled)
 	if (cfg.useCss) {
 		try {
-			let sht = document.createElement('style');
+			var sht = document.createElement('style');
 			sht.innerHTML = styles;
 			document.head.appendChild(sht);
 		} catch(e) {
@@ -42,13 +50,13 @@ let SimpleValidations = function() {
 	Array.prototype.forEach.call(document.querySelectorAll('[' + cfg.formValidateAttr + ']'), function(form) {
 
 		// add form-level error container (if not exists)
-		let ferr = util.createValidationElement(form, cfg.formError);
+		var ferr = util.createValidationElement(form, cfg.formError);
 		if (ferr) {
 			form.insertBefore(ferr, form.firstChild);
 		}
 
 		// add form-level success container (if not exists)
-		let fsucc = util.createValidationElement(form, cfg.formSuccess);
+		var fsucc = util.createValidationElement(form, cfg.formSuccess);
 		if (fsucc) {
 			form.appendChild(fsucc);
 		}
@@ -56,13 +64,13 @@ let SimpleValidations = function() {
 		// disable form by default
 		util.disableForm(form, true);
 
-		let formValidator = new FormValidator(form);
+		var formValidator = new FormValidator(form);
 
 		// loop thru fields in this form marked for validation
 		Array.prototype.forEach.call(form.querySelectorAll('[' + cfg.fieldValidators + ']'), function(field) {
 
 			// reference ID to tie message container, etc to this field
-			let baseId = util.getAttr(field, cfg.baseId);
+			var baseId = util.getAttr(field, cfg.baseId);
 			if (!baseId) {
 				baseId = util.createId();
 				field.setAttribute(cfg.baseId, baseId);
@@ -73,11 +81,11 @@ let SimpleValidations = function() {
 			// so the divs need to be added manually (if wanted)
 			if (field.type !== 'radio' && field.type !== 'checkbox') {
 				try {
-					let cvt = util.getAttr(field, cfg.valTarget);
-					let cv = (cvt) ? form.querySelector('#' + cvt) : null;
+					var cvt = util.getAttr(field, cfg.valTarget);
+					var cv = (cvt) ? form.querySelector('#' + cvt) : null;
 					if (!cv) {
-						let wrapId = 'w-' + baseId;
-						let fc = util.createValidationElement(field.parentNode, cfg.fieldContainer, wrapId);
+						var wrapId = 'w-' + baseId;
+						var fc = util.createValidationElement(field.parentNode, cfg.fieldContainer, wrapId);
 						field.parentNode.appendChild(fc);
 						fc.appendChild(field);
 						field.setAttribute(cfg.valTarget, wrapId);
@@ -89,11 +97,11 @@ let SimpleValidations = function() {
 
 				// add field-level error container (if not exists and not a custom one )
 				try {
-					let ces = util.getAttr(field, cfg.invMessage);
-					let ce = (ces) ? form.querySelector('#' + ces) : null;
+					var ces = util.getAttr(field, cfg.invMessage);
+					var ce = (ces) ? form.querySelector('#' + ces) : null;
 					if (!ce) {
-						let errId = 'e-' + baseId;
-						let fe = util.createValidationElement(field.parentNode, cfg.fieldError, errId);
+						var errId = 'e-' + baseId;
+						var fe = util.createValidationElement(field.parentNode, cfg.fieldError, errId);
 						field.parentNode.parentNode.insertBefore(fe, field.parentNode.nextElementSibling);
 						field.setAttribute(cfg.invMessage, errId);
 					}
@@ -106,7 +114,7 @@ let SimpleValidations = function() {
 			// check if field has a value already (like from the backend)
 			// simulate a focusout event by sending an explicit event object
 			try {
-				let val = util.getValue(field);
+				var val = util.getValue(field);
 				if (val && /\S/.test(val)) {
 					formValidator.validate({
 						"type": "focusout",
@@ -120,20 +128,20 @@ let SimpleValidations = function() {
 			}
 
 			// set up debouncing of input
-			let dbField = util.getAttr(field, cfg.fieldDebounce);
-			let dbr = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
-			let dbf = debounce(formValidator.validate, dbr);
-			let dbw = function(e) {
+			var dbField = util.getAttr(field, cfg.fieldDebounce);
+			var dbRate = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
+			var debounced = debounce(formValidator.validate, dbRate);
+			var debounceWrapper = function(e) {
 				//console.log("debounceWrapper", e.type, form.getAttribute('name'), field.getAttribute('name'), field.getAttribute('id'), "deboucerate", dbRate);
 				if (field.offsetParent !== null) {
-					dbf(e, form).then(function(){}).catch(function(){});
+					debounced(e, form).then(function(){}).catch(function(){});
 				}
 			}
 
 			// and add listeners to trigger form revalidation on any changes
-			field.addEventListener('input', dbw, false);
-			field.addEventListener('change', dbw, false);
-			field.addEventListener('focusout', dbw, false);
+			field.addEventListener('input', debounceWrapper, false);
+			field.addEventListener('change', debounceWrapper, false);
+			field.addEventListener('focusout', debounceWrapper, false);
 
 		}); // end loop thru fields in form
 
@@ -144,23 +152,23 @@ let SimpleValidations = function() {
 			formValidator.validate(e, form).then(function() {
 				console.log("success!");
 
-				let ref = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
-				let aftr = (
-					ref &&
-					ref in window &&
-					typeof window[ref] === 'function'
-				) ? window[ref] : null;
+				var afterSubmitRef = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
+				var afterSubmit = (
+					afterSubmitRef &&
+					afterSubmitRef in window &&
+					typeof window[afterSubmitRef] === 'function'
+				) ? window[afterSubmitRef] : null;
 
-				if (aftr) {
+				if (afterSubmit) {
 					console.log("AFTERSUBMIT", e, form, 'valid');
-					aftr(e, form, 'valid');
+					afterSubmit(e, form, 'valid');
 				} else {
 					console.log("submitting form the traditional way");
 					form.submit();
 				}
 			}).catch(function() {
-				let m = util.getAttr(form, cfg.formInvalidMessage) || "Please correct the errors below";
-				util.showMsg(form, cfg.formError.className, m);
+				var m = util.getAttr(form, cfg.formInvalidMessage) || "Please correct the errors below";
+				util.showFormMessage(form, cfg.formError.className, m);
 			});
 		});
 
