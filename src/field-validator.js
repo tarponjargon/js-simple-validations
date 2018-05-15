@@ -17,12 +17,12 @@ function FieldValidator(field, form, event) {
 	// Load validations (hash containing the types of validations)
 	this.validators = new Validations(this);
 
-	// merge in any custom validators
-	// if ('customValidators' in window.validateOptions && typeof window.validateOptions.customValidators === 'object') {
-	// 	for (let key in window.validateOptions.customValidators) {
-	// 		this.validators[key] = window.validateOptions.customValidators[key];
-	// 	}
-	// }
+	//merge in any custom validators
+	if ('customValidators' in window.validateOptions && typeof window.validateOptions.customValidators === 'object') {
+		for (let key in window.validateOptions.customValidators) {
+			this.validators[key] = window.validateOptions.customValidators[key];
+		}
+	}
 
 	this.checkValid = function(field=self.field) {
 		return util.getAttr(field, cfg.fieldIsValid);

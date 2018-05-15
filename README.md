@@ -1,4 +1,6 @@
 
+
+
 # Simple Validations
 Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations (JSV) when don't want to mess with *any* Javascript, CSS or dependencies (aren't forms painful enough already?)   Think of it as enhanced [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
 
@@ -15,6 +17,7 @@ Another form validation library! There are already some [good ones out there](ht
  - Only 10kb gzipped
 
 <a href="https://codepen.io/tarponjargon/pen/mLeQMg/">Try it out on CodePen</a>
+
 
 ## Documentation
 1. [How it works](#howitworks)
@@ -35,11 +38,9 @@ Another form validation library! There are already some [good ones out there](ht
 
 JSV listens for `input`, `change` and `focusout` events on each field in the form, and the `submit` event on the form itself.  Validations are triggered on each of those events.  When all fields pass validation, the form is in a "valid" state and can be submitted.  
 
-To avoid you having to write *any* Javascript, JSV instantiates and attaches to form elements when the page is ready.  JSV is intended for use with "traditional" server-side rendered HTML forms.  So if you're using a framework or otherwise creating your forms with Javascript, it probably won't work.  
-
 <a name="installation"></a>
 ## Installation
-Download the [javascript file](https://raw.githubusercontent.com/tarponjargon/js-simple-validations/master/dist/js-simple-validations.min.js), or just include this script tag in your HTML:
+Include in your HTML:
 
     <script src="https://unpkg.com/js-simple-validations@0.1.7/dist/js-simple-validations.min.js"></script>
 
@@ -47,11 +48,21 @@ Or install with npm:
 
     npm install js-simple-validations
 
-On your form(s) add this `data-jsv-form="true"` to any form(s) you want to validate:
+**How to use on your forms**
+
+Add this data attribute to any form(s) you want to validate:
+
+    data-jsv-form="true"
+
+Example:
 
     <form action="/processform" method="POST" data-jsv-form="true">
 
-For each field in the form you want to validate, specify the field [validation type(s)](#validationtypes) like `data-jsv-validators="[TYPE]"` 
+For each field in the form you want to validate, specify the field [validation type(s)](#validationtypes) in this data attribute:
+
+    data-jsv-validators="[TYPE]"
+
+Example:
 
     <input type="text" name="firstname" data-jsv-validators="require" />
 
@@ -59,7 +70,7 @@ Or apply multiple types like:
 
     <input type="text" name="email" data-jsv-validators="require, email" />
 
-*That's all you need to do* (unless you want to [customize](#validationmessages))
+*That's all you need to do*
 
 <a name="validationtypes"></a>
 ## Validation Types
@@ -305,7 +316,7 @@ Looks like:
 
 ![enter image description here](https://i.imgur.com/KUlN1cy.png)
 
-<a name="formlevelconfig"></a>
+<a href="formlevelconfig"></a>
 ## Form Configuration
 
 The following data attributes can be added to the `<form>` tag
@@ -321,7 +332,7 @@ The following data attributes can be added to the `<form>` tag
 | `data-jsv-form-invalid-callback="[JAVASCRIPT FUNCTION NAME]"` | If specified, the function is called when a form is submitted but is not valid.  Arguments: `event`, `form` (the entire form element) and the string '`invalid`'.  |
 | `data-jsv-form-valid-callback="[JAVASCRIPT FUNCTION NAME]"` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| If specified, the function is called when a form becomes valid.  If used, be prepared for the possibility that it can be called many times.  Also, this is not to be used as a submit handler.  Arguments: `event`, `form` (the entire form element) and the string '`valid`'. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  |
 
-<a name="fieldlevelconfig"></a>
+<a href="fieldlevelconfig"></a>
 ## Field Configuration
 The following attributes can be added to the form field elements (like `<input>)`:
 
@@ -425,4 +436,3 @@ There is an E2E test suite that uses Jest and Puppeteer.  To perform the tests o
 <a name="acknowledgements"></a>
 ## Acknowledgements
 The idea behind JSV is to basically mimic some of the functionality of [ember-cp-validations](https://github.com/offirgolan/ember-cp-validations) using vanilla JS.
-

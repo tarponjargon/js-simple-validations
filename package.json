@@ -1,7 +1,7 @@
 {
   "name": "js-simple-validations",
   "private": false,
-  "version": "0.1.8",
+  "version": "0.1.7",
   "description": "Form validation tool",
   "repository": {
     "type": "git",
@@ -24,23 +24,25 @@
   "author": "Rory O'Connor",
   "license": "ISC",
   "devDependencies": {
-    "babel-core": "^6.26.2",
+    "babel-core": "^6.26.3",
     "babel-jest": "^22.4.3",
     "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "eslint": "^4.19.1",
     "eslint-loader": "^2.0.0",
     "jest": "^22.4.3",
-    "puppeteer": "^1.3.0",
-    "webpack": "^4.6.0",
-    "webpack-cli": "^2.0.15"
+    "puppeteer": "^1.4.0",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.3"
   },
   "dependencies": {
+    "nodelist-foreach-polyfill": "^1.2.0",
     "promise-polyfill": "7.1.2"
   },
   "jest": {
     "moduleFileExtensions": [
-      "js"
+      "js",
+      "json"
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
