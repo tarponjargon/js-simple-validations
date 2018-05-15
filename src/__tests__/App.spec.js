@@ -111,13 +111,7 @@ const toValidate = [{
 		selector: 'textarea[name=random-textarea]',
 		expectMessage: "This field can't be empty"
 	},{
-		name: 'Invalid Random Textarea field 2',
-		type: 'invalid',
-		testVal: '"yuuurd"',
-		selector: 'textarea[name=random-textarea]',
-		expectMessage: "Should be only letters and numbers"
-	},{
-		name: 'Valid Random Textarea field',
+		name: 'Invalid Random Textarea field',
 		type: 'valid',
 		testVal: 'yardy yar yar yarr',
 		selector: 'textarea[name=random-textarea]'
@@ -137,7 +131,7 @@ const toValidate = [{
 		type: 'invalid',
 		testVal: '4122344512348765',
 		selector: 'input[name=cardNumber]',
-		expectMessage: "Please check your credit card number"
+		expectMessage: "Please enter a valid credit card number (no spaces)"
 	},{
 		name: 'Valid Credit Card',
 		type: 'valid',
@@ -477,7 +471,7 @@ describe("Demo form", async () => {
 
 	test("Invalid form message", async () => {
 		const errSelector = '.' + cfg.formError.className;
-		const expectMessage = "Please correct the errors below";
+		const expectMessage = "Please correct the errors in red";
 		const errText = await page.evaluate(s => document.querySelector(s).innerText, errSelector);
 		expect(errText).toBe(expectMessage);
 	});

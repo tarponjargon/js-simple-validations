@@ -1,4 +1,4 @@
-var cfg = {
+let cfg = {
 	"disableValidations": false, // will not attach to window if true (can be passed in user-set options too)
 	"formValidateAttr": "data-jsv-form", // the data attribute to look for which triggers validation
 	"formIsValid": "data-jsv-form-isvalid", // data attribute store on <form> element when form is valid

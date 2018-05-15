@@ -1,4 +1,5 @@
 import cfg from './config';
+import 'nodelist-foreach-polyfill';
 
 function Util() {
 
@@ -14,7 +15,7 @@ function Util() {
 	// removes empty or whitespace elements, trims each element
 	this.cleanArray = function(arr) {
 		if (Array.isArray(arr) && arr.length) {
-			for (var i=0; i<arr.length; i++) {
+			for (let i=0; i<arr.length; i++) {
 				arr[i] = (arr[i]) ? arr[i].trim() : ""; // handles null
 			}
 			arr = arr.filter(function(e) { return /\S/.test(e) });
@@ -31,9 +32,9 @@ function Util() {
 	// convert int to it's english word equiv.  1-10 only, else just returns argument
 	this.digitWord = function(digit) {
 		try {
-			var num = (digit && !isNaN(digit)) ? digit : parseInt(digit);
+			let num = (digit && !isNaN(digit)) ? digit : parseInt(digit);
 			num = num.toString();
-			var digitWords = {
+			let digitWords = {
 				'0': 'zero','1': 'one','2': 'two','3': 'three','4': 'four',
 				'5': 'five','6': 'six','7': 'seven','8': 'eight','9': 'nine'
 			};
@@ -49,13 +50,13 @@ function Util() {
 
 	// function inserts DOM elements needed by this program
 	this.createValidationElement = function(el, selectorObj, id, tag='div') {
-		var newEl = null;
+		let newEl = null;
 		try {
 			if (!el.querySelector('.' + selectorObj.className)) {
 				newEl = document.createElement(tag);
 				newEl.classList.add(selectorObj.className);
 				if (selectorObj.addClasses && Array.isArray(selectorObj.addClasses)) {
-					Array.prototype.forEach.call(selectorObj.addClasses, function(addClass) {
+					selectorObj.addClasses.forEach(addClass => {
 						newEl.classList.add(addClass);
 					})
 				}
@@ -74,7 +75,7 @@ function Util() {
 	this.safeString = function(text) {
 		if (!text) { return null }
 		try {
-			var table = {
+			let table = {
 				'<': 'lt','>': 'gt','"': 'quot','\'': 'apos','&': 'amp',
 				'\r': '#10','\n': '#13'
 			};
@@ -101,7 +102,7 @@ function Util() {
 
 	// safely toggle disabling an element - takea a true/false
 	this.disableElement = function(element, isDisabled) {
-		var b = isDisabled || false;
+		let b = isDisabled || false;
 		try {
 			if (element && this.isElement(element)) {
 				if (element.tagName === 'FORM') {
@@ -126,11 +127,11 @@ function Util() {
 	// toggle disabling the form && button but only if cfg value is true.  takes a true/false
 	this.disableForm = function(form, isDisabled) {
 		if (this.getAttr(form, cfg.disableInvalid)) {
-			var b = isDisabled || false;
+			let b = isDisabled || false;
 			// disable button on form
 			try {
-				var button = null;
-				var buttons = form.getElementsByTagName("button");
+				let button = null;
+				let buttons = form.getElementsByTagName("button");
 				if (buttons && buttons.length) {
 					button = buttons[0];
 					this.disableElement(button, b);
@@ -139,7 +140,7 @@ function Util() {
 						cfg.useTooltip &&
 						cfg.buttonTooltip
 					) {
-						var m = this.getAttr(form, cfg.formIncompleteText) || cfg.formIncompleteMessage;
+						let m = this.getAttr(form, cfg.formIncompleteText) || cfg.formIncompleteMessage;
 						button.setAttribute(cfg.buttonTooltip, m);
 					}
 				}
@@ -156,12 +157,12 @@ function Util() {
 
 	// get an attribute and sanitize it
 	this.getAttr = function(element, attrName) {
-		var attrValue = null;
+		let attrValue = null;
 		if (!element || !attrName || !this.isElement(element)) {
 			return null;
 		}
 		try {
-			var curVal = element.getAttribute(attrName) || null;
+			let curVal = element.getAttribute(attrName) || null;
 			if (curVal) {
 				attrValue = this.safeString(curVal.trim());
 
@@ -184,7 +185,8 @@ function Util() {
 	this.getValue = function(field) {
 		//console.log("getValue Called");
 		try {
-
+			let allChecked = [];
+			let allCheckedDefault = [];
 			switch (field.type) {
 				case "text":
 				case "textarea":
@@ -208,8 +210,7 @@ function Util() {
 					return this.safeStringInput(field.value);
 
 				case "select-multiple":
-					var allChecked = [];
-					for (i = 0; i < field.options.length; i++) {
+					for (let i = 0; i < field.options.length; i++) {
 						if (field.options[i].selected) {
 							allChecked[allChecked.length] = this.safeStringInput(field.options[i].value) || "";
 						}
@@ -217,12 +218,11 @@ function Util() {
 					return allChecked;
 
 				case "select-one":
-					var i = field.selectedIndex;
-					if (i == -1) {
+					if (field.selectedIndex == -1) {
 						return "";
 					}
 					else {
-						return this.safeStringInput(field.options[i].value) || "";
+						return this.safeStringInput(field.options[field.selectedIndex].value) || "";
 					}
 
 				case "button":
@@ -237,15 +237,15 @@ function Util() {
 				default:
 					// multiple-value handling for radio and checkbox
 					if (field[0].type === "radio") {
-						for (i = 0; i < field.length; i++) {
+						for (let i = 0; i < field.length; i++) {
 							if (field[i].checked) {
 								return this.safeStringInput(field[i].value);
 							}
 						}
 						return "";
 					} else if (field[0].type == "checkbox") {
-						var allCheckedDefault = [];
-						for (i = 0; i < field.length; i++) {
+
+						for (let i = 0; i < field.length; i++) {
 							if (field[i].checked) {
 								allCheckedDefault[allChecked.length] = this.safeStringInput(field[i].value);
 							}
@@ -267,7 +267,7 @@ function Util() {
 			return false;
 		}
 		try {
-			var target = form.querySelector('.' + targetId);
+			let target = form.querySelector('.' + targetId);
 			if (target && this.isElement(target)) {
 				target.innerHTML = message;
 				target.classList.remove(cfg.messageHidden);
@@ -286,7 +286,7 @@ function Util() {
 			return false;
 		}
 		try {
-			var target = form.querySelector('.' + targetId);
+			let target = form.querySelector('.' + targetId);
 			if (target) {
 				target.innerHTML = "";
 				target.classList.add(cfg.messageHidden);
@@ -301,9 +301,9 @@ function Util() {
 	};
 
 	this.debounce = function(func, wait, immediate) {
-		var timeout;
+		let timeout;
 		return function() {
-			var context = this, args = arguments;
+			let context = this, args = arguments;
 			if (timeout) {
 				console.log("there is a timeout");
 			}
@@ -323,7 +323,7 @@ function Util() {
 
 	this.nameToString = function(name){
 		if (!name) { return null; }
-    	var words = name.match(/[A-Za-z][a-z]*/g);
+    	let words = name.match(/[A-Za-z][a-z]*/g);
 		return words.map(this.capitalize).join(" ");
 	}.bind(this);
 
