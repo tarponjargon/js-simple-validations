@@ -1,5 +1,4 @@
 import Promise from '../node_modules/promise-polyfill';
-import 'nodelist-foreach-polyfill';
 import cfg from './config';
 import Validations from './validations';
 import Util from './utilities';
@@ -82,7 +81,7 @@ function FieldValidator(field, form, event) {
 
 	this.getCustomErrors = function(field=self.field) {
 		let errors = {};
-		self.getValidations(field).forEach(vtype => {
+		Array.prototype.forEach.call(self.getValidations(field), function(vtype) {
 			let cm = util.getAttr(field, cfg.invErrPrefix + vtype);
 			if (cm) {
 				errors[vtype] = cm;
@@ -108,7 +107,7 @@ function FieldValidator(field, form, event) {
 			"valid": {},
 			"invalid": {}
 		};
-		self.getValidations(field).forEach(type => {
+		Array.prototype.forEach.call(self.getValidations(field), function(type) {
 			let v = util.getAttr(field, cfg.fieldValidCallback + type);
 			if (v) {
 				cb.valid[type] = v;
@@ -125,7 +124,7 @@ function FieldValidator(field, form, event) {
 	this.setFieldsValid = function(fields, validator) {
 		try {
 			if (Array.isArray(fields) && fields.length) {
-				fields.forEach(f => {
+				Array.prototype.forEach.call(fields, function(f) {
 					// ignore field if it's the current field
 					if (self.field.getAttribute('name') !== f.getAttribute('name')) {
 						self.valid(f, validator);
@@ -143,7 +142,7 @@ function FieldValidator(field, form, event) {
 		//console.log("SETFIELDSINVALID", fields);
 		try {
 			if (Array.isArray(fields) && fields.length) {
-				fields.forEach(f => {
+				Array.prototype.forEach.call(fields, function(f) {
 					// ignore field if it's the current field
 					if (self.field.getAttribute('name') !== f.getAttribute('name')) {
 						self.invalid(f, validator, null, true);
@@ -247,7 +246,7 @@ function FieldValidator(field, form, event) {
 			let fieldName = field.getAttribute('name');
 			// mark all fields with this name as valid (this will cover multi-value fields)
 			let validFields = self.form.querySelectorAll('[name='+fieldName+']');
-			validFields.forEach(f => {
+			Array.prototype.forEach.call(validFields, function(f) {
 				f.setAttribute(cfg.fieldIsValid, "true");
 			});
 
@@ -307,7 +306,7 @@ function FieldValidator(field, form, event) {
 
 			// un-mark fields with this name from being valid
 			let invalidFields = self.form.querySelectorAll('[name='+fieldName+']');
-			invalidFields.forEach(f => {
+			Array.prototype.forEach.call(invalidFields, function(f) {
 				f.removeAttribute(cfg.fieldIsValid);
 			});
 

@@ -1,5 +1,4 @@
 import cfg from './config';
-import 'nodelist-foreach-polyfill';
 
 function Util() {
 
@@ -56,7 +55,7 @@ function Util() {
 				newEl = document.createElement(tag);
 				newEl.classList.add(selectorObj.className);
 				if (selectorObj.addClasses && Array.isArray(selectorObj.addClasses)) {
-					selectorObj.addClasses.forEach(addClass => {
+					Array.prototype.forEach.call(selectorObj.addClasses, function(addClass) {
 						newEl.classList.add(addClass);
 					})
 				}

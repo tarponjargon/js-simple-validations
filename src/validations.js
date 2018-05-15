@@ -1,5 +1,4 @@
 import Promise from '../node_modules/promise-polyfill';
-import 'nodelist-foreach-polyfill';
 import cfg from './config';
 import Util from './utilities';
 
@@ -302,7 +301,7 @@ let Validations = function(self) {
 					let countSelected = 0;
 
 					if (allNamedElements && allNamedElements[0]) {
-						allNamedElements.forEach(thisElement => {
+						Array.prototype.forEach.call(allNamedElements, function(thisElement) {
 							if (util.getValue(thisElement)) {
 								countSelected++;
 							}
@@ -330,11 +329,11 @@ let Validations = function(self) {
 					return new Promise(function(resolve, reject) {
 						let n = util.getAttr(field, cfg.dependentFields);
 						let d = (n) ? util.splitString(n) : [];
-						let f = (d.length) ? d.map(i => '[name="'+i+'"]') : [];
+						let f = (d.length) ? Array.prototype.map.call(d, function(i) { return '[name="'+i+'"]' }) : [];
 						let q = (f.length) ? self.form.querySelectorAll(f.join(',')) : [];
 						let v = 0;
 						let b = [];
-						q.forEach(c => {
+						Array.prototype.forEach.call(q, function(c) {
 							if (self.checkValid(c)) {
 								v++;
 							} else {
@@ -350,7 +349,7 @@ let Validations = function(self) {
 							if (validator && validator in err) {
 								error = err[validator];
 							} else {
-								let da = (b.length) ? b.map(i => self.getLabel(i)) : [];
+								let da = (b.length) ? Array.prototype.map.call(b, function(i) { return self.getLabel(i) }) : [];
 								error = (da.length) ? "Please complete " + da.join(", ") : null;
 								if (b.length && self.checkIfCurrent(field)) {
 									self.setFieldsInvalid(b, validator);
@@ -377,7 +376,7 @@ let Validations = function(self) {
 					let dateHash = {};
 					let setFieldsToValid = []; // fields to to force state of 'valid' on if this valiation succeeds
 					// get year, month and day values (if exist), force them to 3 or 4 digit format
-					['year','month','day'].forEach(k => {
+					Array.prototype.forEach.call(['year','month','day'], function(k) {
 						let f = self.form.querySelector('[' + cfg.expireDate + '="' + k + '"]');
 						let v = (f) ? util.getValue(f) : null;
 						if (f && v) { setFieldsToValid.push(f) }

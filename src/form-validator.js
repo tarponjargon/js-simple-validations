@@ -1,5 +1,4 @@
 import Promise from '../node_modules/promise-polyfill';
-import 'nodelist-foreach-polyfill';
 import FieldValidator from './field-validator';
 import cfg from './config';
 import Util from './utilities';
@@ -43,7 +42,7 @@ function FormValidator(form) {
 			"validate": [],
 			"reset": []
 		}
-		self.getFields(form).forEach(field => {
+		Array.prototype.forEach.call(self.getFields(form), function(field) {
 			try {
 				let add = false;
 				let reset = false;
@@ -92,7 +91,7 @@ function FormValidator(form) {
 		//console.log("in checkValid");
 		let fields = self.getFields(form);
 		let v = 0;
-		fields.forEach(field => {
+		Array.prototype.forEach.call(fields, function(field) {
 			if (field.getAttribute(cfg.fieldIsValid)) {
 				v++;
 			}
@@ -109,14 +108,14 @@ function FormValidator(form) {
 
 				// loop thru all validation fields fields and validate each
 				let proms = [ new Promise.resolve() ];  // give it a resolving promise in case there are none
-				vfields.validate.forEach(field => {
+				Array.prototype.forEach.call(vfields.validate, function(field) {
 					//console.log("vfields current field", field);
 					let fieldValidator = new FieldValidator(field, form, e);
 					proms.push(fieldValidator.validate(field));
 				});
 
 				// reset UI on any field in 'reset'
-				vfields.reset.forEach(field => {
+				Array.prototype.forEach.call(vfields.reset, function(field) {
 					let fieldValidator = new FieldValidator(field, form, e);
 					proms.push(fieldValidator.reset(field));
 				});

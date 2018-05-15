@@ -1,7 +1,6 @@
 import Util from './utilities';
 import FormValidator from './form-validator';
 import debounce from './debounce-promise';
-import 'nodelist-foreach-polyfill';
 import cfg from './config';
 import styles from './styles.js'
 
@@ -40,7 +39,7 @@ let SimpleValidations = function() {
 	} // end if for useCss
 
 	// loop thru forms in DOM marked for validation
-	document.querySelectorAll('[' + cfg.formValidateAttr + ']').forEach(form => {
+	Array.prototype.forEach.call(document.querySelectorAll('[' + cfg.formValidateAttr + ']'), function(form) {
 
 		// add form-level error container (if not exists)
 		let ferr = util.createValidationElement(form, cfg.formError);
@@ -60,7 +59,7 @@ let SimpleValidations = function() {
 		let formValidator = new FormValidator(form);
 
 		// loop thru fields in this form marked for validation
-		form.querySelectorAll('[' + cfg.fieldValidators + ']').forEach(field => {
+		Array.prototype.forEach.call(form.querySelectorAll('[' + cfg.fieldValidators + ']'), function(field) {
 
 			// reference ID to tie message container, etc to this field
 			let baseId = util.getAttr(field, cfg.baseId);
