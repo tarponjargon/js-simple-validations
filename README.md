@@ -40,9 +40,9 @@ To avoid you having to write *any* Javascript, JSV instantiates and attaches to 
 
 <a name="installation"></a>
 ## Installation
-Download the [javascript file](https://raw.githubusercontent.com/tarponjargon/js-simple-validations/master/dist/js-simple-validations.min.js), or just include this script tag in your HTML:
+Download the [javascript file](https://raw.githubusercontent.com/tarponjargon/js-simple-validations/master/dist/js-simple-validations.js), or just include this script tag in your HTML:
 
-    <script src="https://unpkg.com/js-simple-validations@0.2.0/dist/js-simple-validations.min.js"></script>
+    <script src="https://unpkg.com/js-simple-validations@0.2.1/dist/js-simple-validations.js"></script>
 
 Or install with npm:
 
