@@ -1,13 +1,19 @@
 /* eslint-disable */
 const path = require('path');
 
+
+
 const PATHS = {
 	src: path.join(__dirname, 'src'),
 	build: path.join(__dirname, 'build'),
 	dist: path.join(__dirname, 'dist'),
 };
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const { getIfUtils,removeEmpty } = require('webpack-config-utils');
+
+const { ifProduction, ifNotProduction } = getIfUtils(process.argv[3]);
 
 module.exports = {
 	module: {
@@ -52,5 +58,11 @@ module.exports = {
 				}
 			})
 		]
-	}
+	},
+	plugins: removeEmpty([
+		ifProduction(new CopyWebpackPlugin([{
+			from: './build/js-simple-validations.js',
+			to: PATHS.dist
+		}])),
+	])
 };

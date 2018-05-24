@@ -1,6 +1,4 @@
 
-
-
 # Simple Validations
 Another form validation library! There are already some [good ones out there](https://www.google.com/search?q=javascript%20form%20validation%20library), but most depend on other libraries, or require you to get your hands dirty.  Use Simple Validations (JSV) when don't want to mess with *any* Javascript, CSS or dependencies (aren't forms painful enough already?)   Think of it as enhanced [HTML5 form validations](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation).
 
@@ -18,51 +16,50 @@ Another form validation library! There are already some [good ones out there](ht
 
 <a href="https://codepen.io/tarponjargon/pen/mLeQMg/">Try it out on CodePen</a>
 
-
 ## Documentation
 1. [How it works](#howitworks)
 2. [Installation](#installation)
-3. [Validation Types](#validationtypes)
-4. [Customizing Validation Messages](#validationmessages)
-5. [Containers and Styling](#containersandstyling)
-6. [Form Configuration](#formlevelconfig)
-7. [Field Configuration](#fieldlevelconfig)
-8. [App Configuration](#appconfig)
-9. [Custom Validators](#customvalidators)
-10. [Callbacks](#callbacks)
-11. [Testing](#testing)
-12. [Acknowledgements](#acknowledgements)
+3. [Quick Setup](#quicksetup)
+4. [Validation Types](#validationtypes)
+5. [Customizing Validation Messages](#validationmessages)
+6. [Containers and Styling](#containersandstyling)
+7. [Form Configuration](#formlevelconfig)
+8. [Field Configuration](#fieldlevelconfig)
+9. [App Configuration](#appconfig)
+10. [Custom Validators](#customvalidators)
+11. [Callbacks](#callbacks)
+12. [Testing](#testing)
+13. [Acknowledgements](#acknowledgements)
 
 <a name="howitworks"></a>
 ## How it Works
 
 JSV listens for `input`, `change` and `focusout` events on each field in the form, and the `submit` event on the form itself.  Validations are triggered on each of those events.  When all fields pass validation, the form is in a "valid" state and can be submitted.  
 
+To avoid you having to write *any* Javascript, JSV instantiates and attaches to form elements when the page is ready.  JSV is intended for use with "traditional" server-side rendered HTML forms.  So if you're using a framework or otherwise creating your forms with Javascript, it probably won't work.  
+
 <a name="installation"></a>
 ## Installation
-Include in your HTML:
+Download the [javascript file](https://raw.githubusercontent.com/tarponjargon/js-simple-validations/master/dist/js-simple-validations.min.js), or just include this script tag in your HTML:
 
-/dist/js-simple-validations.min.js"></script>
+    <script src="https://unpkg.com/js-simple-validations@0.2.0/dist/js-simple-validations.min.js"></script>
 
 Or install with npm:
 
-    npm install js-simple-validations
+    npm install js-simple-validations --save-dev
 
-**How to use on your forms**
+Then import into your bundle with:
 
-Add this data attribute to any form(s) you want to validate:
+	import SimpleValidations from 'js-simple-validations';
 
-    data-jsv-form="true"
+<a name="quicksetup"></a>
+## Quick Setup
 
-Example:
+On your form(s) add this `data-jsv-form="true"` to any form(s) you want to validate:
 
     <form action="/processform" method="POST" data-jsv-form="true">
 
-For each field in the form you want to validate, specify the field [validation type(s)](#validationtypes) in this data attribute:
-
-    data-jsv-validators="[TYPE]"
-
-Example:
+For each field in the form you want to validate, specify the field [validation type(s)](#validationtypes) like `data-jsv-validators="[TYPE]"`
 
     <input type="text" name="firstname" data-jsv-validators="require" />
 
@@ -70,7 +67,7 @@ Or apply multiple types like:
 
     <input type="text" name="email" data-jsv-validators="require, email" />
 
-*That's all you need to do*
+*That's all you need to do* (unless you want to [customize](#validationmessages))
 
 <a name="validationtypes"></a>
 ## Validation Types
@@ -316,7 +313,7 @@ Looks like:
 
 ![enter image description here](https://i.imgur.com/KUlN1cy.png)
 
-<a href="formlevelconfig"></a>
+<a name="formlevelconfig"></a>
 ## Form Configuration
 
 The following data attributes can be added to the `<form>` tag
@@ -332,7 +329,7 @@ The following data attributes can be added to the `<form>` tag
 | `data-jsv-form-invalid-callback="[JAVASCRIPT FUNCTION NAME]"` | If specified, the function is called when a form is submitted but is not valid.  Arguments: `event`, `form` (the entire form element) and the string '`invalid`'.  |
 | `data-jsv-form-valid-callback="[JAVASCRIPT FUNCTION NAME]"` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| If specified, the function is called when a form becomes valid.  If used, be prepared for the possibility that it can be called many times.  Also, this is not to be used as a submit handler.  Arguments: `event`, `form` (the entire form element) and the string '`valid`'. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  |
 
-<a href="fieldlevelconfig"></a>
+<a name="fieldlevelconfig"></a>
 ## Field Configuration
 The following attributes can be added to the form field elements (like `<input>)`:
 

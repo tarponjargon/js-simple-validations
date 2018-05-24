@@ -1,7 +1,7 @@
 {
   "name": "js-simple-validations",
   "private": false,
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "Form validation tool",
   "repository": {
     "type": "git",
@@ -28,12 +28,14 @@
     "babel-jest": "^22.4.3",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
+    "copy-webpack-plugin": "^4.5.1",
     "eslint": "^4.19.1",
     "eslint-loader": "^2.0.0",
     "jest": "^22.4.3",
     "puppeteer": "^1.4.0",
     "webpack": "^4.8.3",
-    "webpack-cli": "^2.1.3"
+    "webpack-cli": "^2.1.3",
+    "webpack-config-utils": "^2.3.0"
   },
   "dependencies": {
     "nodelist-foreach-polyfill": "^1.2.0",
