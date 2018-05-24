@@ -45,7 +45,7 @@ module.exports = {
 	},
 	output: {
 		path: PATHS.dist,
-		filename: 'js-simple-validations.min.js'
+		filename: 'js-simple-validations.js'
 	},
 	//watch: true,
 	optimization: {
@@ -62,7 +62,7 @@ module.exports = {
 	plugins: removeEmpty([
 		ifProduction(new CopyWebpackPlugin([{
 			from: './build/js-simple-validations.js',
-			to: PATHS.dist
+			to: `${PATHS.dist}/js-simple-validations-full.js`
 		}])),
 	])
 };
