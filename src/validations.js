@@ -448,7 +448,7 @@ let Validations = function(self) {
 										let data = JSON.parse(xhr.responseText);
 										//console.log("raw ajax response", data, "data[ajaxKey]", data[ajaxKey]);
 										let val = util.getAttr(field, cfg.ajaxValue) || fieldVal;
-										if (data && data[key] === val) {
+										if (data && data[key].toString() === val) {
 											resolve(self.forceEvent(field));
 										} else {
 											let err = self.getCustomErrors(field);
