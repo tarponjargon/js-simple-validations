@@ -48,6 +48,9 @@ import styles from './styles.js'
 			// loop thru forms in DOM marked for validation
 			document.querySelectorAll('[' + cfg.formValidateAttr + ']').forEach(form => {
 
+				// stores max configured debounce value on form
+				let maxDebounce = cfg.debounceDefault;
+
 				// add form-level error container (if not exists)
 				let ferr = util.createValidationElement(form, cfg.formError);
 				if (ferr) {
@@ -129,6 +132,7 @@ import styles from './styles.js'
 					// set up debouncing of input
 					let dbField = util.getAttr(field, cfg.fieldDebounce);
 					let dbr = (dbField && !isNaN(dbField)) ? dbField : cfg.debounceDefault;
+					if (dbr > maxDebounce) { maxDebounce = dbr }
 					let dbf = debounce(formValidator.validate, dbr);
 					let dbw = function(e) {
 						//console.log("debounceWrapper", e.type, form.getAttribute('name'), field.getAttribute('name'), field.getAttribute('id'), "deboucerate", dbRate);
@@ -146,29 +150,32 @@ import styles from './styles.js'
 
 				// form submit handler
 				form.addEventListener('submit', function(e) {
-					console.log("SUBMIT event", form);
+					console.log("SUBMIT event", form, maxDebounce);
 					e.preventDefault(); // we need to do a final validation first
-					formValidator.validate(e, form).then(function() {
-						console.log("success!");
+					// run final validations AFTER maxDebounce to let all previous debounced operations clear
+					setTimeout(() => {
+						formValidator.validate(e, form).then(function() {
+							console.log("success!");
 
-						let ref = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
-						let aftr = (
-							ref &&
-							ref in window &&
-							typeof window[ref] === 'function'
-						) ? window[ref] : null;
+							let ref = (cfg.formSubmitHandler) ? util.getAttr(form, cfg.formSubmitHandler) : null;
+							let aftr = (
+								ref &&
+								ref in window &&
+								typeof window[ref] === 'function'
+							) ? window[ref] : null;
 
-						if (aftr) {
-							console.log("AFTERSUBMIT", e, form, 'valid');
-							aftr(e, form, 'valid');
-						} else {
-							console.log("submitting form the traditional way");
-							form.submit();
-						}
-					}).catch(function() {
-						let m = util.getAttr(form, cfg.formInvalidMessage) || "Please correct the errors below";
-						util.showMsg(form, cfg.formError.className, m);
-					});
+							if (aftr) {
+								console.log("AFTERSUBMIT", e, form, 'valid');
+								aftr(e, form, 'valid');
+							} else {
+								console.log("submitting form the traditional way");
+								form.submit();
+							}
+						}).catch(function() {
+							let m = util.getAttr(form, cfg.formInvalidMessage) || "Please correct the errors below";
+							util.showMsg(form, cfg.formError.className, m);
+						});
+					}, (maxDebounce+100));
 				});
 
 			}); // end loop thru forms in window
