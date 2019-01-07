@@ -1,7 +1,7 @@
 {
   "name": "js-simple-validations",
   "private": false,
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Form validation tool",
   "repository": {
     "type": "git",
@@ -11,9 +11,7 @@
   "scripts": {
     "test": "jest",
     "dist": "webpack --mode production",
-    "postdist": "./deploy-prod.sh",
     "dev": "webpack --mode development --output ./build/js-simple-validations.js",
-    "postdev": "./deploy-dev.sh",
     "lint:js": "eslint src/ webpack.*.js --cache"
   },
   "keywords": [
@@ -33,8 +31,9 @@
     "eslint-loader": "^2.1.1",
     "jest": "^23.6.0",
     "puppeteer": "^1.11.0",
+    "uglifyjs-webpack-plugin": "^2.1.1",
     "webpack": "^4.28.3",
-    "webpack-cli": "^2.1.5",
+    "webpack-cli": "^3.2.1",
     "webpack-config-utils": "^2.3.1"
   },
   "dependencies": {
