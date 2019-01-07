@@ -25,21 +25,21 @@
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.26.3",
-    "babel-jest": "^22.4.4",
-    "babel-loader": "^7.1.4",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
-    "copy-webpack-plugin": "^4.5.1",
-    "eslint": "^4.19.1",
-    "eslint-loader": "^2.0.0",
-    "jest": "^22.4.4",
-    "puppeteer": "^1.4.0",
-    "webpack": "^4.8.3",
-    "webpack-cli": "^2.1.4",
-    "webpack-config-utils": "^2.3.0"
+    "copy-webpack-plugin": "^4.6.0",
+    "eslint": "^5.12.0",
+    "eslint-loader": "^2.1.1",
+    "jest": "^23.6.0",
+    "puppeteer": "^1.11.0",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^2.1.5",
+    "webpack-config-utils": "^2.3.1"
   },
   "dependencies": {
     "nodelist-foreach-polyfill": "^1.2.0",
-    "promise-polyfill": "7.1.2"
+    "promise-polyfill": "8.1.0"
   },
   "jest": {
     "moduleFileExtensions": [
