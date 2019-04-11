@@ -82,6 +82,7 @@ import styles from "./styles.js";
           .querySelectorAll("[" + cfg.fieldValidators + "]")
           .forEach(field => {
             // reference ID to tie message container, etc to this field
+
             let baseId = util.getAttr(field, cfg.baseId);
             if (!baseId) {
               baseId = util.createId();

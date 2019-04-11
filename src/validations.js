@@ -298,7 +298,7 @@ let Validations = function(self) {
 
 					let fieldName = field.getAttribute('name');
 					let minThreshold = util.getAttr(field, cfg.minThresh) || 1;
-					let allNamedElements = self.form.querySelectorAll('[name='+fieldName+']');
+					let allNamedElements = self.form.querySelectorAll('[name="'+fieldName+'"]');
 					let countSelected = 0;
 
 					if (allNamedElements && allNamedElements[0]) {

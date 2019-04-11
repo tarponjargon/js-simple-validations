@@ -246,7 +246,7 @@ function FieldValidator(field, form, event) {
 
 			let fieldName = field.getAttribute('name');
 			// mark all fields with this name as valid (this will cover multi-value fields)
-			let validFields = self.form.querySelectorAll('[name='+fieldName+']');
+			let validFields = self.form.querySelectorAll('[name="'+fieldName+'"]');
 			validFields.forEach(f => {
 				f.setAttribute(cfg.fieldIsValid, "true");
 			});
@@ -295,7 +295,7 @@ function FieldValidator(field, form, event) {
 
 	// function sets the state of the UI (form field) to invalid
 	this.invalid = function(field=self.field, lastv, messages, current) {
-		//if (self.checkIfCurrent()) { console.log("in self.invalid", messages) }
+		if (self.checkIfCurrent()) { console.log("in self.invalid", messages) }
 		try {
 			let fieldName = field.getAttribute('name');
 
@@ -306,7 +306,7 @@ function FieldValidator(field, form, event) {
 			}
 
 			// un-mark fields with this name from being valid
-			let invalidFields = self.form.querySelectorAll('[name='+fieldName+']');
+			let invalidFields = self.form.querySelectorAll('[name="'+fieldName+'"]');
 			invalidFields.forEach(f => {
 				f.removeAttribute(cfg.fieldIsValid);
 			});
